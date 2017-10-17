@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Unknown5 type="uint32" default="0" description="" />
-  <Unknown6 type="float" default="0" description="" />
-  <Unknown7 type="uint32" default="0" description="" />
+  <CueID type="uint32" default="0" description="The ID of the sound, as defined in cue_name_list.orc" />
+  <BaseVolume type="float" default="0" description="1 = normal volume ?" />
+  <PathID type="uint32" default="0" description="" />
   <Extra type="RawByteLength" length="12" />
 </Template>
