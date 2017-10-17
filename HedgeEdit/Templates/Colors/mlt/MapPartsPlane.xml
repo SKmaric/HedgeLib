@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <IsSolid type="bool" default="true" description="Enable collision" />
+  <Unknown6 type="enum" default="1" description="" />
+  <ModelType type="enum" default="2" description="If 2, the size will round up to an even number if any of the dimensions are an odd number." />
+  <Width type="enum" default="2" description="" />
+  <Height type="enum" default="2" description="" />
+  <Length type="enum" default="2" description="" />
+  <Extra type="RawByteLength" length="8" />
 </Template>
