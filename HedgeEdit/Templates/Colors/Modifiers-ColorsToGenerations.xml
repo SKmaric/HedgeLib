@@ -64,6 +64,7 @@
 		<PlaPhantomCancelVolume>PhantomCancelCollision</PlaPhantomCancelVolume>
 		<!-- Sound -->
 		<SoundPoint>EnvSound</SoundPoint>
+		<SoundLine>PathSoundSource</SoundLine>
 		<!-- Mission -->
 		<MissionChainFloor>ChainFloor</MissionChainFloor>
 		<MissionChainThornBall>ChainSpikeBall</MissionChainThornBall>
@@ -84,6 +85,7 @@
 		<RainbowRing>-180</RainbowRing>
 		<TrickJump>-180</TrickJump>
 		<CameraCollisionBoard>-180</CameraCollisionBoard>
+		<WindNoiseCollision>-180</WindNoiseCollision>
 	</Rotation-Y>
 	<Param-Divide>
 		<Collision>5</Collision>

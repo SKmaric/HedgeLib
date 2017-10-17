@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Width type="float" default="0" description="collision of width" />
+  <Collision_Height type="float" default="0" description="the height of the collision" />
+  <CueID type="uint32" default="0" description="The ID of the sound, as defined in cue_name_list.orc" />
+  <EmitterPos type="vector" description="?" />
   <Extra type="RawByteLength" length="24" />
 </Template>
