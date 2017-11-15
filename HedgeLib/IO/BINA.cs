@@ -37,7 +37,7 @@ namespace HedgeLib.IO
         }
 
         // Methods
-        public BINAHeader ReadHeader()
+        public BINAHeader ReadHeader(bool ignoreSignature = false)
         {
             var header = new BINAHeader();
             if (version == BINA.BINATypes.Version1)
@@ -67,7 +67,7 @@ namespace HedgeLib.IO
 
                 // BINA Signature
                 string sig = ReadSignature(4);
-                if (sig != BINAHeader.Signature)
+                if (!ignoreSignature && sig != BINAHeader.Signature)
                     throw new InvalidSignatureException(BINAHeader.Signature, sig);
 
                 // TODO: Find out what this is - maybe additional data length?
@@ -79,41 +79,56 @@ namespace HedgeLib.IO
             {
                 // BINA Header
                 string sig = ReadSignature(4);
-                if (sig != BINAHeader.Signature)
+                if (!ignoreSignature && sig != BINAHeader.Signature)
                     throw new InvalidSignatureException(BINAHeader.Signature, sig);
 
                 // Version String
-                string versionString = ReadSignature(3);
-                if (versionString != BINAHeader.Ver2String)
+                string verString = ReadSignature(3);
+                if (!ushort.TryParse(verString, out header.Version))
                 {
                     Console.WriteLine(
-                        "WARNING: Unknown BINA header version, expected {0} got {1}!",
-                        BINAHeader.Ver2String, versionString);
+                        "WARNING: BINA header version was invalid {0}",
+                        verString);
                 }
 
                 IsBigEndian = (ReadChar() == 'B');
-                header.FileSize = ReadUInt32();
 
-                // TODO: Figure out what these values are.
-                ushort unknown1 = ReadUInt16();
-                ushort unknown2 = ReadUInt16();
+                // Version 3.00
+                if (header.Version >= 300)
+                {
+                    header.ID = ReadUInt32();
+                    header.FileSize = ReadUInt32();
 
-                // DATA Header
-                string dataSig = ReadSignature();
-                if (dataSig != BINAHeader.DataSignature)
-                    throw new InvalidSignatureException(BINAHeader.DataSignature, dataSig);
+                    // The rest is PAC specific
+                    Offset = 0;
+                }
 
-                header.DataLength = ReadUInt32();
-                header.StringTableOffset = ReadUInt32();
-                header.StringTableLength = ReadUInt32();
-                header.FinalTableLength = ReadUInt32();
+                // Version 2.00
+                else
+                {
+                    header.FileSize = ReadUInt32();
 
-                // Additional data
-                ushort additionalDataLength = ReadUInt16();
-                ushort unknown3 = ReadUInt16();
+                    // TODO: Figure out what these values are.
+                    ushort unknown1 = ReadUInt16();
+                    ushort unknown2 = ReadUInt16();
 
-                JumpAhead(additionalDataLength);
-                Offset = (uint)BaseStream.Position;
+                    // DATA Header
+                    string dataSig = ReadSignature();
+                    if (dataSig != BINAHeader.DataSignature)
+                        throw new InvalidSignatureException(BINAHeader.DataSignature, dataSig);
+
+                    header.DataLength = ReadUInt32();
+                    header.StringTableOffset = ReadUInt32();
+                    header.StringTableLength = ReadUInt32();
+                    header.FinalTableLength = ReadUInt32();
+
+                    // Additional data
+                    ushort additionalDataLength = ReadUInt16();
+                    ushort unknown3 = ReadUInt16();
+
+                    JumpAhead(additionalDataLength);
+                    Offset = (uint)BaseStream.Position;
+                }
             }
 
             return header;
@@ -140,7 +155,7 @@ namespace HedgeLib.IO
                 else if (type == (byte)BINA.OffsetTypes.FourteenBit)
                 {
                     byte b2 = ReadByte();
-                    ushort d2 = (ushort)(((d << 8) & b2) << 2);
+                    ushort d2 = (ushort)(((d << 8) | b2) << 2);
 
                     offsets.Add(d2 + lastOffsetPos);
                 }
@@ -169,12 +184,15 @@ namespace HedgeLib.IO
 
         // Constructors
         public BINAWriter(Stream output, BINA.BINATypes type = BINA.BINATypes.Version1,
-            bool isBigEndian = true) : base(output, Encoding.ASCII, isBigEndian)
+            bool isBigEndian = true, bool writeHeader = true) :
+            base(output, Encoding.ASCII, isBigEndian)
         {
             version = type;
             Offset = (version == BINA.BINATypes.Version2) ?
                 BINAHeader.Ver2Length : BINAHeader.Ver1Length;
-            WriteNulls(Offset);
+
+            if (writeHeader)
+                WriteNulls(Offset);
         }
 
         // Methods
@@ -250,7 +268,7 @@ namespace HedgeLib.IO
             header.FileSize = (uint)BaseStream.Position;
         }
 
-        public void FillInHeader(BINAHeader header)
+        public void FillInHeader(BINAHeader header, string sig = BINAHeader.Signature)
         {
             BaseStream.Position = 0;
             if (version == BINA.BINATypes.Version1)
@@ -265,33 +283,45 @@ namespace HedgeLib.IO
 
                 WriteSignature(BINAHeader.Ver1String);
                 Write((IsBigEndian) ? 'B' : 'L');
-                WriteSignature(BINAHeader.Signature);
+                WriteSignature(sig);
                 WriteNulls(4); // TODO: Find out what this is.
             }
             else
             {
                 // BINA Header
-                WriteSignature(BINAHeader.Signature);
-                WriteSignature(BINAHeader.Ver2String);
+                WriteSignature(sig);
+                WriteSignature(header.Version.ToString());
                 Write((IsBigEndian) ? 'B' : 'L');
-                Write(header.FileSize);
 
-                // TODO: Figure out what these values are.
-                Write((ushort)1);
-                Write((ushort)0); // Possibly IsFooterMagicPresent?
+                // Version 3.00
+                if (header.Version >= 300)
+                {
+                    Write(header.ID);
+                    Write(header.FileSize);
+                }
 
-                // DATA Header
-                WriteSignature(BINAHeader.DataSignature);
-                Write(header.DataLength);
-                Write(header.StringTableOffset);
-                Write(header.StringTableLength);
+                // Version 2.00
+                else
+                {
+                    Write(header.FileSize);
 
-                Write(header.FinalTableLength);
-                Write((ushort)(Offset - BaseStream.Position + 4));
+                    // TODO: Figure out what these values are.
+                    Write((ushort)1);
+                    Write((ushort)0); // Possibly IsFooterMagicPresent?
+
+                    // DATA Header
+                    WriteSignature(BINAHeader.DataSignature);
+                    Write(header.DataLength);
+                    Write(header.StringTableOffset);
+                    Write(header.StringTableLength);
+
+                    Write(header.FinalTableLength);
+                    Write((ushort)(Offset - (BaseStream.Position + 4)));
+                }
             }
         }
 
-        public void AddString(string offsetName, string str)
+        public void AddString(string offsetName, string str, uint offsetLength = 4)
         {
             if (string.IsNullOrEmpty(offsetName)) return;
 
@@ -310,7 +340,7 @@ namespace HedgeLib.IO
             }
 
             // Add an offset to the string we're going to write into the string table later
-            AddOffset(offsetName);
+            AddOffset(offsetName, offsetLength);
             tableEntry.OffsetNames.Add(offsetName);
 
             if (newEntry)
