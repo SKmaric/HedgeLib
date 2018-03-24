@@ -18,6 +18,7 @@
 		<!-- System -->
 		<LayerChangeCollisionFlat>LayerBoard</LayerChangeCollisionFlat>
 		<ObjFlowCollision>FlowEx</ObjFlowCollision>
+		<EventCollision>SwitchCollision</EventCollision>
 		<!-- Player System -->
 		<AutorunFinishCollision>AutorunCollisionEnd</AutorunFinishCollision>
 		<AutorunStartCollision>AutorunCollisionStart</AutorunStartCollision>
@@ -70,11 +71,13 @@
 		<MissionChainFloor>ChainFloor</MissionChainFloor>
 		<MissionChainThornBall>ChainSpikeBall</MissionChainThornBall>
 	</Rename>
-	<Position-Y> <!-- Local rotation -->
+	<Position-Y> <!-- Global rotation -->
 		<Ring>0.5</Ring>
+		<RedRing>1</RedRing>
 	</Position-Y>
 	<Rotation-X>
 		<FallDeadCollision>-90</FallDeadCollision>
+		<Fiber>-90</Fiber>
 	</Rotation-X>
 	<Rotation-Y>
 		<DashRing>-180</DashRing>
@@ -86,7 +89,11 @@
 		<RainbowRing>-180</RainbowRing>
 		<TrickJump>-180</TrickJump>
 		<CameraCollisionBoard>-180</CameraCollisionBoard>
+		<EventJumpCollision>-180</EventJumpCollision>
 		<WindNoiseCollision>-180</WindNoiseCollision>
+		<AutorunCollisionStart>-180</AutorunCollisionStart>
+		<AutorunCollisionEnd>-180</AutorunCollisionEnd>
+		<SetParticle>-90</SetParticle>
 	</Rotation-Y>
 	<Param-Divide>
 		<Collision>5</Collision>

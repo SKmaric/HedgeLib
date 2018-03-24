@@ -5,7 +5,7 @@
   <IsReset type="bool" default="false" description="?" />
   <Unknown5 type="bool" default="true" description="?" />
   <SetPlaceType type="enum" default="0" description="?" />
-  <Unknown6 type="enum" default="0" description="?" />
+  <InitDisp type="enum" default="0" description="?" />
   <Unknown7 type="uint" default="0" description="?" />
   <Extra type="RawByteLength" length="16" />
 </Template>

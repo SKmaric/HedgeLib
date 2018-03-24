@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <TrgHeight type="float" default="0" description="" />
-  <Unknown-Velocity type="float" default="0" description="" />
+  <KeepHeight type="float" default="0" description="" />
+  <JumpVel type="float" default="0" description="" />
   <Time_On type="float" default="0" description="" />
   <Time_Off type="float" default="0" description="" />
-  <Unknown9 type="float" default="0" description="" />
-  <UseTimer type="bool" default="false" description="" />
+  <TrgHeight type="float" default="0" description="Floating distance modifier (up/down motion at top of gust height)." />
+  <Type type="enum" default="0" description="0: Constant, 1: Timer Controlled, 2: Switch Controlled" />
   <Extra type="RawByteLength" length="24" />
 </Template>

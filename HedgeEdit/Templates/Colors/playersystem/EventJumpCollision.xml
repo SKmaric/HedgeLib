@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Width type="float" default="0" />
+  <Collision_Height type="float" default="0" />
+  <ImpulseSpeedOnNormal type="float" default="500" description="Initial speed Sonic is sent off with." />
+  <ImpulseSpeedOnBoost type="float" default="500" description="Initial speed Sonic is sent off with while boosting." />
+  <OutOfControl type="float" default="0" />
+  <Pitch type="float" default="0" />
+  <SpeedMin type="float" default="0" />
+  <m_IsGroundOnly type="bool" default="true" />
+  <Unknown5 type="bool" default="false" />
+  <Unknown6 type="bool" default="false" />
+  <Unknown7 type="bool" default="false" />
   <Extra type="RawByteLength" length="32" />
 </Template>

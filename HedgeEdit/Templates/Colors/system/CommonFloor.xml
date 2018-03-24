@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <MoveType type="enum" default="0" description="0: Static, 1: Stop-and-Go, 2: Smooth, 3: Fall" />
+  <FloorSize type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="104" />
 </Template>

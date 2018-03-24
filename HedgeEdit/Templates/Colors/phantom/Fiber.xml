@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Height type="float" default="10" description="" />
+  <Collision_Length type="float" default="10" description="" />
+  <Collision_Width type="float" default="5" description="" />
+  <PathID type="uint32" default="0" description="ID of path" />
+  <CameraID type="uint32" default="0" description="ID of camera" />
+  <Type type="enum" default="0" description="0: Starting Point, 1: Ending Point" />
+  <Unknown5 type="bool" default="false" description="?" />
+  <Unknown6 type="bool" default="false" description="?" />
+  <Unknown7 type="bool" default="false" description="?" />
+  <Unknown8 type="float" default="800" description="?" />
+  <Unknown9 type="uint32" default="0" description="?" />
   <Extra type="RawByteLength" length="32" />
 </Template>
