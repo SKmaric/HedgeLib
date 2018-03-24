@@ -164,6 +164,35 @@ namespace HedgeLib.Sets
 
                     data = arr;
                 }
+                else if (dataType == typeof(ForcesSetData.ObjectReference[]))
+                {
+                    var countAttr = paramElem.Attribute("count");
+                    uint arrLength = 0;
+
+                    if (countAttr != null)
+                    {
+                        uint.TryParse(countAttr.Value, out arrLength);
+                    }
+
+                    uint i = 0;
+                    var arr = new ForcesSetData.ObjectReference[arrLength];
+
+                    foreach (var refElem in paramElem.Elements("ForcesObjectReference"))
+                    {
+                        var objRef = new ForcesSetData.ObjectReference();
+                        objRef.ImportXML(refElem);
+                        arr[i] = objRef;
+                        ++i;
+                    }
+
+                    data = arr;
+                }
+                else if (dataType  == typeof(ForcesSetData.ObjectReference))
+                {
+                    var objRef = new ForcesSetData.ObjectReference();
+                    objRef.ImportXML(paramElem);
+                    data = objRef;
+                }
                 else
                 {
                     data = Convert.ChangeType(paramElem.Value, dataType);
@@ -190,7 +219,7 @@ namespace HedgeLib.Sets
         public void ExportXML(string filePath,
             Dictionary<string, SetObjectType> objectTemplates = null)
         {
-            using (var fileStream = File.OpenWrite(filePath))
+            using (var fileStream = File.Create(filePath))
             {
                 ExportXML(fileStream, objectTemplates);
             }
@@ -219,7 +248,8 @@ namespace HedgeLib.Sets
 
                 // Generate Parameters Element
                 var paramsElem = new XElement("Parameters");
-                var template = objectTemplates?[obj.ObjectType];
+                var template = (objectTemplates.ContainsKey(obj.ObjectType)) ?
+                    objectTemplates[obj.ObjectType] : null;
 
                 for (int i = 0; i < obj.Parameters.Count; ++i)
                 {
@@ -251,6 +281,9 @@ namespace HedgeLib.Sets
             {
                 var dataType = param.DataType;
                 var dataTypeAttr = new XAttribute("type", dataType.Name);
+                if (dataType == typeof(ForcesSetData.ObjectReference))
+                    dataTypeAttr.Value = "ForcesObjectReference";
+
                 var elem = new XElement((string.IsNullOrEmpty(name)) ?
                     "Parameter" : name, dataTypeAttr);
 
@@ -271,6 +304,27 @@ namespace HedgeLib.Sets
                         return elem;
 
                     elem.Value = string.Join(",", arr);
+                }
+                else if (dataType == typeof(ForcesSetData.ObjectReference[]))
+                {
+                    var arr = (param.Data as ForcesSetData.ObjectReference[]);
+                    dataTypeAttr.Value = "ForcesObjectList";
+                    elem.Add(new XAttribute("count", (arr == null) ? 0 : arr.Length));
+
+                    if (arr == null)
+                        return elem;
+
+                    foreach (var v in arr)
+                    {
+                        var objRefElem = new XElement("ForcesObjectReference");
+                        v.ExportXML(objRefElem);
+                        elem.Add(objRefElem);
+                    }
+                }
+                else if (dataType == typeof(ForcesSetData.ObjectReference))
+                {
+                    var objRef = (param.Data as ForcesSetData.ObjectReference);
+                    objRef.ExportXML(elem);
                 }
                 else
                 {

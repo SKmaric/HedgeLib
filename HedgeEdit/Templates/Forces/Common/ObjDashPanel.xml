@@ -21,7 +21,8 @@
   <Unknown12 type="ulong" default="0" description="Always 0?" />
   <Unknown13 type="ulong" default="0" description="Always 0?" />
   
-  <Extra type="model" value="cmn_obj_dashroller.model" />
+  <Extra type="model" value="cmn_obj_dashroller.model" condition="not IsSideView" />
+  <Extra type="model" value="cmn_obj_dashroller_SV.model" condition="IsSideView" />
   <Extra type="description" value="Gotta go fast" />
   <Extra type="RawByteLength" length="112" />
 </Template>

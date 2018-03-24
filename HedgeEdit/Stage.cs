@@ -1,6 +1,6 @@
-﻿using HedgeLib.Sets;
+﻿using HedgeEdit.Lua;
+using HedgeEdit.UI;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace HedgeEdit
@@ -8,10 +8,9 @@ namespace HedgeEdit
     public class Stage
     {
         // Variables/Constants
-        public static List<SetData> Sets = new List<SetData>();
-        public static SetData CurrentSetLayer = null;
         public static GameEntry GameType;
         public static EditorCache EditorCache;
+        public static LuaScript Script => script;
         public static string ID, DataDir, CacheDir;
 
         private static LuaScript script;
@@ -20,7 +19,7 @@ namespace HedgeEdit
         // Methods
         public static void Load(string dataDir, string stageID, GameEntry game)
         {
-            Viewport.Clear();
+            Data.Clear();
 
             // Throw exceptions if necessary
             if (!Directory.Exists(dataDir))
@@ -38,6 +37,10 @@ namespace HedgeEdit
             GameType = game;
             ID = stageID;
             DataDir = dataDir;
+
+            var resDir = game.ResourcesDir;
+            Data.ModelDirectories.Add(resDir);
+            Data.ResourceDirectories.Add(resDir);
 
             // Make cache directory
             CacheDir = Path.Combine(Program.StartupPath,
@@ -92,7 +95,7 @@ namespace HedgeEdit
             }
             catch (Exception ex)
             {
-                LuaTerminal.LogError($"ERROR: {ex.Message}");
+                LuaTerminal.LogError($"ERROR: {ex.Message}, {ex.StackTrace}");
             }
 
             unpackStopWatch.Stop();
@@ -111,15 +114,17 @@ namespace HedgeEdit
 
         public static void SaveSets()
         {
-            SaveSets(Sets, DataDir, CacheDir);
+            Save("SaveSets", DataDir, CacheDir);
         }
 
-        public static void SaveSets(List<SetData> sets, string dataDir, string cacheDir)
+        public static void SaveAll()
+        {
+            Save("SaveAll", DataDir, CacheDir);
+        }
+
+        public static void Save(string funcName, string dataDir, string cacheDir)
         {
             // Argument Checks
-            if (sets == null)
-                throw new ArgumentNullException("sets");
-
             if (string.IsNullOrEmpty(dataDir))
                 throw new ArgumentNullException("dataDir");
 
@@ -129,7 +134,7 @@ namespace HedgeEdit
             // Save Sets
             try
             {
-                script.Call("SaveSets", dataDir, CacheDir, ID);
+                script.Call(funcName, dataDir, CacheDir, ID);
             }
             catch (Exception ex)
             {

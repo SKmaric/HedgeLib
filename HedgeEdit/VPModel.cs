@@ -1,4 +1,6 @@
-﻿using HedgeLib.Models;
+﻿using HedgeLib;
+using HedgeLib.Math;
+using HedgeLib.Models;
 using OpenTK.Graphics.ES30;
 using System;
 using System.Collections.Generic;
@@ -9,13 +11,11 @@ namespace HedgeEdit
     {
         // Variables/Constants
         public List<VPObjectInstance> Instances = new List<VPObjectInstance>();
-
-        private string[] matNames;
-        private int[] triLengths;
-        private uint[] vaos;
+        public Vector3 BoundingSize;
+        protected VPMesh[] meshes;
 
         // Constructors
-        public VPModel(Model mdl)
+        public VPModel(Model mdl, bool generateAABB = false)
         {
             if (mdl == null)
                 throw new ArgumentNullException("mdl");
@@ -23,14 +23,25 @@ namespace HedgeEdit
             int meshCount = mdl.Meshes.Count;
             Mesh mesh;
 
-            vaos = new uint[meshCount];
-            triLengths = new int[meshCount];
-            matNames = new string[meshCount];
+            var aabb = new AABB();
+            meshes = new VPMesh[meshCount];
 
             for (int i = 0; i < meshCount; ++i)
             {
                 mesh = mdl.Meshes[i];
-                triLengths[i] = mesh.Triangles.Length;
+
+                // Generate an AABB
+                if (generateAABB)
+                {
+                    for (uint i2 = Mesh.VertPos; i2 < mesh.VertexData.Length;
+                        i2 += Mesh.StructureLength)
+                    {
+                        aabb.AddPoint(
+                            mesh.VertexData[i2],
+                            mesh.VertexData[i2 + 1],
+                            mesh.VertexData[i2 + 2]);
+                    }
+                }
 
                 // Setup a vertex array object and vertex buffer object
                 GL.GenVertexArrays(1, out uint vao);
@@ -70,24 +81,53 @@ namespace HedgeEdit
                 GL.BufferData(BufferTarget.ElementArrayBuffer, mesh.Triangles.Length *
                     sizeof(uint), mesh.Triangles, BufferUsageHint.StaticDraw);
 
-                // Assign the mesh's material name
-                matNames[i] = mesh.MaterialName;
-
                 // Un-bind the VAO (and, by extension, the VBO/EBO)
                 GL.BindVertexArray(0);
 
-                // Assign the VAO/VBO/EBO to their corresponding arrays
-                vaos[i] = vao;
+                // Generate a VPMesh
+                meshes[i] = new VPMesh()
+                {
+                    VAO = vao,
+                    MaterialName = mesh.MaterialName,
+                    TriangleCount = mesh.Triangles.Length,
+                    Slot = mesh.Slot
+                };
             }
+
+            if (generateAABB)
+                BoundingSize = aabb.Size;
         }
 
         // Methods
-        public void Draw(int shaderID)
+        public VPObjectInstance InstanceIntersects(OpenTK.Vector3 origin,
+            OpenTK.Vector3 direction, uint distance = 100)
         {
-            if (vaos == null)
+            //var dest = (origin + (direction * distance));
+            var o = Types.ToHedgeLib(origin);
+            var d = Types.ToHedgeLib(direction);
+
+            foreach (var instance in Instances)
+            {
+                // TODO: Try to make this more efficient if possible
+                if (AABB.Intersects(o, d, Types.ToHedgeLib(
+                    instance.Position), BoundingSize, distance))
+                {
+                    return instance;
+                }
+            }
+
+            return null;
+        }
+
+        public void Draw(int shaderID, Mesh.Slots slot)
+        {
+            if (meshes == null)
                 throw new Exception("Cannot draw model - model not initialized!");
 
             int modelLoc = GL.GetUniformLocation(shaderID, "model");
+            int highlightLoc = GL.GetUniformLocation(shaderID, "highlight");
+            GL.Uniform4(highlightLoc, new OpenTK.Vector4(1, 1, 1, 1));
+
             foreach (var transform in Instances)
             {
                 // Update Transforms
@@ -96,34 +136,61 @@ namespace HedgeEdit
                 // Update shader transform matrices
                 GL.UniformMatrix4(modelLoc, false, ref modelTransform);
 
+                // Update Highlight Color
+                bool selected = Viewport.SelectedInstances.Contains(transform);
+                if (selected)
+                    GL.Uniform4(highlightLoc, new OpenTK.Vector4(1, 0, 0, 1));
+
                 // Draw the meshes
-                for (int i = 0; i < vaos.Length; ++i)
+                for (int i = 0; i < meshes.Length; ++i)
                 {
-                    // Get the material
-                    string matName = matNames[i];
-                    var mat = (string.IsNullOrEmpty(matName) ||
-                        !Viewport.Materials.ContainsKey(matName)) ?
-                        Viewport.DefaultMaterial : Viewport.Materials[matName];
-
-                    // Get the texture
-                    string texName = (mat.Textures.Count > 0) ?
-                        mat.Textures[0].TextureName : null;
-
-                    int tex = (string.IsNullOrEmpty(texName) ||
-                        !Viewport.Textures.ContainsKey(texName)) ?
-                        Viewport.DefaultTexture : Viewport.Textures[texName];
-
-                    // Bind the texture and the mesh's VAO
-                    GL.BindTexture(TextureTarget.Texture2D, tex);
-                    GL.BindVertexArray(vaos[i]);
-
-                    // Draw the mesh
-                    GL.DrawElements(PrimitiveType.Triangles, triLengths[i],
-                        DrawElementsType.UnsignedInt, IntPtr.Zero);
-
-                    // Un-bind the mesh's VAO
-                    GL.BindVertexArray(0);
+                    meshes[i].Draw(slot);
                 }
+
+                // Set Highlight Color back to default
+                if (selected)
+                    GL.Uniform4(highlightLoc, new OpenTK.Vector4(1, 1, 1, 1));
+            }
+        }
+
+        // Other
+        protected struct VPMesh
+        {
+            // Variables/Constants
+            public string MaterialName;
+            public uint VAO;
+            public int TriangleCount;
+            public Mesh.Slots Slot;
+
+            // Methods
+            public void Draw(Mesh.Slots slot)
+            {
+                if (Slot != slot)
+                    return;
+
+                // Get the material
+                var mat = (string.IsNullOrEmpty(MaterialName) ||
+                    !Data.Materials.ContainsKey(MaterialName)) ?
+                    Data.DefaultMaterial : Data.Materials[MaterialName];
+
+                // Get the texture
+                string texName = (mat.Texset.Textures.Count > 0) ?
+                    mat.Texset.Textures[0].TextureName : null;
+
+                int tex = (string.IsNullOrEmpty(texName) ||
+                    !Data.Textures.ContainsKey(texName)) ?
+                    Data.DefaultTexture : Data.Textures[texName];
+
+                // Bind the texture and the mesh's VAO
+                GL.BindTexture(TextureTarget.Texture2D, tex);
+                GL.BindVertexArray(VAO);
+
+                // Draw the mesh
+                GL.DrawElements(PrimitiveType.Triangles, TriangleCount,
+                    DrawElementsType.UnsignedInt, IntPtr.Zero);
+
+                // Un-bind the VAO
+                GL.BindVertexArray(0);
             }
         }
     }

@@ -9,6 +9,8 @@ namespace HedgeLib.IO
 {
     public static class BINA
     {
+        public static Encoding Encoding => Encoding.GetEncoding("shift-jis");
+
         public enum OffsetTypes
         {
             SixBit = 0x40,
@@ -29,7 +31,15 @@ namespace HedgeLib.IO
 
         // Constructors
         public BINAReader(Stream input, BINA.BINATypes type =
-            BINA.BINATypes.Version1) : base(input, Encoding.ASCII, true)
+            BINA.BINATypes.Version1) : base(input, BINA.Encoding, true)
+        {
+            version = type;
+            Offset = (version == BINA.BINATypes.Version2) ?
+                BINAHeader.Ver2Length : BINAHeader.Ver1Length;
+        }
+
+        public BINAReader(Stream input, Encoding encoding, BINA.BINATypes type =
+            BINA.BINATypes.Version1) : base(input, encoding, true)
         {
             version = type;
             Offset = (version == BINA.BINATypes.Version2) ?
@@ -185,7 +195,20 @@ namespace HedgeLib.IO
         // Constructors
         public BINAWriter(Stream output, BINA.BINATypes type = BINA.BINATypes.Version1,
             bool isBigEndian = true, bool writeHeader = true) :
-            base(output, Encoding.ASCII, isBigEndian)
+            base(output, BINA.Encoding, isBigEndian)
+        {
+            version = type;
+            Offset = (version == BINA.BINATypes.Version2) ?
+                BINAHeader.Ver2Length : BINAHeader.Ver1Length;
+
+            if (writeHeader)
+                WriteNulls(Offset);
+        }
+
+        public BINAWriter(Stream output, Encoding encoding,
+            BINA.BINATypes type = BINA.BINATypes.Version1,
+            bool isBigEndian = true, bool writeHeader = true) :
+            base(output, encoding, isBigEndian)
         {
             version = type;
             Offset = (version == BINA.BINATypes.Version2) ?

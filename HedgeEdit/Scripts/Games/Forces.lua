@@ -1,18 +1,59 @@
 ﻿function ExtractResources(sourceDir, destDir)
 	SetDataType("Forces")
 	Extract("{0}/CommonObject.pac", "{0}")
+	-- TODO: Finish this
 end
 
 function Load(dataDir, cacheDir, stageID)
 	SetDataType("Forces")
 
+	-- actstgmission.lua
+	local actPth = IOPathCombine(dataDir, "actstgmission.lua")
+	local stageDir = "{0}/{1}/"
+	local dirName = stageID
+
+	if IOFileExists(actPth) then
+		dofile(actPth)
+
+		if mission_all ~= nil and mission_all[1] ~= nil and mission_all[1].missions ~= nil then
+			for i, m in ipairs(mission_all[1].missions) do
+				if m.name == stageID then
+					if m.dir ~= nil then
+						dirName = m.dir
+						stageDir = "{0}/" .. m.dir .. "/"
+						print(dirName)
+						print(stageDir)
+					end
+
+					break
+				end
+			end
+		end
+	end
+
+	-- Add Resource Directories
+	AddResourceDirectory(stageDir .. dirName .. "_obj")
+	AddResourceDirectory(stageDir .. dirName .. "_trr_cmn")
+
+	for i = 0, 99 do
+		AddResourceDirectory(string.format(
+			stageDir .. dirName .. "_trr_s%02d", i))
+	end
+
 	-- Miscellaneous (E.G. w5a01/w5a01_misc.pac)
 	UIChangeStatus("Extracting Miscellaneous PAC...")
-	Extract("{0}/{1}/{1}_misc.pac", "{0}/{1}/{1}_misc", "Miscellaneous")
+	Extract(stageDir .. dirName .. "_misc.pac",
+		stageDir .. dirName .. "_misc", "Miscellaneous")
 
 	-- Object (E.G. w5a01/w5a01_obj.pac)
 	UIChangeStatus("Extracting Object PAC...")
-	Extract("{0}/{1}/{1}_obj.pac", "{0}/{1}/{1}_obj", "Object")
+	Extract(stageDir .. dirName .. "_obj.pac",
+		stageDir .. dirName .. "_obj", "Object")
+
+	-- Terrain Common (E.G. w5a01/w5a01_trr_cmn.pac)
+	UIChangeStatus("Extracting Terrain Common PAC...")
+	Extract(stageDir .. dirName .. "_trr_cmn.pac",
+		stageDir .. dirName .. "_trr_cmn", "TerrainCommon")
 
 	-- Set Data (E.G. gedit/w5a01_gedit.pac)
 	UIChangeStatus("Extracting Set Data...")
@@ -20,7 +61,7 @@ function Load(dataDir, cacheDir, stageID)
 
 	local files = IOGetFilesInDir("{0}/gedit/{1}_gedit",
 		"*.gedit", false)
-	
+
 	if files ~= nil and #files > 0 then
 		UIShowProgress()
 
@@ -29,19 +70,23 @@ function Load(dataDir, cacheDir, stageID)
 			UIChangeLoadStatus(string.format(
 				"Set Data %02d/%02d", i, #files))
 
-			LoadSetData(files[i])
+			local layer = LoadSetLayer(files[i], true)
+
+			-- Change Default Set Layer
+			if layer.Name == stageID .. "_obj_area01" then
+				ChangeCurrentSetLayer(layer)
+			end
 		end
 
 		UIHideProgress()
 	end
 
+	UIToggleSetsSaving(true)
+
 	-- Sky (E.G. w5a01/w5a01_sky.pac)
 	UIChangeStatus("Extracting Sky PAC...")
-	Extract("{0}/{1}/{1}_sky.pac", "{0}/{1}/{1}_sky", "Sky")
-
-	-- Terrain Common (E.G. w5a01/w5a01_trr_cmn.pac)
-	UIChangeStatus("Extracting Terrain Common PAC...")
-	Extract("{0}/{1}/{1}_trr_cmn.pac", "{0}/{1}/{1}_trr_cmn", "TerrainCommon")
+	Extract(stageDir .. dirName .. "_sky.pac",
+		stageDir .. dirName .. "_sky", "Sky")
 
 	-- Terrain Blocks (E.G. w5a01/w5a01_trr_s00.pac)
 	UIShowProgress()
@@ -49,7 +94,8 @@ function Load(dataDir, cacheDir, stageID)
 		UIChangeProgress((i / 99) * 100)
 		UIChangeLoadStatus(string.format("Terrain Sector %02d/99", i))
 
-		local pth = string.format("{0}/{1}/{1}_trr_s%02d", i)
+		local pth = string.format(stageDir .. dirName .. "_trr_s%02d", i)
+		local group = "Sector #" .. i
 		Extract(pth .. ".pac", pth, "TerrainSector".. i)
 
 		if IODirExists(pth) then
@@ -61,7 +107,7 @@ function Load(dataDir, cacheDir, stageID)
 					-- Skip blocks containing "_noGI"
 					-- TODO: Load these properly instead
 					if not file:find("_noGI") then
-						LoadTerrain(file, "{0}/{1}/{1}_trr_cmn")
+						LoadTerrain(file, stageDir .. dirName .. "_trr_cmn", group)
 					end
 				end
 			end
@@ -71,13 +117,23 @@ end
 
 function SaveSets(dataDir, cacheDir, stageID)
 	-- Set Data (E.G. gedit/w5a01_gedit.pac)
-	UIChangeSaveStatus("Set Data")
-	SaveSetLayers("{0}/gedit/{1}_gedit", "", ".gedit", true)
-
 	SetDataType("Forces")
+	SaveSetLayers("{0}/gedit/{1}_gedit", "", ".gedit")
+	
 	-- TODO: Repack
 end
 
 function SaveAll(dataDir, cacheDir, stageID)
 	-- TODO
+end
+
+function InitSetObject(obj)
+	AddCustomData(obj, "ParentID", "ushort", 0)
+	AddCustomData(obj, "ParentUnknown1", "ushort", 0)
+	AddCustomData(obj, "Unknown1", "ushort", 0)
+	AddCustomData(obj, "RangeIn", "float", 1000)
+	AddCustomData(obj, "RangeOut", "float", 1200)
+
+	obj.CustomData["Name"] = GenSetObjectParam("string",
+		obj.ObjectType .. tostring(obj.ObjectID))
 end

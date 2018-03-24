@@ -1,13 +1,10 @@
-﻿using HedgeLib.Materials;
-using HedgeLib.Models;
-using HedgeLib.Textures;
+﻿using HedgeLib.Models;
 using OpenTK;
 using OpenTK.Graphics.ES30;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace HedgeEdit
@@ -15,29 +12,18 @@ namespace HedgeEdit
     public static class Viewport
     {
         // Variables/Constants
-        public static Dictionary<string, VPModel> Terrain =
-            new Dictionary<string, VPModel>();
+        public static List<VPObjectInstance> SelectedInstances =
+            new List<VPObjectInstance>();
 
-        public static Dictionary<string, VPModel> Objects =
-            new Dictionary<string, VPModel>();
-
-        public static Dictionary<string, GensMaterial> Materials =
-            new Dictionary<string, GensMaterial>();
-
-        public static Dictionary<string, int> Textures =
-            new Dictionary<string, int>();
-
-        public static VPModel DefaultCube;
-        public static GensMaterial DefaultMaterial;
         public static Vector3 CameraPos = Vector3.Zero, CameraRot = new Vector3(-90, 0, 0);
+        public static Vector3 CameraForward { get; private set; } = new Vector3(0, 0, -1);
         public static float FOV = 40.0f, NearDistance = 0.1f, FarDistance = 1000000f;
-        public static int DefaultTexture;
         public static bool IsMovingCamera = false;
 
         private static GLControl vp = null;
         private static Point prevMousePos = Point.Empty;
-        private static Vector3 camUp = new Vector3(0, 1, 0),
-            camForward = new Vector3(0, 0, -1);
+        private static MouseState prevMouseState;
+        private static Vector3 camUp = new Vector3(0, 1, 0);
 
         private static float camSpeed = normalSpeed;
         private const float normalSpeed = 1, fastSpeed = 8, slowSpeed = 0.25f;
@@ -65,46 +51,10 @@ namespace HedgeEdit
             GL.TexParameter(TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            // Load default model
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            string cubePth = Path.Combine(Program.StartupPath,
-                Program.ResourcesPath, $"DefaultCube{Model.MDLExtension}");
-
-            var mdl = new Model();
-            mdl.Load(cubePth);
-
-            // Load default texture
-            string defaultTexPath = Path.Combine(Program.StartupPath,
-                Program.ResourcesPath, $"DefaultTexture{DDS.Extension}");
-
-            Texture defaultTex;
-            if (File.Exists(defaultTexPath))
-            {
-                defaultTex = new DDS();
-                defaultTex.Load(defaultTexPath);
-            }
-            else
-            {
-                defaultTex = new Texture()
-                {
-                    Width = 1,
-                    Height = 1,
-                    PixelFormat = Texture.PixelFormats.RGB,
-                    MipmapCount = 1,
-                    ColorData = new byte[][]
-                    {
-                        new byte[] { 255, 255, 255 }
-                    }
-                };
-            }
-
-            // Setup default texture/material/model
-            DefaultTexture = GenTexture(defaultTex);
-            DefaultMaterial = new GensMaterial();
-            DefaultCube = new VPModel(mdl);
-
-            watch.Stop();
-            Console.WriteLine("Default assets init time: {0}", watch.ElapsedMilliseconds);
+            // Enable Blending
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha,
+                BlendingFactorDest.OneMinusSrcAlpha);
         }
 
         public static void Resize(int width, int height)
@@ -126,23 +76,25 @@ namespace HedgeEdit
             GL.UseProgram(defaultID);
 
             // Update camera transform
+            var keyState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
+            var mousePos = Cursor.Position;
+            var vpMousePos = vp.PointToClient(mousePos);
+
             if (IsMovingCamera && mouseState.RightButton == OpenTK.Input.ButtonState.Pressed)
             {
-                var vpMousePos = vp.PointToClient(Cursor.Position);
                 float screenX = (float)vpMousePos.X / vp.Size.Width;
                 float screenY = (float)vpMousePos.Y / vp.Size.Height;
 
                 // Set Camera Rotation
                 var mouseDifference = new Point(
-                    Cursor.Position.X - prevMousePos.X,
-                    Cursor.Position.Y - prevMousePos.Y);
+                    mousePos.X - prevMousePos.X,
+                    mousePos.Y - prevMousePos.Y);
 
                 CameraRot.X += mouseDifference.X * 0.1f;
                 CameraRot.Y -= mouseDifference.Y * 0.1f;
 
                 // Set Camera Movement Speed
-                var keyState = Keyboard.GetState();
                 if (keyState.IsKeyDown(Key.ShiftLeft) ||
                     keyState.IsKeyDown(Key.ShiftRight))
                 {
@@ -161,22 +113,22 @@ namespace HedgeEdit
                 // Set Camera Position
                 if (keyState.IsKeyDown(Key.W))
                 {
-                    CameraPos += camSpeed * camForward;
+                    CameraPos += camSpeed * CameraForward;
                 }
                 else if (keyState.IsKeyDown(Key.S))
                 {
-                    CameraPos -= camSpeed * camForward;
+                    CameraPos -= camSpeed * CameraForward;
                 }
 
                 if (keyState.IsKeyDown(Key.A))
                 {
                     CameraPos -= Vector3.Normalize(
-                        Vector3.Cross(camForward, camUp)) * camSpeed;
+                        Vector3.Cross(CameraForward, camUp)) * camSpeed;
                 }
                 else if (keyState.IsKeyDown(Key.D))
                 {
                     CameraPos += Vector3.Normalize(
-                        Vector3.Cross(camForward, camUp)) * camSpeed;
+                        Vector3.Cross(CameraForward, camUp)) * camSpeed;
                 }
 
                 // Snap cursor to center of viewport
@@ -196,10 +148,10 @@ namespace HedgeEdit
                 Z = (float)Math.Sin(x) * yCos
             };
 
-            camForward = Vector3.Normalize(front);
+            CameraForward = Vector3.Normalize(front);
 
             var view = Matrix4.LookAt(CameraPos,
-                CameraPos + camForward, camUp);
+                CameraPos + CameraForward, camUp);
 
             var projection = Matrix4.CreatePerspectiveFieldOfView(
                 MathHelper.DegreesToRadians(FOV),
@@ -214,6 +166,78 @@ namespace HedgeEdit
             GL.UniformMatrix4(viewLoc, false, ref view);
             GL.UniformMatrix4(projectionLoc, false, ref projection);
 
+            // Object Selection
+            if (mouseState.LeftButton == OpenTK.Input.ButtonState.Pressed &&
+                prevMouseState.LeftButton == OpenTK.Input.ButtonState.Released &&
+                vpMousePos.X >= 0 && vpMousePos.Y >= 0 && vpMousePos.X <= vp.Width &&
+                vpMousePos.Y <= vp.Height && Program.MainForm.Active)
+            {
+                // Get mouse world coordinates/direction
+                view.Invert();
+                projection.Invert();
+
+                var near = UnProject(0);
+                var far = UnProject(1);
+                var direction = (far - near);
+                direction.Normalize(); // TODO: Is NormalizeFast accurate enough?
+
+                // Fire a ray from mouse coordinates in camera direction and
+                // select any object that ray comes in contact with.
+                if (!SelectObject(Data.DefaultCube))
+                {
+                    foreach (var obj in Data.Objects)
+                    {
+                        SelectObject(obj.Value);
+                    }
+                }
+
+                // Sub-Methods
+                bool SelectObject(VPModel mdl)
+                {
+                    // TODO: Fix farther objects being selected first due to dictionary order
+                    var instance = mdl.InstanceIntersects(near, direction);
+                    if (instance != null && instance.CustomData != null)
+                    {
+                        if (!keyState.IsKeyDown(Key.LControl))
+                            SelectedInstances.Clear();
+
+                        SelectedInstances.Add(instance);
+                        Program.MainForm.RefreshGUI();
+                        return true;
+                    }
+
+                    if (Program.MainForm.Focused)
+                        SelectedInstances.Clear();
+
+                    return false;
+                }
+
+                Vector3 UnProject(float z)
+                {
+                    // This method was hacked together from
+                    // a bunch of StackOverflow posts lol
+                    var vec = new Vector4()
+                    {
+                        X = 2.0f * vpMousePos.X / vp.Width - 1,
+                        Y = -(2.0f * vpMousePos.Y / vp.Height - 1),
+                        Z = z,
+                        W = 1.0f
+                    };
+
+                    Vector4.Transform(ref vec, ref projection, out vec);
+                    Vector4.Transform(ref vec, ref view, out vec);
+
+                    if (vec.W > float.Epsilon || vec.W < float.Epsilon)
+                    {
+                        vec.X /= vec.W;
+                        vec.Y /= vec.W;
+                        vec.Z /= vec.W;
+                    }
+
+                    return vec.Xyz;
+                }
+            }
+
             // Transform Gizmos
             // float screenX = (float)Math.Min(Math.Max(0,
             //    vpMousePos.X), vp.Size.Width) / vp.Size.Width;
@@ -223,178 +247,43 @@ namespace HedgeEdit
             // TODO
 
             // Draw all models in the scene
-            DefaultCube.Draw(defaultID);
-
-            foreach (var mdl in Terrain)
+            for (int i = 0; i < 4; ++i)
             {
-                mdl.Value.Draw(defaultID);
-            }
+                var slot = (Mesh.Slots)i;
+                Data.DefaultCube.Draw(defaultID, slot);
 
-            foreach (var mdl in Objects)
-            {
-                mdl.Value.Draw(defaultID);
+                foreach (var mdl in Data.DefaultTerrainGroup)
+                {
+                    mdl.Value.Draw(defaultID, slot);
+                }
+
+                foreach (var group in Data.TerrainGroups)
+                {
+                    foreach (var mdl in group.Value)
+                    {
+                        mdl.Value.Draw(defaultID, slot);
+                    }
+                }
+
+                foreach (var mdl in Data.Objects)
+                {
+                    mdl.Value.Draw(defaultID, slot);
+                }
             }
 
             // Swap our buffers
             vp.SwapBuffers();
+            prevMouseState = mouseState;
         }
 
-        public static int AddTexture(string name, Texture tex)
+        public static VPObjectInstance SelectObject(object obj)
         {
-            if (Textures.ContainsKey(name))
-                return Textures[name];
+            var instance = Data.GetObjectInstance(obj);
+            if (instance == null)
+                return null;
 
-            int texture = GenTexture(tex);
-            Textures.Add(name, texture);
-            return texture;
-        }
-
-        private static int GenTexture(Texture tex)
-        {
-            int texture = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, texture);
-
-            if (tex == null)
-                throw new ArgumentNullException("tex");
-
-            // Set Parameters
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureMinFilter,
-                (float)TextureMinFilter.LinearMipmapLinear);
-
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureMagFilter,
-                (int)TextureMagFilter.Linear);
-
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureWrapS,
-                (int)TextureWrapMode.Repeat);
-
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureWrapT,
-                (int)TextureWrapMode.Repeat);
-
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureBaseLevel,
-                0);
-
-            GL.TexParameter(TextureTarget.Texture2D,
-                TextureParameterName.TextureMaxLevel,
-                (int)tex.MipmapCount - 1);
-
-            // Generate textures
-            uint mipmapCount = ((tex.MipmapCount == 0) ? 1 : tex.MipmapCount);
-            int w = (int)tex.Width, h = (int)tex.Height;
-            for (int i = 0; i < mipmapCount; ++i)
-            {
-                // Un-Compressed
-                if (tex.CompressionFormat == Texture.CompressionFormats.None)
-                {
-                    GL.TexImage2D(TextureTarget2d.Texture2D,
-                        i, // level
-                        (TextureComponentCount)tex.PixelFormat,
-                        w,
-                        h,
-                        0, // border
-                        (PixelFormat)tex.PixelFormat,
-                        PixelType.UnsignedByte,
-                        tex.ColorData[i]);
-                }
-
-                // Compressed
-                else
-                {
-                    GL.CompressedTexImage2D(TextureTarget2d.Texture2D,
-                        i, // level
-                        (CompressedInternalFormat)tex.CompressionFormat,
-                        w,
-                        h,
-                        0, // border
-                        tex.ColorData[i].Length,
-                        tex.ColorData[i]);
-                }
-
-                w /= 2;
-                h /= 2;
-            }
-
-            // TODO: Is this good? :P
-            if (mipmapCount < 2)
-            {
-                GL.GenerateMipmap(TextureTarget.Texture2D);
-            }
-
-            return texture;
-        }
-
-        public static void AddTerrainModel(Model mdl)
-        {
-            if (!Terrain.ContainsKey(mdl.Name))
-            {
-                var trr = new VPModel(mdl);
-                Terrain[mdl.Name] = trr;
-            }
-        }
-
-        public static void AddObjectModel(string type, Model mdl)
-        {
-            if (!Objects.ContainsKey(type))
-            {
-                var obj = new VPModel(mdl);
-                Objects.Add(type, obj);
-            }
-        }
-
-        public static void AddInstance(string type,
-            VPObjectInstance instance, bool isObject)
-        {
-            bool hasModel = (isObject) || (Terrain.ContainsKey(type));
-            if (!hasModel)
-            {
-                throw new Exception(
-                    "Could not add instance of model. Model has not yet been loaded!");
-            }
-
-            if (isObject)
-                hasModel = Objects.ContainsKey(type);
-
-            var obj = (!hasModel) ? DefaultCube :
-                (isObject) ? Objects[type] : Terrain[type];
-
-            obj.Instances.Add(instance);
-        }
-
-        public static void AddInstance(string type,
-            bool isObject, object customData = null)
-        {
-            AddInstance(type, new VPObjectInstance(
-                customData), isObject);
-        }
-
-        public static void AddInstance(string type, Vector3 pos,
-            Quaternion rot, Vector3 scale,
-            bool isObject, object customData = null)
-        {
-            AddInstance(type, new VPObjectInstance(
-                pos, rot, scale, customData), isObject);
-        }
-
-        public static void AddInstance(string type, HedgeLib.Vector3 pos,
-            HedgeLib.Quaternion rot, HedgeLib.Vector3 scale,
-            bool isObject, object customData = null)
-        {
-            AddInstance(type, new VPObjectInstance(
-                Types.ToOpenTK(pos), Types.ToOpenTK(rot),
-                Types.ToOpenTK(scale), customData), isObject);
-        }
-
-        public static void Clear()
-        {
-            DefaultCube.Instances.Clear();
-            Terrain.Clear();
-            Objects.Clear();
-            Materials.Clear();
-            Textures.Clear();
+            SelectedInstances.Add(instance);
+            return instance;
         }
     }
 }

@@ -9,7 +9,7 @@ HedgeLib is a C# library [under the MIT license](https://github.com/Radfordhound
 Right now it supports the following:
 
 ### Havok
-- [Reading/Writing XML Havok data.](HedgeLib/Collison/Havok.cs)
+- [Reading/Writing XML Havok data.](HedgeLib/Havok/HavokXML.cs)
 
 ### Hedgehog Engine
 - [Reading/Writing Lights.](HedgeLib/Lights/Light.cs)
@@ -17,6 +17,7 @@ Right now it supports the following:
 - [Reading/Writing Materials.](HedgeLib/Materials/GensMaterial.cs)
 
 ### Sonic Forces
+- [Reading/Writing Gismos.](HedgeLib/Misc/ForcesGISM.cs)
 - [Reading Archives.](HedgeLib/Archives/ForcesArchive.cs)
 - [Reading/Writing Set Data.](HedgeLib/Sets/ForcesSetData.cs)
 
@@ -30,8 +31,10 @@ Right now it supports the following:
 - [Reading Set Data.](HedgeLib/Sets/GensSetData.cs)
 - [Reading/Writing Terrain Groups.](HedgeLib/Terrain/GensTerrainGroup.cs)
 - [Reading/Writing Light Lists.](HedgeLib/Lights/GensLightList.cs)
+- [Reading/Writing PFI Files.](HedgeLib/Misc/GensPFI.cs)
 
 ### Sonic '06
+- [Reading Archives.](HedgeLib/Archives/S06Archive.cs)
 - [Reading/Writing Set Data.](HedgeLib/Sets/S06SetData.cs)
 
 ### Sonic Heroes/Shadow the Hedgehog
@@ -58,8 +61,18 @@ Right now this includes the following:
 - [Hedge Archive Editor](HedgeTools/HedgeArchiveEditor)
   * A GUI tool that allows easy editing of archiving formats from all games HedgeLib supports.
 
+- [Hedge PFD](HedgeTools/HedgePFD)
+  * A Command Line tool that allows for quick packing of Generations/Unleashed PFD
+  files and generation of their accompanying PFI files.
+
+- [Forces GISM Editor](HedgeTools/ForcesGISMEditor)
+  * A GUI tool that allows editing of the Forces GISM format (basically a "Gismo" used by a stage).
+
 - [Hedge GISM Editor](HedgeTools/HedgeGISMEditor)
   * A GUI tool that allows editing of the Lost World GISM format (basically a list of "Gismos" used by a stage).
+
+- [Hedge Cnvrs Editor](HedgeTools/HedgeCnvrsEditor)
+  * A GUI tool that allows editing of the Forces CNVRS-TEXT format (basically a list of text used in different areas in the game e.g.: Loading Screen).
 
 # Building
 This repository uses [AppVeyor](https://www.appveyor.com/) to automatically build every commit!

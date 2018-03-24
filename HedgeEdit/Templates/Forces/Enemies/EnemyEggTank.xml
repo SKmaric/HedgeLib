@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <AttackRange type="float" default="400" description="" />
+  <Unknown2 type="uint" default="0" description="" />
+  <Unknown3 type="float" default="100" description="" />
+  <Unknown4 type="float" default="100" description="" />
+  
+  <Unknown5 type="bool" default="false" description="" />
+  <Unknown6 type="bool" default="false" description="" />
+  <Unknown7 type="bool" default="true" description="" />
+  <Unknown8 type="bool" default="false" description="" />
+  
+  <BulletSpeed type="float" default="250" description="" />
+  <Unknown10 type="float" default="500" description="" />
+  <Unknown11 type="uint" default="1" description="" />
+  
+  <ShootingRate type="float" default="0.1" description="The rate the tank shoots at" />
+  <Unknown12 type="float" default="1.1" description="" />
+  <Unknown13 type="float" default="32" description="" />
+  <Unknown14 type="uint" default="0" description="" />
+  
+
+
+
+  <Extra type="model" value="enm_eggtank01.model" />
+  <Extra type="description" value="LOOK OUT, TANK!!!!!!!!" />
+  <Extra type="RawByteLength" length="48" />
+</Template>

@@ -15,11 +15,19 @@
 			UIChangeLoadStatus(string.format(
 				"Set Data %02d/%02d", i, #files))
 
-			LoadSetData(files[i])
+			local layer = LoadSetLayer(files[i])
+			-- TODO: Remove .set from end of layer name
+
+			-- Change Default Set Layer
+			if layer.Name == "setdata_base.set" then
+				ChangeCurrentSetLayer(layer)
+			end
 		end
 
 		UIHideProgress()
 	end
+
+	UIToggleSetsSaving(true)
 
 	-- AR (E.G. ghz200)
 	UIChangeStatus("Extracting " .. stageID .. "...")
@@ -42,15 +50,11 @@
 	-- Terrain
 	LoadTerrainList("{0}/Packed/{1}/terrain.terrain",
 		"{0}/Packed/Stage", "{0}/Packed/{1}")
-
-	-- TODO
 end
 
 function SaveSets(dataDir, cacheDir, stageID)
 	-- Set Data
-	-- TODO: Finish GensSetData Save method then uncomment these lines:
-
-	--UIChangeSaveStatus("Set Data")
+	-- TODO: Finish GensSetData Save method then uncomment this line:
 	--SaveSetLayers("{0}/#{1}", "", ".xml", true)
 
 	UIChangeStatus("Repacking #" .. stageID .. "...")

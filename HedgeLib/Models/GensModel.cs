@@ -1,4 +1,5 @@
-﻿using HedgeLib.IO;
+﻿using HedgeLib.Headers;
+using HedgeLib.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,9 +9,10 @@ namespace HedgeLib.Models
     public class GensModel : Model
     {
         // Variables/Constants
+        public HedgehogEngineHeader Header = new GensHeader();
         public const string Extension = ".model", TerrainExtension = ".terrain-model";
         public const int SubMeshSlotCount = 4;
-        public const uint NextGenSignature = 0x133054A;
+        public const uint NextGenSignature = 0x133054A, PS3RootType = 0x3ED;
 
         // Methods
         public override void Load(string filePath)
@@ -52,43 +54,7 @@ namespace HedgeLib.Models
         {
             // Header
             var reader = new GensReader(fileStream);
-            uint fileSize = reader.ReadUInt32();
-            uint rootNodeType = reader.ReadUInt32();
-
-            // Next-Gen Header
-            byte nextGenMarker = (byte)(fileSize >> 24);
-            if (nextGenMarker == 0x80 && rootNodeType == NextGenSignature)
-            {
-                uint finalTableOffset = reader.ReadUInt32();
-                uint finalTableLength = reader.ReadUInt32();
-                reader.Offset = 0x10;
-
-                // Sections
-                // TODO: Do something with these
-                fileSize >>= 8;
-                while (fileStream.Position < fileSize)
-                {
-                    uint sectionOffset = reader.ReadUInt32();
-                    byte sectionType = (byte)(sectionOffset & 0xFF);
-                    sectionOffset >>= 8;
-
-                    uint sectionValue = reader.ReadUInt32();
-                    string sectionName = new string(reader.ReadChars(8));
-
-                    if (sectionName == "Contexts")
-                        break;
-                }
-            }
-
-            // Generations Header
-            else
-            {
-                uint finalTableOffset = reader.ReadUInt32();
-                uint rootNodeOffset = reader.ReadUInt32();
-                uint finalTableAbsOffset = reader.ReadUInt32();
-                uint fileEndOffset = reader.ReadUInt32();
-                reader.Offset = rootNodeOffset;
-            }
+            Header = reader.ReadHeader();
 
             // Data
             uint meshCount = reader.ReadUInt32();
@@ -146,29 +112,61 @@ namespace HedgeLib.Models
                 for (uint i2 = 0; i2 < subMeshCount; ++i2)
                 {
                     reader.JumpTo(subMeshOffsets[i2], false);
-                    ReadSubMesh(reader, scale);
+                    var m = ReadSubMesh(reader, scale);
+                    m.Slot = (Mesh.Slots)i;
                 }
 
                 reader.JumpTo(curPos + (++i * 8));
             }
         }
 
-        protected void ReadSubMesh(GensReader reader, float scale = 1)
+        protected Mesh ReadSubMesh(GensReader reader, float scale = 1)
         {
             uint offset; // Generic uint reused for different data
 
             // Offsets
-            uint materialNameOffset = reader.ReadUInt32();
-            uint faceCount = reader.ReadUInt32();
-            uint faceOffset = reader.ReadUInt32();
-            uint vertexCount = reader.ReadUInt32();
-            uint vertexSize = reader.ReadUInt32();
-            uint vertexOffset = reader.ReadUInt32();
-            uint vertexFormatOffset = reader.ReadUInt32();
-            uint boneCount = reader.ReadUInt32();
-            uint boneOffset = reader.ReadUInt32();
-            uint textureUnitCount = reader.ReadUInt32();
-            uint textureUnitOffsetsOffset = reader.ReadUInt32();
+            uint materialNameOffset, faceCount, faceOffset, vertexCount,
+                vertexSize, vertexOffset, vertexFormatOffset, boneCount,
+                boneOffset, textureUnitCount, textureUnitOffsetsOffset;
+
+            if (Header.RootNodeType == PS3RootType)
+            {
+                uint unknownOffset1 = reader.ReadUInt32(); // VertexFormat?
+                materialNameOffset = reader.ReadUInt32();
+                boneCount = reader.ReadUInt32();
+                boneOffset = reader.ReadUInt32(); // ?
+                textureUnitCount = reader.ReadUInt32();
+                textureUnitOffsetsOffset = reader.ReadUInt32();
+
+                // Possibly vertex format?
+                reader.JumpTo(unknownOffset1, false);
+                int unknown1 = reader.ReadInt32();
+                int unknown2 = reader.ReadInt32();
+                int unknown3 = reader.ReadInt32();
+                int unknown4 = reader.ReadInt32();
+
+                uint unknownOffset2 = reader.ReadUInt32();
+                uint unknownCount1 = reader.ReadUInt32();
+                vertexOffset = reader.ReadUInt32();
+
+                // TODO
+                throw new NotImplementedException(
+                    "ERROR: Cannot yet read PS3 terrain-models");
+            }
+            else
+            {
+                materialNameOffset = reader.ReadUInt32();
+                faceCount = reader.ReadUInt32();
+                faceOffset = reader.ReadUInt32();
+                vertexCount = reader.ReadUInt32();
+                vertexSize = reader.ReadUInt32();
+                vertexOffset = reader.ReadUInt32();
+                vertexFormatOffset = reader.ReadUInt32();
+                boneCount = reader.ReadUInt32();
+                boneOffset = reader.ReadUInt32();
+                textureUnitCount = reader.ReadUInt32();
+                textureUnitOffsetsOffset = reader.ReadUInt32();
+            }
 
             // Faces
             var faces = new ushort[faceCount];
@@ -186,7 +184,7 @@ namespace HedgeLib.Models
             ushort face1 = 0, face2 = 0, face3 = 0;
             ushort lastFace = 0;
 
-            var newFaces = new List<Vector3>();
+            var newFaces = new List<uint>();
             for (uint i = 0; i < faceCount; ++i)
             {
                 ushort t = faces[i];
@@ -208,9 +206,23 @@ namespace HedgeLib.Models
                     {
                         if ((face1 != face2) && (face2 != face3) && (face1 != face3))
                         {
-                            newFaces.Add(((newIndex % 2) == 0) ?
-                                new Vector3(face1, face2, face3) :
-                                new Vector3(face3, face2, face1));
+                            if ((newIndex % 2) == 0)
+                            {
+                                newFaces.Add(face1);
+                                newFaces.Add(face2);
+                                newFaces.Add(face3);
+                            }
+                            else
+                            {
+                                newFaces.Add(face3);
+                                newFaces.Add(face2);
+                                newFaces.Add(face1);
+                            }
+
+                            //newFaces.Add(((newIndex % 2) == 0) ?
+                            //    new Vector3(face1, face2, face3) :
+                            //    new Vector3(face3, face2, face1));
+
                             //newFaces.Add((doReverse) ? face1 : face3);
                             //newFaces.Add(face2);
                             //newFaces.Add((doReverse) ? face3 : face1);
@@ -371,19 +383,12 @@ namespace HedgeLib.Models
             var mesh = new Mesh()
             {
                 VertexData = data,
-                Triangles = new uint[newFaces.Count * 3],
+                Triangles = newFaces.ToArray(),
                 MaterialName = materialName
             };
 
-            for (int i = 0; i < newFaces.Count; ++i)
-            {
-                var vect = newFaces[i];
-                mesh.Triangles[i * 3] = (uint)vect.X;
-                mesh.Triangles[(i * 3) + 1] = (uint)vect.Y;
-                mesh.Triangles[(i * 3) + 2] = (uint)vect.Z;
-            }
-
             Meshes.Add(mesh);
+            return mesh;
         }
 
         // TODO: Make a Save method
@@ -404,6 +409,7 @@ namespace HedgeLib.Models
                 Vector2_Half = 0x2C235F,
                 Vector3 = 0x2A23B9,
                 Vector3_360 = 0x2A2190,
+                Vector3_Forces = 0x2761095,
                 Vector4 = 0x1A23A6,
                 Vector4_Byte = 0x1A2086
             }
@@ -434,6 +440,11 @@ namespace HedgeLib.Models
                         reader.ReadUInt32();
                         break;
 
+                    case DataTypes.Vector3_Forces:
+                        // TODO: Read this properly
+                        reader.ReadUInt32();
+                        break;
+
                     case DataTypes.Vector4:
                         data[i] = reader.ReadSingle() * scale;
                         data[i + 1] = reader.ReadSingle() * scale;
@@ -449,7 +460,59 @@ namespace HedgeLib.Models
 
                     case DataTypes.Indices_Byte:
                         // TODO: Read this properly
-                        throw new NotImplementedException();
+                        reader.ReadUInt32();
+                        break;
+                }
+            }
+
+            public void Write(GensWriter writer, float[] data, uint i, float scale = 1)
+            {
+                switch ((DataTypes)Type)
+                {
+                    case DataTypes.Vector2:
+                        writer.Write(data[i] * scale);
+                        writer.Write(data[i + 1] * scale);
+                        break;
+
+                    case DataTypes.Vector2_Half:
+                        // TODO: Is this correct?
+                        writer.WriteHalf((Half)(data[i] * scale));
+                        writer.WriteHalf((Half)(data[i + 1] * scale));
+                        break;
+
+                    case DataTypes.Vector3:
+                        writer.Write(data[i] * scale);
+                        writer.Write(data[i + 1] * scale);
+                        writer.Write(data[i + 2] * scale);
+                        break;
+
+                    case DataTypes.Vector3_360:
+                        // TODO: Write this properly
+                        throw new NotImplementedException(
+                            "Cannot yet write Vector3_360 values");
+
+                    case DataTypes.Vector3_Forces:
+                        // TODO: Write this properly
+                        throw new NotImplementedException(
+                            "Cannot yet write Vector3_Forces values");
+
+                    case DataTypes.Vector4:
+                        writer.Write(data[i] * scale);
+                        writer.Write(data[i + 1] * scale);
+                        writer.Write(data[i + 2] * scale);
+                        writer.Write(data[i + 3] * scale);
+                        break;
+
+                    case DataTypes.Vector4_Byte:
+                    case DataTypes.Indices:
+                        // TODO: Write this properly
+                        throw new NotImplementedException(
+                            "Cannot yet write Vector4_Byte/Indices values");
+
+                    case DataTypes.Indices_Byte:
+                        // TODO: Write this properly
+                        throw new NotImplementedException(
+                            "Cannot yet write Indices_Byte values");
                 }
             }
         }
