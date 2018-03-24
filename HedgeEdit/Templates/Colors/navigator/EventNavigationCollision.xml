@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Width type="float" default="0" />
+  <Collision_Height type="float" default="0" />
+  <Collision_Length type="float" default="0" />
+  <NavigationType type="enum" default="0" description="0 = Boost, 1 = Wisp, 2 = Quickstep, 3 = Slide, 4 = ?, 5 = Drift, 6 = Jump + Stomp, 7 = Jump + Homing Attack, 8 = Caution" />
+  <Unknown4 type="float" default="0" description="?" />
+  <Unknown5 type="float" default="0" description="?" />
+  <Unknown6 type="float" default="0" description="?" />
+  <Unknown7 type="float" default="0" description="?" />
+  <Unknown8 type="float" default="0" description="?" />
+  <Unknown-ActiveType type="bool" default="false" description="?" />
+  <OutputTime type="float" default="0" description="?" />
+  <Unknown11 type="float" default="0" description="?" />
+  <Unknown12 type="float" default="0" description="?" />
+  <Unknown-OnlyOnce type="bool" default="false" description="?" />
   <Extra type="RawByteLength" length="56" />
 </Template>

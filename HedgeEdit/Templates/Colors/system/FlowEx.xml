@@ -6,8 +6,8 @@
   <Unknown8 type="float" default="0" description="" />
   <Unknown9 type="float" default="0" description="" />
   <Unknown10 type="float" default="0" description="" />
-  <Unknown11 type="float" default="0" description="" />
-  <Unknown12 type="float" default="0" description="" />
-  <Unknown13 type="float" default="0" description="" />
+  <Collision_Width type="float" default="0" description="" />
+  <Collision_Height type="float" default="0" description="" />
+  <Collision_Length type="float" default="0" description="" />
   <Extra type="RawByteLength" length="36" />
 </Template>
