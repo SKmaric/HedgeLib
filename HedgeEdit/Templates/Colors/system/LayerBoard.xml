@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Width type="float" default="0" />
+  <Collision_Height type="float" default="0" />
+  <ONLayerIndex type="enum" default="0" description="?" />
+  <ONLayerIndex1 type="enum" default="0" description="?" />
+  <ONLayerIndex2 type="enum" default="0" description="?" />
+  <ONLayerIndex3 type="enum" default="0" description="?" />
+  <OffLayerIndex type="enum" default="0" description="?" />
+  <OffLayerIndex1 type="enum" default="0" description="?" />
+  <OffLayerIndex2 type="enum" default="0" description="?" />
+  <OffLayerIndex3 type="enum" default="0" description="?" />
   <Extra type="RawByteLength" length="16" />
 </Template>

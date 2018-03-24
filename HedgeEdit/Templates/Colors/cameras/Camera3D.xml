@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Unknown4 type="bool" default="true" description="" />
+  <Unknown5 type="bool" default="false" description="" />
+  <Unknown6 type="bool" default="false" description="" />
+  <Unknown7 type="bool" default="false" description="" />
+  <Unknown8 type="uint32" default="0" description="" />
+  <Unknown9 type="uint32" default="0" description="" />
+  <Unknown10 type="float" default="0" description="" />
+  <Unknown11 type="float" default="0" description="" />
+  <Unknown12 type="float" default="0" description="" />
+  <Unknown13 type="float" default="0" description="" />
+  <Unknown14 type="float" default="0" description="" />
   <Extra type="RawByteLength" length="32" />
 </Template>
