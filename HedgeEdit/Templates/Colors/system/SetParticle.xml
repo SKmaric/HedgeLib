@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <EffectID type="uint32" default="0" description="" />
+  <Unknown6 type="uint32" default="0" description="" />
+  <Unknown7 type="uint32" default="0" description="" />
+  <EffectScaleX type="float" default="0" description="" />
+  <EffectScaleY type="float" default="0" description="" />
+  <EffectScaleZ type="float" default="0" description="" />
+  <Unknown11 type="float" default="0" description="" />
   <Extra type="RawByteLength" length="28" />
 </Template>

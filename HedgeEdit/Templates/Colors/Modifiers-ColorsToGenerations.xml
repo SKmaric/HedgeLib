@@ -17,6 +17,7 @@
 		<GeneralFloor>CommonFloor</GeneralFloor>
 		<!-- System -->
 		<LayerChangeCollisionFlat>LayerBoard</LayerChangeCollisionFlat>
+		<ObjFlowCollision>FlowEx</ObjFlowCollision>
 		<!-- Player System -->
 		<AutorunFinishCollision>AutorunCollisionEnd</AutorunFinishCollision>
 		<AutorunStartCollision>AutorunCollisionStart</AutorunStartCollision>
@@ -96,5 +97,7 @@
 		<Height>10</Height>
 		<Width>10</Width>
 		<Length>10</Length>
+		<Range>10</Range>
+		<Radius>10</Radius>
 	</Param-Divide>
 </Modifiers>

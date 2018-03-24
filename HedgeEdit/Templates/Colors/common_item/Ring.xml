@@ -3,9 +3,9 @@
   <ResetTime type="float" default="0" description="?" />
   <Unknown4 type="uint" default="0" description="?" />
   <IsReset type="bool" default="false" description="?" />
-  <IsLightSpeedDashTarget type="bool" default="true" description="?" />
+  <Unknown5 type="bool" default="true" description="?" />
   <SetPlaceType type="enum" default="0" description="?" />
-  <Unknown5 type="enum" default="0" description="?" />
-  <Unknown6 type="uint" default="0" description="?" />
+  <Unknown6 type="enum" default="0" description="?" />
+  <Unknown7 type="uint" default="0" description="?" />
   <Extra type="RawByteLength" length="16" />
 </Template>
