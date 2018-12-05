@@ -15,6 +15,7 @@
 		<RedMedal>RedRing</RedMedal>
 		<ObjectPhysics>Gismo</ObjectPhysics>
 		<GeneralFloor>CommonFloor</GeneralFloor>
+		<PlaTramCar>RollerCoaster</PlaTramCar>
 		<!-- System -->
 		<LayerChangeCollisionFlat>LayerBoard</LayerChangeCollisionFlat>
 		<ObjFlowCollision>FlowEx</ObjFlowCollision>
@@ -48,8 +49,9 @@
 		<!-- Enemies -->
 		<EnemyBatabata2D>enmBatabata</EnemyBatabata2D>
 		<EnemyBeeton2D>enmBeeton</EnemyBeeton2D>
+		<EnemyEChaserManager>enmEggChaser</EnemyEChaserManager>
 		<EnemyPawn3D>enmEggPawn</EnemyPawn3D>
-		<EnemyPawnPla3D>enmEggPawn_rso</EnemyPawnPla3D>
+		<EnemyPawnPla3D>enmEggPawn_fct</EnemyPawnPla3D>
 		<EnemyPawnGun3D>enmEggPawnGun</EnemyPawnGun3D>
 		<EnemyPawnLance3D>enmEggPawnLance</EnemyPawnLance3D>
 		<EnemyGanigani3D>enmGanigani</EnemyGanigani3D>
@@ -59,11 +61,14 @@
 		<EnemySpanner>enmSpanner</EnemySpanner>
 		<EnemySpinner>enmSpinner</EnemySpinner>
 		<MissionSprinkler>enmSprinkler</MissionSprinkler>
+		<CteGunTruck200>enmBigChaser</CteGunTruck200>
 		<!-- Wisp -->
 		<PlaReleaseBox>ReleaseBoxSmall</PlaReleaseBox>
 		<CpzPipeEnterCollision>EventSpiralPipe</CpzPipeEnterCollision>
 		<GoalRing>ReleaseBoxBig</GoalRing>
 		<PlaPhantomCancelVolume>PhantomCancelCollision</PlaPhantomCancelVolume>
+		<MissionOpenBlock>PuzzleRing</MissionOpenBlock>
+		<PlaFallBlock>PhantomObjectBreakable</PlaFallBlock>
 		<!-- Sound -->
 		<SoundPoint>EnvSound</SoundPoint>
 		<SoundLine>PathSoundSource</SoundLine>
@@ -71,6 +76,28 @@
 		<MissionChainFloor>ChainFloor</MissionChainFloor>
 		<MissionChainThornBall>ChainSpikeBall</MissionChainThornBall>
 	</Rename>
+	<MakeObjectPhysics>
+		<IronBox />
+		<PulleyColumn />
+		<DestBox />
+		<ConnectionPipe />
+		<Fiber />
+		<Prism />
+		<Generator />
+		<BattleShipShutter />
+		<Partition />
+		<LightRoad />
+		<WarpHole />
+		<ShortWarp />
+		<Catapult />
+		<CogWheel />
+		<ThornCylinder />
+		<AquariumDoor />
+		<Meteor />
+		<BreakableMeteor />
+		<LongTank />
+		<Hatch />
+	</MakeObjectPhysics>
 	<Position-Y> <!-- Global rotation -->
 		<Ring>0.5</Ring>
 		<RedRing>1</RedRing>
@@ -94,6 +121,7 @@
 		<AutorunCollisionStart>-180</AutorunCollisionStart>
 		<AutorunCollisionEnd>-180</AutorunCollisionEnd>
 		<SetParticle>-90</SetParticle>
+		<GrindThorn>-90</GrindThorn>
 	</Rotation-Y>
 	<Param-Divide>
 		<Collision>5</Collision>
