@@ -40,6 +40,7 @@
             this.importXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.filterTxtBx = new System.Windows.Forms.TextBox();
             this.treeView = new System.Windows.Forms.TreeView();
             this.listView = new System.Windows.Forms.ListView();
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -95,7 +96,7 @@
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -137,7 +138,7 @@
             this.importXMLToolStripMenuItem.Name = "importXMLToolStripMenuItem";
             this.importXMLToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.importXMLToolStripMenuItem.Text = "Import XML";
-            this.importXMLToolStripMenuItem.Click += new System.EventHandler(this.importXMLToolStripMenuItem_Click);
+            this.importXMLToolStripMenuItem.Click += new System.EventHandler(this.ImportXMLToolStripMenuItem_Click);
             // 
             // exportXMLToolStripMenuItem
             // 
@@ -145,7 +146,7 @@
             this.exportXMLToolStripMenuItem.Name = "exportXMLToolStripMenuItem";
             this.exportXMLToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.exportXMLToolStripMenuItem.Text = "Export XML";
-            this.exportXMLToolStripMenuItem.Click += new System.EventHandler(this.exportXMLToolStripMenuItem_Click);
+            this.exportXMLToolStripMenuItem.Click += new System.EventHandler(this.ExportXMLToolStripMenuItem_Click);
             // 
             // splitContainer
             // 
@@ -163,6 +164,15 @@
             this.splitContainer.Size = new System.Drawing.Size(1022, 541);
             this.splitContainer.SplitterDistance = 224;
             this.splitContainer.TabIndex = 4;
+            // 
+            // filterTxtBx
+            // 
+            this.filterTxtBx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.filterTxtBx.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.filterTxtBx.Location = new System.Drawing.Point(798, 2);
+            this.filterTxtBx.Name = "filterTxtBx";
+            this.filterTxtBx.Size = new System.Drawing.Size(224, 20);
+            this.filterTxtBx.TabIndex = 1;
             // 
             // treeView
             // 
@@ -211,34 +221,35 @@
             this.renameTsm,
             this.deleteTsm});
             this.TVMenu.Name = "TVMenu";
-            this.TVMenu.Size = new System.Drawing.Size(153, 92);
+            this.TVMenu.Size = new System.Drawing.Size(127, 70);
             // 
             // addEntry
             // 
             this.addEntry.Name = "addEntry";
-            this.addEntry.Size = new System.Drawing.Size(152, 22);
+            this.addEntry.Size = new System.Drawing.Size(126, 22);
             this.addEntry.Text = "Add Entry";
-            this.addEntry.Click += new System.EventHandler(this.addEntry_Click);
+            this.addEntry.Click += new System.EventHandler(this.AddEntry_Click);
             // 
             // renameTsm
             // 
             this.renameTsm.Name = "renameTsm";
-            this.renameTsm.Size = new System.Drawing.Size(152, 22);
+            this.renameTsm.Size = new System.Drawing.Size(126, 22);
             this.renameTsm.Text = "Rename";
-            this.renameTsm.Click += new System.EventHandler(this.renameTsm_Click);
+            this.renameTsm.Click += new System.EventHandler(this.RenameTsm_Click);
             // 
             // deleteTsm
             // 
             this.deleteTsm.Name = "deleteTsm";
-            this.deleteTsm.Size = new System.Drawing.Size(152, 22);
+            this.deleteTsm.Size = new System.Drawing.Size(126, 22);
             this.deleteTsm.Text = "Delete";
-            this.deleteTsm.Click += new System.EventHandler(this.deleteTsm_Click);
+            this.deleteTsm.Click += new System.EventHandler(this.DeleteTsm_Click);
             // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1022, 565);
+            this.Controls.Add(this.filterTxtBx);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
@@ -277,6 +288,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportXMLToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameTsm;
         private System.Windows.Forms.ToolStripMenuItem deleteTsm;
+        private System.Windows.Forms.TextBox filterTxtBx;
     }
 }
 

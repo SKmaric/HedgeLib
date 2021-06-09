@@ -155,6 +155,12 @@ namespace HedgeEdit.UI
                 };
             };
 
+            // Update Edit Menu Items
+            cutMenuItem.Enabled = objsSelected;
+            copyMenuItem.Enabled = objsSelected;
+            PasteMenuItem.Enabled = (Data.CurrentSetLayer != null);
+            deleteMenuItem.Enabled = objsSelected;
+
             // Update Labels
             int objCount = 0;
             foreach (var layer in Data.SetLayers)
@@ -165,8 +171,11 @@ namespace HedgeEdit.UI
                 }
             }
 
-            objectCountLbl.Text = $"{objCount} Objects";
-            objectSelectedLbl.Text = $"{selectedObjs} Object(s) Selected";
+            string selectedTxt = (selectedObjs == 0) ? "Nothing Selected" :
+                (selectedObjs == 1) ? "1 Instance Selected" :
+                $"{selectedObjs} Instances Selected";
+
+            objectSelectedLbl.Text = $"{objCount} Objects\n{selectedTxt}";
 
             // Enable/Disable EVERYTHING
             posXBox.Enabled = posYBox.Enabled = posZBox.Enabled =
@@ -235,40 +244,130 @@ namespace HedgeEdit.UI
                     foreach (var customData in setObj.CustomData)
                     {
                         object data = customData.Value;
-                        itemSet.Add($"_{customData.Key}", ref data, "Data", false,
-                            "Custom Data", string.Empty, true);
-                    }
+                        var type = customData.Value.DataType;
+                        CustomProperty item;
 
-                    // Parameters
-                    for (int i = 0; i < setObj.Parameters.Count; ++i)
-                    {
-                        var templateParam = objTemplate?.Parameters[i];
-                        object param = setObj.Parameters[i];
-
-                        string name = (templateParam == null) ?
-                            $"Parameter {i}" : templateParam.Name;
-
-                        var item = new CustomProperty(name, ref param, "Data", false,
-                            "Parameters", templateParam?.Description, true);
-
-                        // Enums
-                        int enumsCount = (templateParam != null) ?
-                            templateParam.Enums.Count : 0;
-
-                        if (enumsCount >= 1)
+                        if (type == typeof(Vector2))
                         {
-                            item.ValueMember = "Value";
-                            item.DefaultType = templateParam.DataType;
-                            item.DisplayMember = "Description";
-                            item.Datasource = templateParam.Enums;
-
-                            // TODO: Fix multi enum param editing
+                            var p = new SerializableVector2Param((SetObjectParam)data);
+                            item = new CustomProperty($"_{customData.Key}", p, false,
+                                "Custom Data", string.Empty, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else if (type == typeof(Vector3))
+                        {
+                            var p = new SerializableVector3Param((SetObjectParam)data);
+                            item = new CustomProperty($"_{customData.Key}", p, false,
+                                "Custom Data", string.Empty, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else if (type == typeof(ForcesSetData.ObjectReference))
+                        {
+                            var p = new SerializableForcesObjectRefParam((SetObjectParam)data);
+                            item = new CustomProperty($"_{customData.Key}", p, false,
+                                "Custom Data", string.Empty, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else
+                        {
+                            item = new CustomProperty($"_{customData.Key}", ref data,
+                                "Data", false, "Custom Data", string.Empty, true);
                         }
 
                         itemSet.Add(item);
                     }
 
+                    // Parameters
+                    for (int i = 0; i < setObj.Parameters.Count;)
+                    {
+                        AddParam(objTemplate?.Parameters[i], setObj.Parameters[i], ++i);
+                    }
+
                     objectProperties.ItemSet.Add(itemSet);
+
+                    // Sub-Methods
+                    void AddParam(SetObjectTypeParam templateParam, object param,
+                        int i, string prefix = null)
+                    {
+                        // Groups
+                        if (templateParam is SetObjectTypeParamGroup group)
+                        {
+                            var objGroup = (param as SetObjectParamGroup);
+                            var parameters = objGroup.Parameters;
+
+                            for (int i2 = 0; i2 < group.Parameters.Count;)
+                            {
+                                AddParam(group.Parameters[i2], objGroup.Parameters[i2],
+                                    ++i2, templateParam.Name);
+                            }
+
+                            return;
+                        }
+
+                        // Parameters
+                        string name = string.Format("{0}{1}",
+                            (prefix == null) ? string.Empty : $"{prefix}_",
+                            (templateParam == null) ? $"Parameter {i}" : templateParam.Name);
+
+                        CustomProperty item;
+                        var type = (templateParam == null) ?
+                            (param as SetObjectParam).DataType : templateParam.DataType;
+
+                        if (type == typeof(Vector2))
+                        {
+                            var p = new SerializableVector2Param((SetObjectParam)param);
+                            item = new CustomProperty(name, p, false,
+                                "Parameters", templateParam?.Description, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else if (type == typeof(Vector3))
+                        {
+                            var p = new SerializableVector3Param((SetObjectParam)param);
+                            item = new CustomProperty(name, p, false,
+                                "Parameters", templateParam?.Description, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else if (type == typeof(ForcesSetData.ObjectReference))
+                        {
+                            var p = new SerializableForcesObjectRefParam((SetObjectParam)param);
+                            item = new CustomProperty(name, p, false,
+                                "Parameters", templateParam?.Description, true)
+                            {
+                                IsBrowsable = true
+                            };
+                        }
+                        else
+                        {
+                            item = new CustomProperty(name, ref param, "Data",
+                                false, "Parameters", templateParam?.Description, true);
+
+                            // Enums
+                            int enumsCount = (templateParam != null) ?
+                                templateParam.Enums.Count : 0;
+
+                            if (enumsCount >= 1)
+                            {
+                                item.ValueMember = "Value";
+                                item.DefaultType = templateParam.DataType;
+                                item.DisplayMember = "Description";
+                                item.Datasource = templateParam.Enums;
+
+                                // TODO: Fix multi enum param editing
+                            }
+                        }
+
+                        itemSet.Add(item);
+                    }
                 }
                 else
                 {
@@ -283,9 +382,16 @@ namespace HedgeEdit.UI
 
         public void UpdateTitle(string stgID = null)
         {
-            Text = string.Format("{0} - {1}",
-                (string.IsNullOrEmpty(stgID)) ? "Untitled" : stgID,
-                Program.Name);
+            string currentLayer = (Data.CurrentSetLayer == null ||
+                string.IsNullOrWhiteSpace(Data.CurrentSetLayer.Name)) ?
+                string.Empty : $" [{Data.CurrentSetLayer.Name}]";
+
+            bool isAprilFools = (DateTime.Today.Month == 4 && DateTime.Today.Day == 1);
+
+            Text = string.Format("{0} - {1}{2}",
+                (string.IsNullOrEmpty(stgID)) ?
+                (isAprilFools) ? "idk??" : "Untitled" : stgID,
+                (isAprilFools) ? "hegedot" : Program.Name, currentLayer);
         }
 
         public void UpdateStatus(string status)
@@ -382,14 +488,6 @@ namespace HedgeEdit.UI
         }
 
         private void Application_Idle(object sender, EventArgs e)
-        {
-            while (viewport.IsIdle)
-            {
-                Viewport.Render();
-            }
-        }
-
-        private void Viewport_Paint(object sender, PaintEventArgs e)
         {
             Viewport.Render();
         }
@@ -694,6 +792,9 @@ namespace HedgeEdit.UI
 
         private void PasteMenuItem_Click(object sender, EventArgs e)
         {
+            if (Data.CurrentSetLayer == null)
+                return;
+
             // Get Data from Clipboard (if any)
             var dataObject = Clipboard.GetDataObject();
             if (dataObject == null)
@@ -726,9 +827,14 @@ namespace HedgeEdit.UI
                     Transform = obj.Transform
                 };
 
+                // Get Object Template (if any)
+                var template = (Stage.GameType != null &&
+                    Stage.GameType.ObjectTemplates.ContainsKey(obj.ObjectType)) ?
+                    Stage.GameType.ObjectTemplates[obj.ObjectType] : null;
+
                 Data.CurrentSetLayer.Objects.Add(newObj);
                 // TODO: Fix crashing if this is called while loading
-                script.Call("InitSetObject", newObj);
+                script.Call("InitSetObject", newObj, template);
 
                 Data.LoadObjectResources(Stage.GameType, newObj);
                 Viewport.SelectObject(newObj);
@@ -774,7 +880,7 @@ namespace HedgeEdit.UI
 
         private void SceneViewMenuItem_Click(object sender, EventArgs e)
         {
-            if (sceneViewMenuItem.Checked)
+            if (SceneViewMenuItem.Checked)
             {
                 if (sceneView == null || sceneView.IsDisposed)
                 {
@@ -801,21 +907,22 @@ namespace HedgeEdit.UI
             {
                 assetsDialog = new AssetsDialog();
                 assetsDialog.Show();
-            }else
+            }
+            else
             {
                 if (assetsDialog.Visible)
                     assetsDialog.Hide();
                 else
                     assetsDialog.Show();
             }
-            
+        }
+
+        private void MatEditorMenuItem_Click(object sender, EventArgs e)
+        {
+            var matEditor = new MaterialEditor();
+            matEditor.ShowDialog();
         }
         #endregion
-
-        private void AddObject(object sender, EventArgs e)
-        {
-            // TODO
-        }
 
         private void RemoveObject(object sender, EventArgs e)
         {
@@ -912,8 +1019,154 @@ namespace HedgeEdit.UI
 
         private void LoadSaveEnable(bool enable)
         {
+            // Changes made with any of these while loading/saving could be problematic.
+            if (!enable && assetsDialog != null)
+            {
+                assetsDialog.Close();
+                assetsDialog = null;
+                AssetsDialogMenuItem.Checked = false;
+            }
+
             openMenuItem.Enabled = SaveSetsMenuItem.Enabled =
-                saveAllMenuItem.Enabled = enable;
+                saveAllMenuItem.Enabled = MatEditorMenuItem.Enabled =
+                AssetsDialogMenuItem.Enabled = enable;
+        }
+
+        // Other
+        [Serializable]
+        public class SerializableParam
+        {
+            // Variables/Constants
+            protected SetObjectParam param;
+
+            // Constructors
+            public SerializableParam(SetObjectParam param)
+            {
+                this.param = param;
+            }
+        }
+
+        [Serializable]
+        public class SerializableVector2Param : SerializableParam
+        {
+            // Variables/Constants
+            public float X
+            {
+                get => ((Vector2)param.Data).X;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new Vector2(value, v.Y);
+                }
+            }
+
+            public float Y
+            {
+                get => ((Vector2)param.Data).Y;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new Vector2(v.X, value);
+                }
+            }
+
+            // Constructors
+            public SerializableVector2Param(SetObjectParam param) : base(param)
+            {
+                if (param.DataType != typeof(Vector2))
+                    throw new NotSupportedException("Cannot cast param to a Vector2!");
+            }
+
+            // Methods
+            protected Vector2 GetValue()
+            {
+                return (Vector2)param.Data;
+            }
+        }
+
+        [Serializable]
+        public class SerializableVector3Param : SerializableParam
+        {
+            // Variables/Constants
+            public float X
+            {
+                get => ((Vector3)param.Data).X;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new Vector3(value, v.Y, v.Z);
+                }
+            }
+
+            public float Y
+            {
+                get => ((Vector3)param.Data).Y;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new Vector3(v.X, value, v.Z);
+                }
+            }
+
+            public float Z
+            {
+                get => ((Vector3)param.Data).Z;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new Vector3(v.X, v.Y, value);
+                }
+            }
+
+            // Constructors
+            public SerializableVector3Param(SetObjectParam param) : base(param)
+            {
+                if (param.DataType != typeof(Vector3))
+                    throw new NotSupportedException("Cannot cast param to a Vector3!");
+            }
+
+            // Methods
+            protected Vector3 GetValue()
+            {
+                return (Vector3)param.Data;
+            }
+        }
+
+        public class SerializableForcesObjectRefParam : SerializableParam
+        {
+            // Variables/Constants
+            public ushort ID
+            {
+                get => ((ForcesSetData.ObjectReference)param.Data).ID;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new ForcesSetData.ObjectReference(value, v.GroupID);
+                }
+            }
+
+            public ushort GroupID
+            {
+                get => ((ForcesSetData.ObjectReference)param.Data).GroupID;
+                set
+                {
+                    var v = GetValue();
+                    param.Data = new ForcesSetData.ObjectReference(v.ID, value);
+                }
+            }
+
+            // Constructors
+            public SerializableForcesObjectRefParam(SetObjectParam param) : base(param)
+            {
+                if (param.DataType != typeof(ForcesSetData.ObjectReference))
+                    throw new NotSupportedException("Cannot cast param to an ObjectReference!");
+            }
+
+            // Methods
+            protected ForcesSetData.ObjectReference GetValue()
+            {
+                return (ForcesSetData.ObjectReference)param.Data;
+            }
         }
     }
 }

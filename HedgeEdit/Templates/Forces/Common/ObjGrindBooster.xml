@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <OutOfControl type="float" default="0.5" description="How long the game locks your control for after coming in contact with this object." />
-  <Speed type="float" default="500" description="How much speed the GrindBooster will send you off with." />
-  <IsVisibleModel type="bool" default="true" description="Setting it to true the model will be visible in-game" />
-  <IsSideView type="bool" default="false" description="For side-view. Probably unused on grind boosters?" />
-  <IsDirectionPath type="bool" default="false" description="Correct to move in the path direction. Probably unused on grind boosters?" />
-  <UnknownFlag1 type="bool" default="false" description="" />
+  <Speed type="float" default="500" description="How much speed this object will send you off with." />
+  <IsVisible type="bool" default="true" description="Whether this object is visible or not." />
+  <IsReversed type="bool" default="false" description="Whether this object is reversed or not." />
   
-  <Unknown1 type="uint" default="0" description="Always 0?" />
-  <Unknown2 type="ulong" default="0" description="Always 0?" />
-  <Unknown3 type="ulong" default="0" description="Always 0?" />
-  <Unknown4 type="ulong" default="0" description="Always 0?" />
-  <Unknown5 type="ulong" default="0" description="Always 0?" />
-  <Unknown6 type="ulong" default="0" description="Always 0?" />
-  <Unknown7 type="ulong" default="0" description="Always 0?" />
-  <Unknown8 type="ulong" default="0" description="Always 0?" />
-  <Unknown9 type="ulong" default="0" description="Always 0?" />
-  <Unknown10 type="ulong" default="0" description="Always 0?" />
-  <Unknown11 type="ulong" default="0" description="Always 0?" />
-  <Unknown12 type="ulong" default="0" description="Always 0?" />
-  <Unknown13 type="ulong" default="0" description="Always 0?" />
+  <Event0>
+	<Targets type="forcesObjectList" description="The objects affected by this event." />
+	<Type type="byte" description="What type of signal to send to each affected object.">
+	  <Enum description="Turn On" value="0" />
+	  <Enum description="Turn Off" value="1" />
+	</Type>
+	<Timer type="float" description="How long to wait after this event is triggered before sending a signal to all affected objects." />
+  </Event0>
+
+  <Event1>
+	<Targets type="forcesObjectList" description="The objects affected by this event." />
+	<Type type="byte" description="What type of signal to send to each affected object.">
+	  <Enum description="Turn On" value="0" />
+	  <Enum description="Turn Off" value="1" />
+	</Type>
+	<Timer type="float" description="How long to wait after this event is triggered before sending a signal to all affected objects." />
+  </Event1>
+
+  <Event2>
+	<Targets type="forcesObjectList" description="The objects affected by this event." />
+	<Type type="byte" description="What type of signal to send to each affected object.">
+	  <Enum description="Turn On" value="0" />
+	  <Enum description="Turn Off" value="1" />
+	</Type>
+	<Timer type="float" description="How long to wait after this event is triggered before sending a signal to all affected objects." />
+  </Event2>
   
   <Extra type="model" value="cmn_obj_grindbooster.model" />
-  <Extra type="description" value="Like DashPanels, except on rails" />
+  <Extra type="description" value="Like DashPanels, except on grind rails." />
   <Extra type="RawByteLength" length="112" />
 </Template>

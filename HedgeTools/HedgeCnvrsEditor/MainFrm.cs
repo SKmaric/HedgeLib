@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Reflection;
 using HedgeLib.Misc;
 using System.IO;
+using System.Drawing;
 
 namespace HedgeCnvrsEditor
 {
     public partial class MainFrm : Form
     {
-        //Variables
+        // Variables/Constants
         public static ForcesText ForcesText;
         private string openFile;
         private Random random = new Random();
-        //Constructor
+
+        // Constructors
         public MainFrm()
         {
             InitializeComponent();
@@ -27,23 +22,26 @@ namespace HedgeCnvrsEditor
             treeView.MouseClick += TreeView_Click;
             treeView.AfterLabelEdit += TreeView_LabelEdit;
             listView.DoubleClick += ListView_DoubleClick;
-            treeView.KeyDown += TreeView_keyPress;
+            filterTxtBx.TextChanged += FilterTxtBx_TextChanged;
+            filterTxtBx.LostFocus += FilterTxtBx_LostFocus;
+            filterTxtBx.GotFocus += FilterTxtBx_GotFocus;
         }
 
-        //Methods
-
+        // Methods
         void AddLVI<T>(string name, T value) where T : struct
         {
             var item = listView.Items.Add(name);
             item.SubItems.Add(value.GetType().Name);
             item.SubItems.Add(value.ToString());
         }
+
         void AddLVI<T>(string name, T? value) where T : struct
         {
             var item = listView.Items.Add(name);
             item.SubItems.Add(typeof(T).Name);
             item.SubItems.Add(value.HasValue ? value.ToString() : "null");
         }
+
         void AddLVI(string name, string value)
         {
             var item = listView.Items.Add(name);
@@ -51,30 +49,32 @@ namespace HedgeCnvrsEditor
             item.SubItems.Add(value.ToString());
         }
 
-
         public void UpdateTreeView()
         {
             if (ForcesText == null)
                 return;
 
             treeView.BeginUpdate();
-            //Update Nodes
+
+            // Update Sheets
             treeView.Nodes.Clear();
-            var rootNode = treeView.Nodes.Add("nodes","Nodes");
-            foreach (var node in ForcesText.Nodes)
+            var rootNode = treeView.Nodes.Add("sheets", "Sheets");
+            foreach (var sheet in ForcesText.Sheets)
             {
-                var entryNode = rootNode.Nodes.Add(node.Name);
-                entryNode.Tag = node;
-                foreach (var entry in node.Entries)
+                var sheetNode = rootNode.Nodes.Add(sheet.Name);
+                sheetNode.Tag = sheet;
+
+                foreach (var cell in sheet.Cells)
                 {
-                    entryNode.Nodes.Add(new TreeNode()
+                    sheetNode.Nodes.Add(new TreeNode()
                     {
-                        Text = entry.Name,
-                        Tag = entry,
-                        Name = entry.Name
+                        Text = cell.Name,
+                        Tag = cell,
+                        Name = cell.Name
                     });
                 }
             }
+
             var layoutsNode = treeView.Nodes.Add("layouts", "Layouts");
             foreach (var category in ForcesText.Layouts)
             {
@@ -85,7 +85,8 @@ namespace HedgeCnvrsEditor
                     Name = category.Name
                 });
             }
-            var typesNode = treeView.Nodes.Add("types", "Value Types");
+
+            var typesNode = treeView.Nodes.Add("types", "Cell Types");
             foreach (var type in ForcesText.Types)
             {
                 typesNode.Nodes.Add(new TreeNode()
@@ -95,12 +96,12 @@ namespace HedgeCnvrsEditor
                     Tag = type.Value
                 });
             }
+
             treeView.EndUpdate();
         }
 
         public void UpdateListView()
         {
-
             listView.BeginUpdate();
             listView.Items.Clear();
 
@@ -110,24 +111,24 @@ namespace HedgeCnvrsEditor
                 return;
             }
 
-            if (treeView.SelectedNode.Tag is ForcesText.Entry entry)
+            if (treeView.SelectedNode.Tag is ForcesText.Cell cell)
             {
                 var category = listView.Items.Add("Layout");
                 category.SubItems.Add("String");
-                category.SubItems.Add(ForcesText.Layouts[entry.LayoutIndex].Name);
-                category.Tag = ForcesText.Layouts[entry.LayoutIndex].Name;
+                category.SubItems.Add(ForcesText.Layouts[cell.LayoutIndex].Name);
+                category.Tag = ForcesText.Layouts[cell.LayoutIndex].Name;
 
 
                 var dataItem = listView.Items.Add("Data");
-                dataItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = entry.TypeName, Tag = entry.TypeName });
-                dataItem.SubItems.Add(entry.Data.Replace("\n", "\\n"));
-                dataItem.Tag = entry.Data;
+                dataItem.SubItems.Add(new ListViewItem.ListViewSubItem() { Text = cell.TypeName, Tag = cell.TypeName });
+                dataItem.SubItems.Add(cell.Data.Replace("\n", "\\n"));
+                dataItem.Tag = cell.Data;
 
 
                 var id = listView.Items.Add("UUID");
                 id.SubItems.Add("ULong");
-                id.SubItems.Add(entry.UUID.ToString());
-                id.Tag = entry.UUID;
+                id.SubItems.Add(cell.UUID.ToString());
+                id.Tag = cell.UUID;
             }
             else if (treeView.SelectedNode.Tag is ForcesText.Layout Layout)
             {
@@ -140,7 +141,7 @@ namespace HedgeCnvrsEditor
                 AddLVI("Unknown Data 7", Layout.UnknownData7);
                 AddLVI("Unknown Data 8", Layout.UnknownData8);
             }
-            else if (treeView.SelectedNode.Tag is ForcesText.EntryType type)
+            else if (treeView.SelectedNode.Tag is ForcesText.CellType type)
             {
                 AddLVI("Namespace", type.Namespace);
                 AddLVI("Unknown Float 1", type.UnknownFloat1);
@@ -159,24 +160,91 @@ namespace HedgeCnvrsEditor
             if (treeView.SelectedNode == null)
                 return;
 
-            if (treeView.SelectedNode.Tag is ForcesText.Node node)
-                ForcesText.Nodes.Remove(node);
+            if (treeView.SelectedNode.Tag is ForcesText.Sheet sheet)
+                ForcesText.Sheets.Remove(sheet);
             else if (treeView.SelectedNode.Tag is ForcesText.Layout layout)
                 ForcesText.Layouts.Remove(layout);
-            else if (treeView.SelectedNode.Tag is ForcesText.EntryType type)
+            else if (treeView.SelectedNode.Tag is ForcesText.CellType type)
                 ForcesText.Types.Remove(treeView.SelectedNode.Name);
-            else if (treeView.SelectedNode.Tag is ForcesText.Entry entry)
+            else if (treeView.SelectedNode.Tag is ForcesText.Cell cell)
             {
-                var parent = (ForcesText.Node)treeView.SelectedNode.Parent.Tag;
-                parent.Entries.Remove(entry);
+                var parent = (ForcesText.Sheet)treeView.SelectedNode.Parent.Tag;
+                parent.Cells.Remove(cell);
             }
             UpdateGUI();
         }
 
         void UpdateGUI()
         {
-            UpdateTreeView();
+            FilterTreeView(filterTxtBx.ForeColor == Color.Gray ? string.Empty : filterTxtBx.Text);
             UpdateListView();
+        }
+
+        void FilterTreeView(string filter = null)
+        {
+            if (ForcesText == null)
+                return;
+
+            if (string.IsNullOrEmpty(filter))
+            {
+                UpdateTreeView();
+                return;
+            }
+
+            treeView.BeginUpdate();
+
+            // Update Nodes
+            treeView.Nodes.Clear();
+            var rootNode = treeView.Nodes.Add("sheets", "Sheets");
+
+            foreach (var sheet in ForcesText.Sheets)
+            {
+                var sheetNode = rootNode.Nodes.Add(sheet.Name);
+                sheetNode.Tag = sheet;
+
+                foreach (var cell in sheet.Cells)
+                {
+                    if (cell.Name.Contains(filter))
+                    {
+                        sheetNode.Nodes.Add(new TreeNode()
+                        {
+                            Text = cell.Name,
+                            Tag = cell,
+                            Name = cell.Name
+                        });
+                    }
+                }
+            }
+
+            var layoutsNode = treeView.Nodes.Add("layouts", "Layouts");
+            foreach (var layout in ForcesText.Layouts)
+            {
+                if (layout.Name.Contains(filter))
+                {
+                    layoutsNode.Nodes.Add(new TreeNode()
+                    {
+                        Text = layout.Name,
+                        Tag = layout,
+                        Name = layout.Name
+                    });
+                }
+            }
+
+            var typesNode = treeView.Nodes.Add("types", "Value Types");
+            foreach (var type in ForcesText.Types)
+            {
+                if (type.Key.Contains(filter))
+                {
+                    typesNode.Nodes.Add(new TreeNode()
+                    {
+                        Name = type.Key,
+                        Text = type.Key,
+                        Tag = type.Value
+                    });
+                }
+            }
+
+            treeView.EndUpdate();
         }
 
         #region GUI Events
@@ -213,7 +281,7 @@ namespace HedgeCnvrsEditor
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ForcesText.Save(openFile, true);
         }
@@ -244,54 +312,56 @@ namespace HedgeCnvrsEditor
             }
         }
 
-        private void addEntry_Click(object sender, EventArgs e)
+        private void AddEntry_Click(object sender, EventArgs e)
         {
             var selectedNode = treeView.SelectedNode;
-            if (selectedNode.Tag is ForcesText.Node node)
+            if (selectedNode.Tag is ForcesText.Sheet sheet)
             {
-                node.Entries.Add(new ForcesText.Entry()
+                sheet.Cells.Add(new ForcesText.Cell()
                 {
                     UUID = (ulong)random.Next(),
-                    Name = $"newEntry{node.Entries.Count}",
+                    Name = $"newCell{sheet.Cells.Count}",
                     LayoutIndex = 0,
                     Data = "*Insert data here*",
                     TypeName = ForcesText.Types.First().Key
                 });
             }
-            else if(selectedNode.Tag is ForcesText.Entry)
+            else if (selectedNode.Tag is ForcesText.Cell)
             {
-                var parentNode = (ForcesText.Node)selectedNode.Parent.Tag;
-                parentNode.Entries.Add(new ForcesText.Entry()
+                var parentNode = (ForcesText.Sheet)selectedNode.Parent.Tag;
+                parentNode.Cells.Add(new ForcesText.Cell()
                 {
                     UUID = (ulong)random.Next(),
-                    Name = $"newEntry{parentNode.Entries.Count}",
+                    Name = $"newCell{parentNode.Cells.Count}",
                     LayoutIndex = 0,
                     Data = "*Insert data here*",
                     TypeName = ForcesText.Types.First().Key
                 });
             }
-            else if(selectedNode.Name == "types")
+            else if (selectedNode.Name == "types")
             {
-                ForcesText.Types.Add($"newValueType{ForcesText.Types.Count}", new ForcesText.EntryType()
-                {
-                    Namespace = "mixStd",
-                });
+                ForcesText.Types.Add($"newValueType{ForcesText.Types.Count}",
+                    new ForcesText.CellType()
+                    {
+                        Namespace = "mixStd",
+                    });
             }
-            else if(selectedNode.Name == "layouts")
+            else if (selectedNode.Name == "layouts")
             {
                 ForcesText.Layouts.Add(new ForcesText.Layout()
                 {
                     Name = $"newLayout{ForcesText.Layouts.Count}"
                 });
             }
-            else if(selectedNode.Name == "nodes")
+            else if (selectedNode.Name == "sheets")
             {
-                ForcesText.Nodes.Add(new ForcesText.Node()
+                ForcesText.Sheets.Add(new ForcesText.Sheet()
                 {
-                    Name = $"newNode{ForcesText.Nodes.Count}"
+                    Name = $"newSheet{ForcesText.Sheets.Count}"
                 });
             }
-            UpdateGUI();
+
+            FilterTreeView();
         }
 
         private void TreeView_LabelEdit(object sender, NodeLabelEditEventArgs e)
@@ -299,13 +369,13 @@ namespace HedgeCnvrsEditor
             var selectedNode = treeView.SelectedNode;
             if (selectedNode.Tag != null && !string.IsNullOrEmpty(e.Label))
             {
-                if (selectedNode.Tag is ForcesText.Node node)
-                    node.Name = e.Label;
-                else if (selectedNode.Tag is ForcesText.Entry entry)
-                    entry.Name = e.Label;
+                if (selectedNode.Tag is ForcesText.Sheet sheet)
+                    sheet.Name = e.Label;
+                else if (selectedNode.Tag is ForcesText.Cell cell)
+                    cell.Name = e.Label;
                 else if (selectedNode.Tag is ForcesText.Layout layout)
                     layout.Name = e.Label;
-                else if (selectedNode.Tag is ForcesText.EntryType type)
+                else if (selectedNode.Tag is ForcesText.CellType type)
                 {
                     var value = ForcesText.Types[selectedNode.Name];
                     ForcesText.Types.Remove(selectedNode.Text);
@@ -314,26 +384,26 @@ namespace HedgeCnvrsEditor
             }
         }
 
-        private void exportXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExportXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var sfd = new SaveFileDialog()
             {
                 Filter = "XML Files|*.xml",
                 FileName = Path.ChangeExtension(Path.GetFileName(openFile),".xml")
             };
+
             if (sfd.ShowDialog() == DialogResult.OK)
-            {
                 ForcesText.ExportXML(sfd.FileName);
-            }
         }
 
-        private void importXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ImportXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog()
             {
                 Filter = "XML Files|*.xml",
                 CheckFileExists = true
             };
+
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 ForcesText = new ForcesText();
@@ -345,29 +415,58 @@ namespace HedgeCnvrsEditor
             }
         }
 
-        void TreeView_keyPress(object sender, KeyEventArgs args)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            switch(args.KeyCode)
+            switch(keyData)
             {
                 case Keys.Delete:
                     {
                         DeleteItem();
-                        break;
+                        return true;
+                    }
+                case Keys.Control | Keys.F:
+                    {
+                        filterTxtBx.Select();
+                        return true;
                     }
                 default:
-                    break;
+                    return base.ProcessCmdKey(ref msg, keyData);
             }
         }
 
-        private void renameTsm_Click(object sender, EventArgs e)
+        private void RenameTsm_Click(object sender, EventArgs e)
         {
             if (treeView.SelectedNode != null)
                 treeView.SelectedNode.BeginEdit();
         }
 
-        private void deleteTsm_Click(object sender, EventArgs e)
+        private void DeleteTsm_Click(object sender, EventArgs e)
         {
             DeleteItem();
+        }
+
+        private void FilterTxtBx_TextChanged(object sender, EventArgs e)
+        {
+            if(filterTxtBx.ForeColor == Color.Black && ForcesText != null)
+            FilterTreeView(filterTxtBx.Text);
+        }
+
+        private void FilterTxtBx_LostFocus(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(filterTxtBx.Text))
+            {
+                filterTxtBx.ForeColor = Color.Gray;
+                filterTxtBx.Text = "Type here to search";
+            }
+        }
+
+        private void FilterTxtBx_GotFocus(object sender, EventArgs e)
+        {
+            if(filterTxtBx.ForeColor == Color.Gray)
+            {
+                filterTxtBx.ForeColor = Color.Black;
+                filterTxtBx.Text = string.Empty;
+            }
         }
     }
     #endregion

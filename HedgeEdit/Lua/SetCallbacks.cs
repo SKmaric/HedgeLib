@@ -26,6 +26,7 @@ namespace HedgeEdit.Lua
             script.Globals["LoadObjectModel"] = (Func<string,
                 string, bool, Vector3?, VPModel>)LoadObjectModel;
 
+            script.Globals["AddSetLayer"] = (Func<string, SetData>)AddSetLayer;
             script.Globals["LoadSetLayer"] = (Func<string, bool, SetData>)LoadSetLayer;
             script.Globals["SaveSetLayer"] = (Action<string, SetData>)SaveSetLayer;
             script.Globals["SaveSetLayers"] = (Action<string, string, string, bool>)SaveSetLayers;
@@ -78,7 +79,10 @@ namespace HedgeEdit.Lua
         public void ChangeCurrentSetLayer(SetData layer)
         {
             Data.CurrentSetLayer = layer;
-            // TODO: Show current layer on UI
+            Program.MainUIInvoke(() =>
+            {
+                Program.MainForm.UpdateTitle(Stage.ID);
+            });
         }
 
         public SetObjectParam GenSetObjectParam(string type, object data)
@@ -109,7 +113,20 @@ namespace HedgeEdit.Lua
             if (!File.Exists(path))
                 return null;
 
-            return Data.LoadModel(path, resDir, false, loadMats);
+            return Data.LoadModel(path, resDir, false, loadMats, null,
+                path.StartsWith(Program.ResourcesDirectory));
+        }
+
+        public SetData AddSetLayer(string name)
+        {
+            // Add Set Layer to list
+            var setData = Types.SetDataType;
+            setData.Name = name;
+            Data.SetLayers.Add(setData);
+
+            // Refresh UI Scene View
+            GUI.RefreshSceneView();
+            return setData;
         }
 
         public SetData LoadSetLayer(string path, bool loadModels = true)
@@ -133,6 +150,7 @@ namespace HedgeEdit.Lua
         {
             // Format path strings
             dir = FormatCacheDir(dir);
+            Directory.CreateDirectory(dir);
 
             // Save sets
             if (showProgress)

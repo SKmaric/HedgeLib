@@ -55,6 +55,9 @@ namespace HedgeEdit
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha,
                 BlendingFactorDest.OneMinusSrcAlpha);
+
+            vp.MakeCurrent();
+            vp.VSync = true;
         }
 
         public static void Resize(int width, int height)
@@ -201,9 +204,12 @@ namespace HedgeEdit
                         if (!keyState.IsKeyDown(Key.LControl))
                             SelectedInstances.Clear();
 
-                        SelectedInstances.Add(instance);
-                        Program.MainForm.RefreshGUI();
-                        return true;
+                        if (!SelectedInstances.Contains(instance))
+                        {
+                            SelectedInstances.Add(instance);
+                            Program.MainForm.RefreshGUI();
+                            return true;
+                        }
                     }
 
                     if (Program.MainForm.Focused)
@@ -272,6 +278,7 @@ namespace HedgeEdit
             }
 
             // Swap our buffers
+            //GL.Flush();
             vp.SwapBuffers();
             prevMouseState = mouseState;
         }

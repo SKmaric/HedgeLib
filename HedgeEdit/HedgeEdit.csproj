@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Archives.cs" />
+    <Compile Include="Data\Asset.cs" />
     <Compile Include="Data\Materials.cs" />
     <Compile Include="UI\GUI.cs" />
     <Compile Include="Data\Objects.cs" />
@@ -95,6 +96,12 @@
     <Compile Include="UI\LuaTerminal.Designer.cs">
       <DependentUpon>LuaTerminal.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\MaterialEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MaterialEditor.Designer.cs">
+      <DependentUpon>MaterialEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\SceneView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +110,12 @@
     </Compile>
     <Compile Include="EditorCache.cs" />
     <Compile Include="GameList.cs" />
+    <Compile Include="UI\TxtBxDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\TxtBxDialog.Designer.cs">
+      <DependentUpon>TxtBxDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="VPModel.cs" />
     <Compile Include="UI\MainFrm.cs">
       <SubType>Form</SubType>
@@ -129,6 +142,9 @@
     <EmbeddedResource Include="UI\LuaTerminal.resx">
       <DependentUpon>LuaTerminal.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\MaterialEditor.resx">
+      <DependentUpon>MaterialEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\SceneView.resx">
       <DependentUpon>SceneView.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,6 +163,9 @@
     </Compile>
     <EmbeddedResource Include="UI\StgOpenDialog.resx">
       <DependentUpon>StgOpenDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TxtBxDialog.resx">
+      <DependentUpon>TxtBxDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest">
       <SubType>Designer</SubType>

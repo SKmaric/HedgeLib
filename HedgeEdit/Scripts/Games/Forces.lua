@@ -1,4 +1,66 @@
-﻿function ExtractResources(sourceDir, destDir)
+﻿CanAddSetLayer = true
+
+-- Functions
+function LoadSector(i, stageDir, dirName)
+	local pth = string.format(stageDir .. dirName .. "_trr_s%02d", i)
+	local group = "Sector #" .. i
+	Extract(pth .. ".pac", pth, "TerrainSector".. i)
+
+	if IODirExists(pth) then
+		local resDir = stageDir .. dirName .. "_trr_cmn"
+
+		-- Terrain Instance Infos
+		local files = IOGetFilesInDir(pth, "*.terrain-instanceinfo", false)
+		if files ~= nil and #files > 0 then
+			for i2 = 1, #files do
+				local file = files[i2]
+
+				-- Skip blocks containing "_noGI"
+				-- TODO: Load these properly instead
+				if not file:find("_noGI") then
+					LoadTerrainInstance(file, resDir, pth, group)
+				end
+			end
+		end
+
+		-- Terrain Models
+		local files = IOGetFilesInDir(pth, "*.terrain-model", false)
+		if files ~= nil and #files > 0 then
+			for i2 = 1, #files do
+				local file = files[i2]
+
+				-- Skip blocks containing "_noGI"
+				-- TODO: Load these properly instead
+				if not file:find("_noGI") then
+					GetModel(file, resDir, group, true)
+				end
+			end
+		end
+	end
+end
+
+function LoadSectorRange(startIndex, stopIndex, loadingText, stageDir, dirName)
+	for i = startIndex, stopIndex do
+		UIChangeProgress((i / stopIndex) * 100)
+		UIChangeLoadStatus(string.format(
+			loadingText .. " %02d/%02d", i, stopIndex))
+
+		LoadSector(i, stageDir, dirName)
+	end
+end
+
+function LoadSectors(sectors, loadingText, stageDir, dirName)
+	for i, s in ipairs(sectors) do
+		UIChangeProgress((i / #sectors) * 100)
+		UIChangeLoadStatus(string.format(
+			loadingText .. " %02d/%02d", i, #sectors))
+
+		LoadSector(s, stageDir, dirName)
+	end
+end
+
+-- Callbacks
+function ExtractResources(sourceDir, destDir)
 	SetDataType("Forces")
 	Extract("{0}/CommonObject.pac", "{0}")
 	-- TODO: Finish this
@@ -11,6 +73,7 @@ function Load(dataDir, cacheDir, stageID)
 	local actPth = IOPathCombine(dataDir, "actstgmission.lua")
 	local stageDir = "{0}/{1}/"
 	local dirName = stageID
+	local staticSectors, dynamicSectors = nil, nil
 
 	if IOFileExists(actPth) then
 		dofile(actPth)
@@ -21,8 +84,14 @@ function Load(dataDir, cacheDir, stageID)
 					if m.dir ~= nil then
 						dirName = m.dir
 						stageDir = "{0}/" .. m.dir .. "/"
-						print(dirName)
-						print(stageDir)
+					end
+
+					if m.static_sectors ~= nil then
+						staticSectors = m.static_sectors
+					end
+
+					if m.dynamic_sectors ~= nil then
+						dynamicSectors = m.dynamic_sectors
 					end
 
 					break
@@ -88,29 +157,17 @@ function Load(dataDir, cacheDir, stageID)
 	Extract(stageDir .. dirName .. "_sky.pac",
 		stageDir .. dirName .. "_sky", "Sky")
 
-	-- Terrain Blocks (E.G. w5a01/w5a01_trr_s00.pac)
+	-- Terrain Sectors (E.G. w5a01/w5a01_trr_s00.pac)
 	UIShowProgress()
-	for i = 0, 99 do
-		UIChangeProgress((i / 99) * 100)
-		UIChangeLoadStatus(string.format("Terrain Sector %02d/99", i))
+	if staticSectors == nil and dynamicSectors == nil then
+		LoadSectorRange(0, 99, "Terrain Sector", stageDir, dirName)
+	else
+		if staticSectors ~= nil then
+			LoadSectors(staticSectors, "Static Sector", stageDir, dirName)
+		end
 
-		local pth = string.format(stageDir .. dirName .. "_trr_s%02d", i)
-		local group = "Sector #" .. i
-		Extract(pth .. ".pac", pth, "TerrainSector".. i)
-
-		if IODirExists(pth) then
-			local files = IOGetFilesInDir(pth, "*.terrain-model", false)
-			if files ~= nil and #files > 0 then
-				for i2 = 1, #files do
-					local file = files[i2]
-
-					-- Skip blocks containing "_noGI"
-					-- TODO: Load these properly instead
-					if not file:find("_noGI") then
-						LoadTerrain(file, stageDir .. dirName .. "_trr_cmn", group)
-					end
-				end
-			end
+		if dynamicSectors ~= nil then
+			LoadSectors(dynamicSectors, "Dynamic Sector", stageDir, dirName)
 		end
 	end
 end
@@ -118,21 +175,35 @@ end
 function SaveSets(dataDir, cacheDir, stageID)
 	-- Set Data (E.G. gedit/w5a01_gedit.pac)
 	SetDataType("Forces")
+	IODeleteFilesInDir("{0}/gedit/{1}_gedit", ".gedit")
 	SaveSetLayers("{0}/gedit/{1}_gedit", "", ".gedit")
 	
 	-- TODO: Repack
 end
 
 function SaveAll(dataDir, cacheDir, stageID)
-	-- TODO
+	-- Materials
+	SetDataType("Forces")
+	SaveMaterials("{0}/{1}/", "", ".material")
+
+	-- TODO: Save Models/Instances
+	-- TODO: Repack
 end
 
-function InitSetObject(obj)
+function InitSetObject(obj, template)
 	AddCustomData(obj, "ParentID", "ushort", 0)
-	AddCustomData(obj, "ParentUnknown1", "ushort", 0)
-	AddCustomData(obj, "Unknown1", "ushort", 0)
+	AddCustomData(obj, "ParentGroupID", "ushort", 0)
+	AddCustomData(obj, "GroupID", "ushort", 0)
+	AddCustomData(obj, "ChildPosOffset", "vector3", "0,0,0")
+	AddCustomData(obj, "ChildRotOffset", "vector3", "0,0,0")
 	AddCustomData(obj, "RangeIn", "float", 1000)
 	AddCustomData(obj, "RangeOut", "float", 1200)
+
+	local rawLenExtra = template.GetExtra("RawByteLength")
+	if rawLenExtra ~= nil then
+		obj.CustomData["RawByteLength"] =
+			GenSetObjectParam("uint", rawLenExtra.Value)
+	end
 
 	obj.CustomData["Name"] = GenSetObjectParam("string",
 		obj.ObjectType .. tostring(obj.ObjectID))

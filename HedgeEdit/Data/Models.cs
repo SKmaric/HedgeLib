@@ -17,7 +17,7 @@ namespace HedgeEdit
             new Dictionary<string, VPModel>();
 
         public static VPModel DefaultCube;
-        public static List<string> ModelDirectories = new List<string>();
+        public static AssetDirectories ModelDirectories = new AssetDirectories();
 
         // Methods
         public static VPObjectInstance GetInstance(VPModel model, object obj)
@@ -49,8 +49,58 @@ namespace HedgeEdit
             return TerrainGroups[name];
         }
 
+        public static VPModel GetModel(string name, string resDir = null,
+            bool isTerrain = false, bool loadMats = false, string group = null,
+            bool nonEditable = true, GensTerrainInstanceInfo instInfo = null,
+            bool spawnInstance = true)
+        {
+            if (string.IsNullOrEmpty(name))
+                return DefaultCube;
+
+            var g = GetTerrainGroup(group);
+            if (!g.ContainsKey(name))
+            {
+                // Attempt to load the model
+                var mdlExt = (isTerrain) ? Types.TerrainModelExtension : Types.ModelExtension;
+                foreach (var dir in ResourceDirectories)
+                {
+                    if (Directory.Exists(dir.FullPath))
+                    {
+                        string path = Path.Combine(dir.FullPath, $"{name}{mdlExt}");
+                        if (File.Exists(path))
+                        {
+                            var mdl = LoadModel(path, resDir, isTerrain, loadMats,
+                                group, nonEditable, instInfo, spawnInstance);
+
+                            if (mdl != null)
+                                return mdl;
+
+                            // TODO: Maybe remove this line so it keeps trying other dirs?
+                            return DefaultCube;
+                        }
+                    }
+                }
+
+                // Return the default cube if that failed
+                return DefaultCube;
+            }
+            else
+            {
+                if (spawnInstance && instInfo != null)
+                {
+                    Program.MainUIInvoke(() =>
+                    {
+                        g[name].Instances.Add(new VPObjectInstance(
+                            instInfo.TransformMatrix, instInfo.FileName));
+                    });
+                }
+
+                return g[name];
+            }
+        }
+
         public static GensTerrainList LoadTerrainList(string path,
-            string groupsDir, string resDir)
+            string groupsDir, string resDir, bool nonEditable = true)
         {
             // Terrain List
             GUI.ChangeLoadStatus("Terrain List");
@@ -159,7 +209,7 @@ namespace HedgeEdit
                         {
                             LoadMaterial(Path.Combine(resDir,
                                 $"{mesh.MaterialName}{matExt}"),
-                                mesh.MaterialName);
+                                mesh.MaterialName, nonEditable);
                         }
 
                         Program.MainUIInvoke(() =>
@@ -175,7 +225,9 @@ namespace HedgeEdit
         }
 
         public static VPModel LoadModel(string path, string resDir = null,
-            bool isTerrain = false, bool loadMats = false, string group = null)
+            bool isTerrain = false, bool loadMats = false, string group = null,
+            bool nonEditable = true, GensTerrainInstanceInfo instInfo = null,
+            bool spawnInstance = true)
         {
             // Figure out what type of model to use
             Model mdl;
@@ -236,29 +288,24 @@ namespace HedgeEdit
                         dict = GetTerrainGroup(group, true);
                     });
 
-                    string instancePath = Path.Combine(dir,
-                        string.Format("{0}{1}",
-                        shortName, GensTerrainInstanceInfo.Extension));
-
-                    if (File.Exists(instancePath))
+                    if (spawnInstance)
                     {
-                        var info = new GensTerrainInstanceInfo();
-                        info.Load(instancePath);
-                        instance = new VPObjectInstance(info.TransformMatrix, shortName);
-                    }
-                    else
-                    {
-                        instance = new VPObjectInstance(shortName);
+                        instance = (instInfo == null) ? new VPObjectInstance(shortName) :
+                            new VPObjectInstance(instInfo.TransformMatrix, instInfo.FileName);
                     }
 
                     // Don't bother loading the model again if we've
                     // already loaded a model with the same name.
                     if (dict.ContainsKey(shortName))
                     {
-                        Program.MainUIInvoke(() =>
+                        if (spawnInstance)
                         {
-                            AddTerrainInstance(shortName, instance, group);
-                        });
+                            Program.MainUIInvoke(() =>
+                            {
+                                AddTerrainInstance(shortName, instance, group);
+                            });
+                        }
+
                         return dict[shortName];
                     }
                 }
@@ -296,12 +343,12 @@ namespace HedgeEdit
 
                     if (!useResDirs && File.Exists(pth))
                     {
-                        var mat = LoadMaterial(pth, mesh.MaterialName);
+                        var mat = LoadMaterial(pth, mesh.MaterialName, nonEditable);
                         if (mat != null)
                             continue;
                     }
 
-                    GetMaterial(mesh.MaterialName);
+                    GetMaterial(mesh.MaterialName, nonEditable);
                 }
             }
 
@@ -310,7 +357,8 @@ namespace HedgeEdit
             {
                 if (isTerrain)
                 {
-                    vpMdl = AddModelInstance(mdl, instance, dict);
+                    vpMdl = (spawnInstance) ? AddModelInstance(mdl,
+                        instance, dict) : AddModel(mdl, dict);
                 }
                 else
                 {
@@ -321,15 +369,14 @@ namespace HedgeEdit
             return vpMdl;
         }
 
-        public static void AddModelDirectoryFromPath(string path)
+        public static AssetDirectory AddModelDirectoryFromPath(string path)
         {
-            AddModelDirectory(Path.GetDirectoryName(path));
+            return AddModelDirectory(Path.GetDirectoryName(path));
         }
 
-        public static void AddModelDirectory(string dir)
+        public static AssetDirectory AddModelDirectory(string dir)
         {
-            if (!ModelDirectories.Contains(dir))
-                ModelDirectories.Add(dir);
+            return ModelDirectories.AddDirectory(dir);
         }
 
         public static bool AddTerrainInstance(string modelName,

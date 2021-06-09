@@ -55,12 +55,21 @@ namespace HedgeEdit.Lua
             UserData.RegisterType<SetObjectParam>();
             UserData.RegisterType<SetObjectTransform>();
             UserData.RegisterType<SetObject>();
+            UserData.RegisterType<SetObjectTypeParamExtra>();
+            UserData.RegisterType<SetObjectTypeParamEnum>();
+            UserData.RegisterType<SetObjectTypeParam>();
+            UserData.RegisterType<SetObjectType>();
             UserData.RegisterType<SetData>();
 
-            UserData.RegisterType<KeyValuePair<string, GensMaterial>>();
-            UserData.RegisterType<GensMaterial>();
             UserData.RegisterType<VPModel>();
             UserData.RegisterType<GensTerrainList>();
+            UserData.RegisterType<GensMaterial>();
+
+            UserData.RegisterType<AssetDirectory>();
+            UserData.RegisterType<AssetDirectories>();
+            UserData.RegisterType<Asset<GensMaterial>>();
+            UserData.RegisterType<KeyValuePair<string, Asset<GensMaterial>>>();
+            UserData.RegisterType<AssetCollection<GensMaterial>>();
         }
 
         public static bool EvaluateCondition(string condition)
@@ -88,10 +97,17 @@ namespace HedgeEdit.Lua
             script.DoString(str);
         }
 
-        public void Call(string funcName, params object[] args)
+        public DynValue Call(string funcName, params object[] args)
         {
             if (script.Globals[funcName] != null)
-                script.Call(script.Globals[funcName], args);
+                return script.Call(script.Globals[funcName], args);
+
+            return null;
+        }
+
+        public object GetValue(string name)
+        {
+            return script.Globals[name];
         }
 
         public string FormatCacheDir(string path)
