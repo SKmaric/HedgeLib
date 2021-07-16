@@ -290,27 +290,27 @@ namespace HedgeLib
 
         public static void AddElem(this XElement elem, Vector2 vect)
         {
-            var x = new XElement("x", vect.X);
-            var y = new XElement("y", vect.Y);
+            var x = new XElement("x", vect.X.ToString("0.#######"));
+            var y = new XElement("y", vect.Y.ToString("0.#######"));
 
             elem.Add(x, y);
         }
 
         public static void AddElem(this XElement elem, Vector3 vect)
         {
-            var x = new XElement("x", vect.X);
-            var y = new XElement("y", vect.Y);
-            var z = new XElement("z", vect.Z);
+            var x = new XElement("x", vect.X.ToString("0.#######"));
+            var y = new XElement("y", vect.Y.ToString("0.#######"));
+            var z = new XElement("z", vect.Z.ToString("0.#######"));
 
             elem.Add(x, y, z);
         }
 
         public static void AddElem(this XElement elem, Vector4 vect)
         {
-            var x = new XElement("x", vect.X);
-            var y = new XElement("y", vect.Y);
-            var z = new XElement("z", vect.Z);
-            var w = new XElement("w", vect.W);
+            var x = new XElement("x", vect.X.ToString("0.#######"));
+            var y = new XElement("y", vect.Y.ToString("0.#######"));
+            var z = new XElement("z", vect.Z.ToString("0.#######"));
+            var w = new XElement("w", vect.W.ToString("0.#######"));
 
             elem.Add(x, y, z, w);
         }
