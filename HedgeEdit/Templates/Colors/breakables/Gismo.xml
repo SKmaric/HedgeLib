@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <Unknown5 type="uint32" default="0" description="" />
-  <Type type="uint32" default="0" description="Numerical ID of Gismo, set by stage info." />
+  <Type type="uint32" default="0" description="Numerical ID of Gismo, set by stage info.">
+	<!-- stg100 Gismo -->
+<!-- 	<Enum value="0" description="stg100_obj_woodbox" />
+	<Enum value="1" description="stg100_obj_dustbox" />
+	<Enum value="2" description="stg100_obj_potA" />
+	<Enum value="3" description="stg100_obj_potB" />
+	<Enum value="4" description="stg100_obj_bench01" />
+	<Enum value="5" description="stg100_obj_bench02" />
+	<Enum value="6" description="stg100_obj_arrow01" />
+	<Enum value="7" description="stg100_obj_arrow02" /> -->
+	<!-- stg200 Gismo -->
+	<Enum value="0" description="stg200_obj_ginger" />
+	<Enum value="1" description="stg200_obj_popcorn" />
+	<Enum value="2" description="stg200_obj_wafer" />
+	<Enum value="3" description="stg200_obj_tank" />
+	<Enum value="4" description="stg200_obj_barricade" />
+	<Enum value="5" description="stg200_obj_popcorn2" />
+	<!-- stg400 Gismo -->
+<!-- 	<Enum value="0" description="stg400_obj_plabox" />
+	<Enum value="1" description="stg400_obj_oildrum" />
+	<Enum value="2" description="stg400_obj_barricade" />
+	<Enum value="3" description="stg400_obj_safetydrum" /> -->
+	<!-- stg500 Gismo -->
+<!-- 	<Enum value="0" description="stg500_obj_barricadeA" />
+	<Enum value="1" description="stg500_obj_barricadeB" />
+	<Enum value="2" description="stg500_obj_jarA" />
+	<Enum value="3" description="stg500_obj_jarB" />
+	<Enum value="4" description="stg500_obj_lanternA" />
+	<Enum value="5" description="stg500_obj_lanternB" />
+	<Enum value="6" description="stg500_obj_jarC" /> -->
+	<!-- stg600 Gismo -->
+<!-- 	<Enum value="0" description="stg600_obj_barricade" />
+	<Enum value="1" description="stg600_obj_bench" />
+	<Enum value="2" description="stg600_obj_tankA" />
+	<Enum value="3" description="stg600_obj_planterA" />
+	<Enum value="4" description="stg600_obj_planterB" />
+	<Enum value="5" description="stg600_obj_lampA" /> -->
+  </Type>
   <Extra type="RawByteLength" length="8" />
 </Template>

@@ -2,9 +2,13 @@
 <Template>
   <IsSolid type="bool" default="true" description="Enable collision" />
   <Unknown6 type="enum" default="1" description="" />
-  <ModelType type="enum" default="2" description="If 2, the size will round up to an even number if any of the dimensions are an odd number." />
-  <Width type="enum" default="2" description="" />
-  <Height type="enum" default="2" description="" />
-  <Length type="enum" default="2" description="" />
+  <ModelType type="enum" default="2" description="Dynamically slices box model if size values aren't a multiple of the model's size.">
+	<Enum value="0" description="mlt_box1" />
+	<Enum value="1" description="mlt_box2" />
+	<Enum value="2" description="mlt_box4" />
+  </ModelType>
+  <BoxSizeX type="enum" default="2" description="" />
+  <BoxSizeY type="enum" default="2" description="" />
+  <BoxSizeZ type="enum" default="2" description="" />
   <Extra type="RawByteLength" length="8" />
 </Template>

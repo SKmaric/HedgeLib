@@ -2,6 +2,29 @@
 <Template>
   <IsSolid type="bool" default="true" description="Enable collision" />
   <Unknown6 type="enum" default="1" description="" />
-  <ModelType type="enum" default="2" description="" />
+  <ModelType type="enum" default="2" description="">
+	<Enum value="4" description="mlt_004" />
+	<Enum value="5" description="mlt_005" />
+	<Enum value="6" description="mlt_006" />
+	<Enum value="7" description="mlt_007" />
+	<Enum value="8" description="mlt_008" />
+	<Enum value="9" description="mlt_009" />
+	<Enum value="10" description="mlt_010" />
+	<Enum value="11" description="mlt_011" />
+	<Enum value="12" description="mlt_012" />
+	<Enum value="13" description="mlt_013" />
+	<Enum value="14" description="mlt_014" />
+	<Enum value="15" description="mlt_015" />
+	<Enum value="16" description="mlt_016" />
+	<Enum value="17" description="mlt_017" />
+	<Enum value="18" description="mlt_018" />
+	<Enum value="19" description="mlt_019" />
+	<Enum value="20" description="mlt_020" />
+	<Enum value="21" description="mlt_021" />
+	<Enum value="22" description="mlt_022" />
+	<Enum value="23" description="mlt_023" />
+	<Enum value="24" description="mlt_024" />
+	<Enum value="25" description="mlt_025" />
+  </ModelType>
   <Extra type="RawByteLength" length="4" />
 </Template>

@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Height type="float" default="65" description="" />
+  <Collision_Width type="float" default="49" description="" />
+  <Speed type="float" default="750" description="" />
+  <Unknown9 type="float" default="750" description="" />
+  <Unknown10 type="uint32" default="0" description="" />
+  <Unknown11 type="float" default="1" description="" />
+  <Unknown12 type="uint32" default="0" description="" />
+  <Unknown13 type="uint32" default="0" description="" />
+  <Unknown14 type="uint32" default="0" description="" />
+  <Unknown15 type="float" default="600" description="" />
+  <Unknown16 type="uint32" default="0" description="" />
   <Extra type="RawByteLength" length="44" />
 </Template>

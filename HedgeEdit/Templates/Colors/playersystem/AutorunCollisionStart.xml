@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Height type="float" default="65" description="" />
+  <Collision_Width type="float" default="49" description="" />
+  <TargetDirection type="vector" description="path search-facing" />
+  <Speed type="float" default="1" description="" />
+  <Unknown9 type="float" default="1" description="" />
+  <Unknown10 type="float" default="1" description="" />
+  <Unknown11 type="float" default="0" description="" />
+  <Unknown12 type="bool" default="true" description="" />
   <Extra type="RawByteLength" length="40" />
 </Template>

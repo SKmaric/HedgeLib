@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Collision_Width type="float" default="0" description="collision of width" />
+  <Collision_Height type="float" default="0" description="the height of the collision" />
+  <Unknown5 type="float" default="1" description="" />
+  <Unknown6 type="float" default="1" description="" />
+  <TargetDirection type="vector" description="path search-facing" />
+  <Unknown7 type="bool" default="true" description="" />
+  <Unknown8 type="bool" default="false" description="" />
+  <Unknown9 type="bool" default="true" description="" />
+  <Unknown10 type="bool" default="true" description="" />
+  <Unknown11 type="float" default="1" description="" />
+  <Unknown12 type="bool" default="false" description="" />
+  <Unknown13 type="bool" default="false" description="" />
+  <Unknown14 type="uint16" default="1" description="" />
+  <Unknown15 type="uint16" default="1" description="" />
+  <Unknown16 type="uint16" default="1" description="" />
+
   <Extra type="RawByteLength" length="48" />
 </Template>

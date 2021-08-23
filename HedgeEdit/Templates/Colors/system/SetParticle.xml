@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <EffectID type="uint32" default="0" description="" />
+  <EffectID type="uint32" default="0" description="">
+	<!-- stg100 particle -->
+	<Enum value="0" description="rso_yo_watersplashS" />
+	<Enum value="1" description="rso_yo_watersplash" />
+	<Enum value="2" description="rso_yo_watersplashS_dark" />
+	<Enum value="3" description="rso_yo_watersplash_dark" />
+	<Enum value="4" description="rso_yo_bonfire" />
+	<Enum value="5" description="rso_yo_fountain" />
+	<!-- stg300 particle -->
+<!-- 	<Enum value="0" description="shp_yo_fireworksC" />
+	<Enum value="1" description="shp_yo_fireworksM" />
+	<Enum value="2" description="shp_yo_fireworksY" /> -->
+	<!-- stg400 particle -->
+<!-- 	<Enum value="0" description="pla_yo_smokeB" />
+	<Enum value="1" description="pla_yo_boring_smoke" />
+	<Enum value="2" description="pla_yo_weld" />
+	<Enum value="3" description="pla_yo_poisonsplash" />
+	<Enum value="4" description="pla_yo_scrape" />
+	<Enum value="5" description="pla_yo_absorb" /> -->
+	<!-- stg500 particle -->
+<!-- 	<Enum value="0" description="qua_yo_fish" />
+	<Enum value="1" description="qua_yo_watersplash" /> -->
+	<!-- stg600 particle -->
+<!-- 	<Enum value="0" description="ast_yo_eruption" />
+	<Enum value="1" description="ast_yo_eruption_far" />
+	<Enum value="2" description="ast_yo_eruption_seethe" /> -->
+  </EffectID>
   <Unknown6 type="uint32" default="0" description="" />
   <Unknown7 type="uint32" default="0" description="" />
   <EffectScaleX type="float" default="0" description="" />

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="collision of width" />
+  <Collision_Width type="float" default="0" description="width of collision" />
   <Collision_Height type="float" default="0" description="the height of the collision" />
-  <CueID type="uint32" default="0" description="The ID of the sound, as defined in cue_name_list.orc" />
+  <CueID type="uint32" default="0" description="The ID of the sound, as defined in cue_name_list.orc">
+    <Enum value="0" description="objsn_whoosh1" />
+    <Enum value="1" description="objsn_whoosh2" />
+    <Enum value="2" description="objsn_whoosh3" />
+  </CueID>
   <EmitterPos type="vector" description="?" />
   <Extra type="RawByteLength" length="24" />
 </Template>
