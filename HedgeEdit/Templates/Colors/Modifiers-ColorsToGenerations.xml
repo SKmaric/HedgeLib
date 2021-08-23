@@ -5,15 +5,19 @@
 		<!-- Element is Generations name, Value is Colors name.-->
 		<!-- Common -->
 		<SpringFake Value="DummySpring" />
-		<GrindDashPanel Value="GrindBooster" />
+		<DashPanel Value="GrindBooster" Condition="IsVisibleModel:false" />
+		<GrindDashPanel Value="GrindBooster" Condition="IsVisibleModel:true" />
 		<SelectCanon Value="JumpSelector" />
 		<JumpPole Value="SpringPole" />
+		<JumpBoard3D Value="JumpBoard" Condition="AngleType>0" />
 		<AdlibTrickJump Value="TrickJump" />
 		<MovingThorn Value="MovingThornBall" />
 		<Item Value="1UP" />
 		<SshBubble Value="BubbleGenerator" />
 		<RedMedal Value="RedRing" />
 		<ObjectPhysics Value="Gismo" />
+		<ObjectPhysics Value="MapPartsMesh" />
+		<ObjectPhysics Value="MapPartsBox" />
 		<GeneralFloor Value="CommonFloor" />
 		<PlaTramCar Value="RollerCoaster" />
 		<!-- System -->
@@ -32,6 +36,9 @@
 		<StumbleCollision Value="EventStumbleCollision" />
 		<!-- Navigator -->
 		<NavigationCollision Value="EventNavigationCollision" />
+		<NavigationCollision Value="EventNavigationCollisionPlane" />
+		<FallSignalSV Value="EventNavigationCollision" Condition="NavigationType:8" />
+		<FallSignalSV Value="EventNavigationCollisionPlane" Condition="NavigationType:8" />
 		<Omochao Value="HintRing" />
 		<!-- Camera -->
 		<ObjCameraPathParallel Value="Camera2D" />
@@ -51,7 +58,13 @@
 		<EnemyBeeton2D Value="enmBeeton" />
 		<EnemyEChaserManager Value="enmEggChaser" />
 		<EnemyPawn3D Value="enmEggPawn" />
+		<EnemyPawnPla3D Value="enmEggPawn_rso" />
+		<EnemyPawnPla3D Value="enmEggPawn_fct" />
+		<EnemyPawnPla3D Value="enmEggPawn_shp" />
+		<EnemyPawnPla3D Value="enmEggPawn_pla" />
 		<EnemyPawnPla3D Value="enmEggPawn_qua" />
+		<EnemyPawnPla3D Value="enmEggPawn_ast" />
+		<EnemyPawnPla3D Value="enmEggPawn_elv" />
 		<EnemyPawnGun3D Value="enmEggPawnGun" />
 		<EnemyPawnLance3D Value="enmEggPawnLance" />
 		<EnemyGanigani3D Value="enmGanigani" />
@@ -64,9 +77,11 @@
 		<CteGunTruck200 Value="enmBigChaser" />
 		<!-- Wisp -->
 		<PlaReleaseBox Value="ReleaseBoxSmall" />
+		<SuperRing Value="ReleaseBoxSmall" Condition="Type:0" />
 		<CpzPipeEnterCollision Value="EventSpiralPipe" />
 		<GoalRing Value="ReleaseBoxBig" />
 		<PlaPhantomCancelVolume Value="PhantomCancelCollision" />
+		<PlaPhantomCancelVolume Value="EventLaserCancelCollision" />
 		<MissionOpenBlock Value="PuzzleRing" />
 		<PlaFallBlock Value="PhantomObjBreakable" />
 		<!-- Sound -->
@@ -107,40 +122,141 @@
 		<PushBlock />
 		<ChaserBrokenBlock />
 	</MakeObjectPhysics>
-	<PositionOffset> <!-- Global rotation -->
+	<RemoveObject>
+		<CleanKill />
+		<enmMole />
+		<enmLarva />
+		<DriftCollision />
+	</RemoveObject>
+	<PositionOffset>
 		<Ring X="0" Y="0.5" Z="0" />
-		<RedRing X="0" Y="1" Z="0" />
+		<SuperRing X="0" Y="0.6" Z="0" />
+		<RedMedal X="0" Y="1" Z="0" />
+		<GoalRing X="0" Y="2" Z="0" />
 	</PositionOffset>
 	<RotationOffset>
+		<DashPanel X="0" Y="-180" Z="0" Condition="IsReversed:false" />
+		<GrindDashPanel X="0" Y="-180" Z="0" Condition="IsReversed:false" />
 		<FallDeadCollision X="-90" Y="0" Z="0" />
-		<Fiber X="-90" Y="0" Z="0" />
 		<DashRing X="0" Y="-180" Z="0" />
 		<JumpBoard X="0" Y="-180" Z="0" />
+		<JumpBoard3D X="0" Y="-180" Z="0" />
 		<PointMarker X="0" Y="-180" Z="0" />
-		<ChageMode_2DtoForward X="0" Y="-180" Z="0" />
-		<ChageMode_3Dto2D X="0" Y="-180" Z="0" />
-		<ChageMode_3DtoForward X="0" Y="-180" Z="0" />
+		<ChangeMode_2DtoForward X="0" Y="-180" Z="0" />
+		<ChangeMode_3Dto2D X="0" Y="-180" Z="0" />
+		<ChangeMode_3DtoForward X="0" Y="-180" Z="0" />
 		<RainbowRing X="0" Y="-180" Z="0" />
-		<TrickJump X="0" Y="-180" Z="0" />
+		<AdlibTrickJump X="0" Y="-180" Z="0" />
 		<CameraCollisionBoard X="0" Y="-180" Z="0" />
-		<EventJumpCollision X="0" Y="-180" Z="0" />
+		<JumpCollision X="0" Y="-180" Z="0" />
 		<WindNoiseCollision X="0" Y="-180" Z="0" />
-		<AutorunCollisionStart X="0" Y="-180" Z="0" />
-		<AutorunCollisionEnd X="0" Y="-180" Z="0" />
+		<AutorunStartCollision X="0" Y="-180" Z="0" />
+		<AutorunFinishCollision X="0" Y="-180" Z="0" />
 		<KeepRunningCollision X="0" Y="-180" Z="0" />
 		<SetParticle X="0" Y="-90" Z="0" />
-		<GrindThorn X="0" Y="-90" Z="0" />
+		<GrindThorn X="0" Y="-90" Z="0" /> 
+		<ObjectPhysics X="-90" Y="0" Z="0" Condition="OriginalName:Fiber" />
 	</RotationOffset>
-	<Param-Divide>
-		<Collision Value="5" />
-		<Speed Value="10" />
-		<Velocity Value="10" />
-		<TargetOffset Value="10" />
-		<Distance Value="10" />
-		<Height Value="10" />
-		<Width Value="10" />
-		<Length Value="10" />
-		<Range Value="10" />
-		<Radius Value="10" />
-	</Param-Divide>
+	<ParamModify>
+		<DashPanel>
+			<IsVisibleModel Rename="IsInvisible" BoolFlip="true" />
+		</DashPanel>
+		<JumpBoard3D>
+			<AngleType Rename="SizeType" Offset="-1" />
+		</JumpBoard3D>
+		<JumpBoard>
+			<AngleType Override="1" />
+		</JumpBoard>
+		<AdlibTrickJump>
+			<SizeType Override="0" Condition="SizeType:1" />
+			<SizeType Override="1" Condition="SizeType:0" />
+		</AdlibTrickJump>
+		<ObjectPhysics>
+			<Type EnumString="true" Condition="OriginalName:Gismo" />
+			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsMesh" />
+			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsBox" />
+		</ObjectPhysics>
+		<PlaReleaseBox>
+			<Type Override="6" Condition="Type:4" />
+			<Type Override="7" Condition="Type:3" />
+		</PlaReleaseBox>
+		<SoundPoint>
+			<CueID Rename="CueName" EnumString="true" />
+			<IsPlayOnce Rename="IsRegularly" BoolFlip="true" />
+			<RangeIn Rename="Range" Factor="0.1" />
+			<RangeOut Rename="Radius" Factor="0.1" />
+		</SoundPoint>
+		<SoundLine>
+			<CueID Rename="CueName" EnumString="true" />
+		</SoundLine>
+		<WindNoiseCollision>
+			<CueID Rename="CueName" EnumString="true" />
+		</WindNoiseCollision>
+		<SetParticle>
+			<CueID Rename="EffectName" EnumString="true" />
+		</SetParticle>
+		<SetRigidBody>
+			<DefaultON Override="false" Condition="IsOneWayPlane:true" />
+		</SetRigidBody>
+		<NavigationCollision>
+			<NavigationType Override="3" Condition="NavigationType:0" />
+			<NavigationType Override="0" Condition="NavigationType:2" />
+			<NavigationType Override="2" Condition="NavigationType:3" />
+			<NavigationType Override="8" Condition="NavigationType:5" />
+			<NavigationType Override="10" Condition="NavigationType:6" />
+			<NavigationType Override="6" Condition="NavigationType:7" />
+		</NavigationCollision>
+		<!-- Camera -->
+		<ObjCameraPathParallel>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPathParallel>
+		<ObjCameraNormal>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraNormal>
+		<ChangeVolumeCamera>
+			<RangeOut Rename="Range" Factor="0.2" />
+		</ChangeVolumeCamera>
+		<ObjCameraFix>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraFix>
+		<ObjCameraPan>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPan>
+		<ObjCameraPanVertical>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPanVertical>
+		<ObjCameraParallel>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraParallel>
+		<ObjCameraPathLook>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPathLook>
+		<ObjCameraPathPath>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPathPath>
+		<ObjCameraPathTarget>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPathTarget>
+		<ObjCameraPoint>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraPoint>
+		<ObjCameraVertical>
+			<RangeOut Rename="Range" Factor="1" />
+		</ObjCameraVertical>
+		<all>
+			<Collision Factor="0.2" />
+			<Speed Factor="0.1" />
+			<Velocity Factor="0.1" />
+			<TargetOffset Factor="0.1" />
+			<Distance Factor="0.1" />
+			<Height Factor="0.1" />
+			<Width Factor="0.1" />
+			<Length Factor="0.1" />
+			<Radius Factor="0.1" />
+			<RangeOut Rename="Range" Factor="0.1" />
+			<RangeIn Factor="0.1" />
+		</all>
+	</ParamModify>
+	<IDOffset Value="0" />
+	<GlobalPositionOffset X="0" Y="0" Z="0" />
 </Modifiers>
