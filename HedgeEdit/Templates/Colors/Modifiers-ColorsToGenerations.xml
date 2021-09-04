@@ -57,7 +57,8 @@
 		<EnemyBatabata2D Value="enmBatabata" />
 		<EnemyBeeton2D Value="enmBeeton" />
 		<EnemyEChaserManager Value="enmEggChaser" />
-		<EnemyPawn3D Value="enmEggPawn" />
+		<EnemyPawn3D Value="enmEggPawn" Condition="MoveTypeSideView:false" />
+		<EnemyPawn2D Value="enmEggPawn" Condition="MoveTypeSideView:true" />
 		<EnemyPawnPla3D Value="enmEggPawn_rso" />
 		<EnemyPawnPla3D Value="enmEggPawn_fct" />
 		<EnemyPawnPla3D Value="enmEggPawn_shp" />
@@ -72,7 +73,8 @@
 		<EnemyMotora3D Value="enmMotora" />
 		<EnemyNal3D Value="enmNal" />
 		<EnemySpanner Value="enmSpanner" />
-		<EnemySpinner Value="enmSpinner" />
+		<EnemySpinner Value="enmSpinner" Condition="ForSideView:false" />
+		<EnemySpinner2D Value="enmSpinner" Condition="ForSideView:true" />
 		<MissionSprinkler Value="enmSprinkler" />
 		<CteGunTruck200 Value="enmBigChaser" />
 		<!-- Wisp -->
@@ -135,8 +137,8 @@
 		<GoalRing X="0" Y="2" Z="0" />
 	</PositionOffset>
 	<RotationOffset>
-		<DashPanel X="0" Y="-180" Z="0" Condition="IsReversed:false" />
-		<GrindDashPanel X="0" Y="-180" Z="0" Condition="IsReversed:false" />
+		<DashPanel X="0" Y="-180" Z="0" Condition="IsFront:false" />
+		<GrindDashPanel X="0" Y="-180" Z="0" Condition="IsFront:false" />
 		<FallDeadCollision X="-90" Y="0" Z="0" />
 		<DashRing X="0" Y="-180" Z="0" />
 		<JumpBoard X="0" Y="-180" Z="0" />
@@ -162,10 +164,10 @@
 			<IsVisibleModel Rename="IsInvisible" BoolFlip="true" />
 		</DashPanel>
 		<JumpBoard3D>
-			<AngleType Rename="SizeType" Offset="-1" />
+			<SizeType Offset="-1" />
 		</JumpBoard3D>
 		<JumpBoard>
-			<AngleType Override="1" />
+			<SizeType Rename="AngleType" Offset="1" />
 		</JumpBoard>
 		<AdlibTrickJump>
 			<SizeType Override="0" Condition="SizeType:1" />
@@ -206,16 +208,27 @@
 			<NavigationType Override="10" Condition="NavigationType:6" />
 			<NavigationType Override="6" Condition="NavigationType:7" />
 		</NavigationCollision>
+		<FallDeadCollision>
+			<CollisionWidth Rename="Collision_Width" Factor="0.2" />
+			<CollisionHeight Rename="Collision_Height" Factor="0.2" />
+		</FallDeadCollision>
 		<!-- Camera -->
+		<ChangeVolumeCamera>
+			<CollisionWidth Rename="Collision_Width" Factor="0.2" />
+			<CollisionHeight Rename="Collision_Height" Factor="0.2" />
+			<CollisionLength Rename="Collision_Length" Factor="0.2" />
+			<EaseTimeEnter Rename="Ease_Time_Enter" />
+			<EaseTimeLeave Rename="Ease_Time_Leave" />
+			<InterpolateType Rename="LineType" />
+			<ShapeType Rename="Shape_Type" />
+			<RangeOut Rename="Range" Factor="0.2" />
+		</ChangeVolumeCamera>
 		<ObjCameraPathParallel>
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPathParallel>
 		<ObjCameraNormal>
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraNormal>
-		<ChangeVolumeCamera>
-			<RangeOut Rename="Range" Factor="0.2" />
-		</ChangeVolumeCamera>
 		<ObjCameraFix>
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraFix>
@@ -226,6 +239,9 @@
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPanVertical>
 		<ObjCameraParallel>
+			<EaseTimeEnter Rename="Ease_Time_Enter" />
+			<EaseTimeLeave Rename="Ease_Time_Leave" />
+			<TargetType Rename="Target_Type" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraParallel>
 		<ObjCameraPathLook>
@@ -243,6 +259,12 @@
 		<ObjCameraVertical>
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraVertical>
+		<!-- Enemy -->
+		<EnemyPawn3D>
+			<RadiusAttack Rename="AttackRange" Factor="0.1" />
+			<RadiusActive Rename="ActionRange" Factor="0.1" />
+			<IsPlayFindMotion Rename="IsPlayFindMotion" />
+		</EnemyPawn3D>
 		<all>
 			<Collision Factor="0.2" />
 			<Speed Factor="0.1" />

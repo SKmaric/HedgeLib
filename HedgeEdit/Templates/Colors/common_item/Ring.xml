@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <ResetTime type="float" default="0" description="?" />
-  <Unknown4 type="uint" default="0" description="?" />
-  <IsReset type="bool" default="false" description="?" />
-  <Unknown5 type="bool" default="true" description="?" />
+  <ResetTime type="float" default="0" description="Time taken to respawn after being collected if IsReset is true." />
+  <TargetID type="uint" default="0" description="?" />
+  <IsReset type="bool" default="false" description="Respawn after being collected" />
+  <IsLightSpeedDashTarget type="bool" default="false" description="Enable light speed dash (unused in Colors; Hover wisp targets Rings regardless of setting)" />
   <SetPlaceType type="enum" default="0" description="?" />
-  <InitDisp type="enum" default="0" description="?" />
-  <Unknown7 type="uint" default="0" description="?" />
+  <EventType type="enum" default="0" description="?" />
+  <RotType type="enum" default="0" description="?" />
   <Extra type="RawByteLength" length="16" />
 </Template>

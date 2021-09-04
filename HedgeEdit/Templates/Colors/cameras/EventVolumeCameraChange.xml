@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" />
-  <Collision_Height type="float" default="0" />
-  <Collision_Length type="float" default="0" />
-  <Target type="target" description="associate camera" />
-  <IsHigherPhantomCamera type="bool" default="false" description="True: Priority higher than phantom camera" />
-  <Unknown-PriorityCategory type="enum" default="0" description="priority category ?" />
-  <Unknown5 type="bool" default="false" description="?" />
-  <Unknown6 type="bool" default="false" description="?" />
-  <Priority type="uint32" default="0" description="priority (higher takes precedence) ?" />
-  <Ease_Time_Enter type="float" default="0" description="transition time at the time of invasion (sec)" />
-  <Ease_Time_Leave type="float" default="0" description="transition time at the time of withdrawal (sec)" />
-  <IsStop type="enum" default="0" description="kind ?" />
-  <IsEnableCollision type="bool" default="false" description="[unsupported] it may need to do a collision judgment at the time of transition ?" />
-  <PhantomType type="enum" default="0" description="The reaction to the phantom ?" />
-  <LineType type="enum" default="0" description="interpolation method ?" />
-  <DefaultStatus type="enum" default="0" description="1: Disabled?" />
-  <Unknown8 type="enum" default="0" description="1: Disabled?" />
+  <CollisionWidth type="float" default="0" />
+  <CollisionHeight type="float" default="0" />
+  <CollisionLength type="float" default="0" />
+  <Target type="target" description="Associated camera" />
+  <IsPhantomCamera type="bool" default="false" description="Active only when wisp is active" />
+  <PriorityCategory type="enum" default="0" description="?" />
+  <Priority type="uint32" default="0" description="If multiple cameras are active, the higher priority camera is used" />
+  <EaseTimeEnter type="float" default="0" description="transition time at the time of invasion (sec)" />
+  <EaseTimeLeave type="float" default="0" description="transition time at the time of withdrawal (sec)" />
+  <ShapeType type="enum" default="0" description="Shape of volume (box, sphere, capsule?)" />
+  <IsStop type="enum" default="0" description="?" />
+  <IsEnableCollision type="bool" default="false" description="?" />
+  <InterpolateType type="enum" default="0" description="interpolation method" />
+  <PhantomType type="enum" default="0" description="?" />
   <NoneEffectiveBoost type="bool" default="false" description="it wants to boost angle without change ?" />
-  <Shape_Type type="enum" default="0" description="form ?" />
   <Extra type="RawByteLength" length="40" />
 </Template>

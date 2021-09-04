@@ -2,6 +2,7 @@
 <Template>
   <Length type="float" default="0" description="" />
   <IsWaitUp type="bool" default="false" description="" />
+  <IsOneTimeUp type="bool" default="false" description="" />
   <ImpulseVelocity type="float" default="0" description="" />
   <OutOfControl type="float" default="0" description="" />
   <UpSpeedMax type="float" default="0" description="" />
