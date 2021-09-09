@@ -9,7 +9,7 @@
 		<GrindDashPanel Value="GrindBooster" Condition="IsVisibleModel:true" />
 		<SelectCanon Value="JumpSelector" />
 		<JumpPole Value="SpringPole" />
-		<JumpBoard3D Value="JumpBoard" Condition="AngleType>0" />
+		<JumpBoard3D Value="JumpBoard" Condition="SizeType>0" />
 		<AdlibTrickJump Value="TrickJump" />
 		<MovingThorn Value="MovingThornBall" />
 		<Item Value="1UP" />
@@ -79,7 +79,7 @@
 		<CteGunTruck200 Value="enmBigChaser" />
 		<!-- Wisp -->
 		<PlaReleaseBox Value="ReleaseBoxSmall" />
-		<SuperRing Value="ReleaseBoxSmall" Condition="Type:0" />
+		<SuperRing Value="ReleaseBoxSmall" Condition="PixieType:0" />
 		<CpzPipeEnterCollision Value="EventSpiralPipe" />
 		<GoalRing Value="ReleaseBoxBig" />
 		<PlaPhantomCancelVolume Value="PhantomCancelCollision" />
@@ -170,18 +170,43 @@
 			<SizeType Rename="AngleType" Offset="1" />
 		</JumpBoard>
 		<AdlibTrickJump>
-			<SizeType Override="0" Condition="SizeType:1" />
-			<SizeType Override="1" Condition="SizeType:0" />
+			<FirstSpeed Rename="ImpulseSpeedOnNormal" Factor="0.1" />
+			<FirstOutOfControl Rename="OutOfControl" />
+			<SecondSpeed Rename="ImpulseSpeedOnBoost" Factor="0.1" />
+			<IsSideView Override="0" Condition="IsSideView:true" />
+			<IsSideView Override="1" Condition="IsSideView:false" />
+			<IsSideView Rename="SizeType" />
 		</AdlibTrickJump>
+		<PointMarker>
+			<StageType Rename="DimensionType" />
+		</PointMarker>
+		<Pulley>
+			<MinSpeed Rename="MinInitVel" Factor="0.1" />
+		</Pulley>
+		<Spring>
+			<HasBase Rename="IsWithBase" />
+		</Spring>
+		<RedMedal>
+			<ItemId Rename="MedalID" />
+		</RedMedal>
+		<GeneralFloor>
+			<Amplitude Factor="0.1" />
+		</GeneralFloor>
 		<ObjectPhysics>
 			<Type EnumString="true" Condition="OriginalName:Gismo" />
 			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsMesh" />
 			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsBox" />
 		</ObjectPhysics>
 		<PlaReleaseBox>
-			<Type Override="6" Condition="Type:4" />
-			<Type Override="7" Condition="Type:3" />
+			<PixieType Override="6" Condition="PixieType:4" />
+			<PixieType Override="7" Condition="PixieType:3" />
+			<PixieType Rename="Type" />
+			<Revive Rename="IsRevive" />
+			<MessageBoot Rename="IsMsgBoot" />
 		</PlaReleaseBox>
+		<CpzPipeEnterCollision>
+			<CollisionDepth Rename="Collision_Length" Factor="0.2" />
+		</CpzPipeEnterCollision>
 		<SoundPoint>
 			<CueID Rename="CueName" EnumString="true" />
 			<IsPlayOnce Rename="IsRegularly" BoolFlip="true" />
@@ -198,9 +223,21 @@
 			<CueID Rename="EffectName" EnumString="true" />
 		</SetParticle>
 		<SetRigidBody>
-			<DefaultON Override="false" Condition="IsOneWayPlane:true" />
+			<DefaultON Override="false" Condition="PhysicsType:1" />
 		</SetRigidBody>
 		<NavigationCollision>
+			<Width Rename="Collision_Width" Factor="0.2" />
+			<Height Rename="Collision_Height" Factor="0.2" />
+			<DisAppearType Rename="DelayType" />
+			<OnlyOneBoot Rename="OnlyOnce" />
+			<EnterAngle Rename="InputAngle" />
+			<NaviType Rename="NavigationType" />
+			<NavigationType Override="3" Condition="Type:0" />
+			<NavigationType Override="0" Condition="Type:2" />
+			<NavigationType Override="2" Condition="Type:3" />
+			<NavigationType Override="8" Condition="Type:5" />
+			<NavigationType Override="10" Condition="Type:6" />
+			<NavigationType Override="6" Condition="Type:7" />
 			<NavigationType Override="3" Condition="NavigationType:0" />
 			<NavigationType Override="0" Condition="NavigationType:2" />
 			<NavigationType Override="2" Condition="NavigationType:3" />
@@ -208,19 +245,43 @@
 			<NavigationType Override="10" Condition="NavigationType:6" />
 			<NavigationType Override="6" Condition="NavigationType:7" />
 		</NavigationCollision>
-		<FallDeadCollision>
-			<CollisionWidth Rename="Collision_Width" Factor="0.2" />
-			<CollisionHeight Rename="Collision_Height" Factor="0.2" />
-		</FallDeadCollision>
+		<EventCollision>
+			<CollisionDepth Rename="Collision_Length" Factor="0.2" />
+			<TargetList Rename="TargetList0" />
+			<TargetList2 Rename="TargetList1" />
+			<TargetList3 Rename="TargetList2" />
+			<EventTimer Rename="Timer0" />
+			<EventType Rename="Event0" />
+			<EventTimer2 Rename="Timer1" />
+			<EventType2 Rename="Event1" />
+			<EventTimer3 Rename="Timer2" />
+			<EventType3 Rename="Event2" />
+		</EventCollision>
+		<EventSetter>
+			<TargetList Rename="TargetList0" />
+			<EventList Rename="TriggerList" />
+			<EventTimer Rename="Timer0" />
+			<EventNotifier Rename="Event0" />
+			<EventTimer2 Rename="Timer1" />
+			<EventNotifier2 Rename="Event1" />
+			<EventTimer3 Rename="Timer2" />
+			<EventNotifier3 Rename="Event2" />
+		</EventSetter>
 		<!-- Camera -->
+		<CameraCollisionBoard>
+			<CameraA Rename="ACameraID" />
+			<CollisionA Rename="ALinkObjID" />
+			<SideTypeA Rename="ALinkSide" />
+			<EaseTimeA Rename="EaseTime_AtoB" />
+			<PriorityA Rename="ACameraPriority" />
+			<CameraB Rename="BCameraID" />
+			<CollisionB Rename="BLinkObjID" />
+			<SideTypeB Rename="BLinkSide" />
+			<PriorityB Rename="BCameraPriority" />
+			<EaseTimeB Rename="EaseTime_BtoA" />
+			<RangeOut Rename="Range" Factor="0.2" />
+		</CameraCollisionBoard>
 		<ChangeVolumeCamera>
-			<CollisionWidth Rename="Collision_Width" Factor="0.2" />
-			<CollisionHeight Rename="Collision_Height" Factor="0.2" />
-			<CollisionLength Rename="Collision_Length" Factor="0.2" />
-			<EaseTimeEnter Rename="Ease_Time_Enter" />
-			<EaseTimeLeave Rename="Ease_Time_Leave" />
-			<InterpolateType Rename="LineType" />
-			<ShapeType Rename="Shape_Type" />
 			<RangeOut Rename="Range" Factor="0.2" />
 		</ChangeVolumeCamera>
 		<ObjCameraPathParallel>
@@ -233,15 +294,13 @@
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraFix>
 		<ObjCameraPan>
+			<PositionMode Rename="CameraPositionMode" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPan>
 		<ObjCameraPanVertical>
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPanVertical>
 		<ObjCameraParallel>
-			<EaseTimeEnter Rename="Ease_Time_Enter" />
-			<EaseTimeLeave Rename="Ease_Time_Leave" />
-			<TargetType Rename="Target_Type" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraParallel>
 		<ObjCameraPathLook>
@@ -266,17 +325,32 @@
 			<IsPlayFindMotion Rename="IsPlayFindMotion" />
 		</EnemyPawn3D>
 		<all>
-			<Collision Factor="0.2" />
-			<Speed Factor="0.1" />
-			<Velocity Factor="0.1" />
-			<TargetOffset Factor="0.1" />
-			<Distance Factor="0.1" />
-			<Height Factor="0.1" />
-			<Width Factor="0.1" />
-			<Length Factor="0.1" />
-			<Radius Factor="0.1" />
-			<RangeOut Rename="Range" Factor="0.1" />
-			<RangeIn Factor="0.1" />
+			<!-- Parameters that match... -->
+			<CollisionWidth Rename="Collision_Width" Factor="0.2" />
+			<CollisionHeight Rename="Collision_Height" Factor="0.2" />
+			<CollisionLength Rename="Collision_Length" Factor="0.2" />
+			<CollisionDepth Rename="Collision_Depth" Factor="0.2" />
+			<EaseTimeEnter Rename="Ease_Time_Enter" />
+			<EaseTimeLeave Rename="Ease_Time_Leave" />
+			<InterpolateType Rename="LineType" />
+			<ShapeType Rename="Shape_Type" />
+			<TargetType Rename="Target_Type" />
+			<TargetOffsetFront Rename="TargetOffset_Front" Factor="0.1" />
+			<TargetOffsetUp Rename="TargetOffset_Up" Factor="0.1" />
+			<TargetOffsetRight Rename="TargetOffset_Right" Factor="0.1" />
+			<!-- Parameters that contain... -->
+			<Collision. Factor="0.2" />
+			<Speed. Factor="0.1" />
+			<Velocity. Factor="0.1" />
+			<Gravity. Factor="0.1" />
+			<TargetOffset. Factor="0.1" />
+			<Distance. Factor="0.1" />
+			<Height. Factor="0.1" />
+			<Width. Factor="0.1" />
+			<Length. Factor="0.1" />
+			<Radius. Factor="0.1" />
+			<RangeOut. Rename="Range" Factor="0.1" />
+			<RangeIn. Factor="0.1" />
 		</all>
 	</ParamModify>
 	<IDOffset Value="0" />

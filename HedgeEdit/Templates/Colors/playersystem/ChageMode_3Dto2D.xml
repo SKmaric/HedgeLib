@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="collision of width" />
-  <Collision_Height type="float" default="0" description="the height of the collision" />
+  <CollisionWidth type="float" default="0" description="collision of width" />
+  <CollisionHeight type="float" default="0" description="the height of the collision" />
   <m_PathEaseTime type="float" default="0" description="SideView path transition time" />
   <TargetDirection type="vector" description="path search-facing" />
   <m_IsChangeCamera type="bool" default="false" description="to switch the camera?" />

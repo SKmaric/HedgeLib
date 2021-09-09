@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" />
-  <Collision_Height type="float" default="0" />
-  <Collision_Length type="float" default="0" />
-  <Unknown5 type="uint32" default="0" />
+  <CollisionWidth type="float" default="0" />
+  <CollisionHeight type="float" default="0" />
+  <CollisionLength type="float" default="0" />
+  <ShapeType type="enum" default="0" />
+  <ConditionType type="enum" default="0" />
   <Extra type="RawByteLength" length="16" />
 </Template>

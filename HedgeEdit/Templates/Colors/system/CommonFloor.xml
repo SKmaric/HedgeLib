@@ -2,5 +2,31 @@
 <Template>
   <MoveType type="enum" default="0" description="0: Static, 1: Stop-and-Go, 2: Smooth, 3: Fall" />
   <FloorSize type="enum" default="0" description="" />
+  <IsMessageON type="bool" default="false" description="" />
+  <IsWallJump type="bool" default="false" description="" />
+  <Target type="target" default="0" description="" />
+  <MoveXRot type="float" default="0" description="" />
+  <MoveYRot type="float" default="0" description="" />
+  <WaitTime type="float" default="0" description="" />
+  <Phase type="float" default="0" description="" />
+  <Cycle type="float" default="0" description="" />
+  <Amplitude type="float" default="0" description="" />
+  <Length type="float" default="0" description="" />
+  <AppearTime type="float" default="0" description="" />
+  <DisappearTime type="float" default="0" description="" />
+  <AppearStopTime  type="float" default="0" description="" />
+  <DisappearStopTim type="float" default="0" description="" />
+  <OnShakeTime type="float" default="0" description="" />
+  <OnFloorTime type="float" default="0" description="" />
+  <CollisionTimeLag type="float" default="0" description="" />
+  <Gravity type="float" default="0" description="" />
+  <ResetTime type="float" default="0" description="" />
+  <PathIndex type="uint32" default="0" description="" />
+  <StartPath1DPos  type="enum" default="0" description="" />
+  <PathSpeed type="float" default="0" description="" />
+  <PathReverseTime  type="float" default="0" description="" />
+  <LightFieldOffset type="position" description="" />
+  <IsReverse type="bool" default="false" description="" />
+  <IsEffect type="bool" default="false" description="" />
   <Extra type="RawByteLength" length="104" />
 </Template>

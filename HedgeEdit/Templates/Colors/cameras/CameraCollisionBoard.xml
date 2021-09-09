@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="collision of width" />
-  <Collision_Height type="float" default="0" description="the height of the collision" />
-  <ACameraID type="target" default="0" description="camera to associate with A" />
-  <ALinkObjID type="target" description="collision to associate with A" />
-  <ALinkSide type="enum" description="face to associate with the A" />
-  <AObjType type="enum" default="0" description="?" />
-  <IsHigherPhantomCameraA type="bool" default="false" description="A side priority than phantom camera" />
-  <EaseTime_AtoB type="float" default="0" description="A transition time" />
-  <ACameraPriority type="uint32" default="0" description="priority of A of the camera" />
+  <CollisionWidth type="float" default="0" description="collision of width" />
+  <CollisionHeight type="float" default="0" description="the height of the collision" />
+  <CameraA type="target" default="0" description="camera to associate with A" />
+  <CollisionA type="target" description="collision to associate with A" />
+  <SideTypeA type="enum" description="face to associate with the A" />
+  <IsPhantomCameraA type="bool" default="false" description="A side priority than phantom camera" />
+  <EaseTimeA type="float" default="0" description="A transition time" />
+  <PriorityA type="uint32" default="0" description="priority of A of the camera" />
   <NoneEffectiveBoostA type="bool" default="false" description="I to A side boost angle without change" />
-  <BCameraID type="target" description="camera to associate with the B" />
-  <BLinkObjID type="target" description="collision to associate with the B" />
-  <BLinkSide type="enum" default="0" description="face to associate with the B" />
-  <BObjType type="enum" default="0" description="?" />
-  <IsHigherPhantomCameraB type="bool" default="false" description="B side priority than phantom camera" />
-  <BCameraPriority type="uint32" default="0" description="priority of B of the camera" />
-  <EaseTime_BtoA type="float" default="0" description="transition time B" />
+  <CameraB type="target" description="camera to associate with the B" />
+  <CollisionB type="target" description="collision to associate with the B" />
+  <SideTypeB type="enum" default="0" description="face to associate with the B" />
+  <IsPhantomCameraB type="bool" default="false" description="B side priority than phantom camera" />
+  <PriorityB type="uint32" default="0" description="priority of B of the camera" />
+  <EaseTimeB type="float" default="0" description="transition time B" />
   <NoneEffectiveBoostB type="bool" default="false" description="I to the B-side boost angle without change" />
   <Extra type="RawByteLength" length="56" />
 </Template>

@@ -2,6 +2,6 @@
 <Template>
   <Width type="float"  default="0" description="" />
   <Height type="float"  default="0" description="" />
-  <DimensionType type="enum" default="0" description="?" />
+  <StageType type="enum" default="0" description="?" />
   <Extra type="RawByteLength" length="12" />
 </Template>

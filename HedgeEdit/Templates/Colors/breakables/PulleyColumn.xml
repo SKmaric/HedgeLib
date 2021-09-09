@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <PathID type="uint32" default="0" />
+  <StartPosition type="float" default="0" />
+  <OffsetX type="float" default="0" />
+  <OffsetY type="float" default="0" />
+  <OffsetZ type="float" default="0" />
+  <IsStart type="bool" default="true" />
+  <IsLong type="bool" default="true" />
   <Extra type="RawByteLength" length="24" />
 </Template>

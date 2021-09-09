@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" />
-  <Collision_Height type="float" default="0" />
-  <NavigationType type="enum" default="0" description="0 = Boost, 1 = Wisp, 2 = Quickstep, 3 = Slide, 4 = ?, 5 = Drift, 6 = Jump + Stomp, 7 = Jump + Homing Attack, 8 = Caution" />
-  <Unknown8 type="float" default="0" description="?" />
-  <ActiveType type="bool" default="false" description="?" />
-  <OutputTime type="float" default="0" description="?" />
-  <Unknown11 type="float" default="0" description="?" />
-  <OnlyOnce type="bool" default="false" description="?" />
+  <Width type="float" default="0" />
+  <Height type="float" default="0" />
+  <NaviType type="enum" default="0" description="0 = Boost, 1 = Wisp, 2 = Quickstep, 3 = Slide, 4 = ?, 5 = Drift, 6 = Jump + Stomp, 7 = Jump + Homing Attack, 8 = Caution" />
+  <CollisionType type="enum" default="0" description="" />
+  <QSType type="enum" default="0" description="" />
+  <DirectionType type="enum" default="0" description="" />
+  <OnSpeed type="float" default="0" description="" />
+  <DisAppearType type="enum" default="0" description="" />
+  <OutputTime type="float" default="0" description="" />
+  <EnterAngle type="float" default="0" description="" />
+  <OnlyOneBoot type="bool" default="false" description="" />
   <Extra type="RawByteLength" length="32" />
 </Template>

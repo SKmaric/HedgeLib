@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Height type="float" default="10" description="" />
-  <Collision_Length type="float" default="10" description="" />
-  <Collision_Width type="float" default="5" description="" />
+  <CollisionWidth type="float" default="10" description="" />
+  <CollisionHeight type="float" default="10" description="" />
+  <CollisionDepth type="float" default="5" description="" />
   <PathID type="uint32" default="0" description="ID of path" />
-  <CameraID type="uint32" default="0" description="ID of camera" />
-  <Unknown5 type="enum" default="0" description="?" />
-  <Unknown6 type="bool" default="false" description="?" />
-  <Unknown7 type="bool" default="false" description="?" />
-  <Unknown8 type="bool" default="false" description="?" />
+  <TargetCamera type="uint32" default="0" description="ID of camera" />
+  <EventType type="enum" default="0" description="?" />
+  <IsExitOutside type="bool" default="false" description="?" />
+  <IsExit2D type="bool" default="true" description="?" />
+  <ExitType type="enum" default="0" description="?" />
   <Extra type="RawByteLength" length="24" />
 </Template>

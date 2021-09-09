@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <PathID type="uint32" default="0" description="" />
-  <Unknown5 type="uint32" default="0" description="" />
-  <Unknown6 type="float" default="0" description="Length?" />
-  <Unknown7 type="enum" default="0" description="IsPoleAttackInvSide?" />
-  <Unknown8 type="uint32" default="0" description="" />
-  <Unknown9 type="uint32" default="0" description="" />
-  <Unknown10 type="uint32" default="0" description="" />
-  <MinInitVel type="float" default="0" description="MinInitVel?" />
-  <Unknown12 type="float" default="0" description="" />
+  <StartPosition type="float" default="0" description="" />
+  <EndPosition type="float" default="0" description="" />
+  <IsJumpCancel type="bool" default="true" description="" />
+  <OffsetX type="float" default="0" description="" />
+  <OffsetY type="float" default="0" description="" />
+  <OffsetZ type="float" default="0" description="" />
+  <MinSpeed type="float" default="0" description="" />
+  <MaxSpeed type="float" default="0" description="" />
   <Extra type="RawByteLength" length="36" />
 </Template>

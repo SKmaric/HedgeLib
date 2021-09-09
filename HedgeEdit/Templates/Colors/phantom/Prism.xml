@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <Pitch type="float" default="0" description="" />
+  <Yaw type="float" default="0" description="" />
+  <Target type="position" description="" />
+  <ObjectID type="target" default="0" description="" />
+  <Type type="enum" default="0" description="" />
+  <CameraID type="target" default="0" description="" />
   <Extra type="RawByteLength" length="32" />
 </Template>

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Unknown4 type="bool" default="true" description="" />
-  <Unknown5 type="bool" default="false" description="" />
-  <Unknown6 type="bool" default="false" description="" />
-  <Unknown7 type="bool" default="false" description="" />
-  <Unknown8 type="uint32" default="0" description="" />
-  <Unknown9 type="uint32" default="0" description="" />
-  <Unknown10 type="float" default="0" description="" />
-  <Unknown11 type="float" default="0" description="" />
-  <Unknown12 type="float" default="0" description="" />
-  <Unknown13 type="float" default="0" description="" />
-  <Unknown14 type="float" default="0" description="" />
+  <IsCameraView type="bool" default="true" description="" />
+  <IsCollision type="bool" default="false" description="" />
+  <EaseTimeEnter type="float" default="0" description="" />
+  <EaseTimeLeave type="float" default="0" description="" />
+  <Fovy type="float" default="0" description="" />
+  <Distance type="float" default="0" description="" />
+  <VerticalOffset type="float" default="0" description="" />
+  <TargetPitch type="float" default="0" description="" />
+  <TargetYaw type="float" default="0" description="" />
   <Extra type="RawByteLength" length="32" />
 </Template>
