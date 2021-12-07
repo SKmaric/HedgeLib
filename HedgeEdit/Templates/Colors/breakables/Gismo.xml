@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Unknown5 type="uint32" default="0" description="" />
-  <Type type="uint32" default="0" description="Numerical ID of Gismo, set by stage info.">
+  <ObjCategoryID type="uint32" default="0" description="?" />
+  <ObjTypeID type="uint32" default="0" description="Numerical ID of Gismo, set by stage info.">
 	<!-- stg100 Gismo -->
 <!-- 	<Enum value="0" description="stg100_obj_woodbox" />
 	<Enum value="1" description="stg100_obj_dustbox" />
@@ -38,6 +38,6 @@
 	<Enum value="3" description="stg600_obj_planterA" />
 	<Enum value="4" description="stg600_obj_planterB" />
 	<Enum value="5" description="stg600_obj_lampA" /> -->
-  </Type>
+  </ObjTypeID>
   <Extra type="RawByteLength" length="8" />
 </Template>

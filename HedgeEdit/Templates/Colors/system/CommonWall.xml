@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <MoveType type="enum" default="0" description="?" />
+  <WallSize type="enum" default="0" description="" />
+  <IsMessageON type="bool" default="false" description="" />
+  <IsWallJump type="bool" default="false" description="" />
+  <MoveXRot type="float" default="0" description="" />
+  <MoveYRot type="float" default="0" description="" />
+  <WaitTime type="float" default="0" description="" />
+  <Phase type="float" default="0" description="" />
+  <Cycle type="float" default="0" description="" />
+  <Amplitude type="float" default="0" description="" />
+  <Length type="float" default="0" description="" />
+  <AppearTime type="float" default="0" description="" />
+  <DisappearTime type="float" default="0" description="" />
+  <AppearStopTime  type="float" default="0" description="" />
+  <DisappearStopTime type="float" default="0" description="" />
   <Extra type="RawByteLength" length="48" />
 </Template>

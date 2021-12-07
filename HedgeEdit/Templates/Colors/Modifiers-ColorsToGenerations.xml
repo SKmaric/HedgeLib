@@ -7,19 +7,22 @@
 		<SpringFake Value="DummySpring" />
 		<DashPanel Value="GrindBooster" Condition="IsVisibleModel:false" />
 		<GrindDashPanel Value="GrindBooster" Condition="IsVisibleModel:true" />
-		<SelectCanon Value="JumpSelector" />
+		<SelectCanon Value="JumpSelector" />	<!-- Comment out for Unleashed -->
 		<JumpPole Value="SpringPole" />
 		<JumpBoard3D Value="JumpBoard" Condition="SizeType>0" />
 		<AdlibTrickJump Value="TrickJump" />
 		<MovingThorn Value="MovingThornBall" />
 		<Item Value="1UP" />
 		<SshBubble Value="BubbleGenerator" />
+		<Fan Value="WaterFan" />
 		<RedMedal Value="RedRing" />
 		<ObjectPhysics Value="Gismo" />
 		<ObjectPhysics Value="MapPartsMesh" />
 		<ObjectPhysics Value="MapPartsBox" />
 		<GeneralFloor Value="CommonFloor" />
 		<PlaTramCar Value="RollerCoaster" />
+		<ThornCylinder2M Value="ThornCylinder" Condition="IsLongModel:false" />
+		<ThornCylinder3M Value="ThornCylinder" Condition="IsLongModel:true" />
 		<!-- System -->
 		<LayerChangeCollisionFlat Value="LayerBoard" />
 		<ObjFlowCollision Value="FlowEx" />
@@ -34,6 +37,7 @@
 		<ChangeDiveEnd Value="ChangeDiveEndNoEvent" />
 		<JumpCollision Value="EventJumpCollision" />
 		<StumbleCollision Value="EventStumbleCollision" />
+		<GoalRing Value="GoalCollision" />
 		<!-- Navigator -->
 		<NavigationCollision Value="EventNavigationCollision" />
 		<NavigationCollision Value="EventNavigationCollisionPlane" />
@@ -186,14 +190,49 @@
 		<Spring>
 			<HasBase Rename="IsWithBase" />
 		</Spring>
+		<SelectCanon>
+			<FrontJumpForce Rename="ShotForce" Factor="0.1" />
+			<FrontJumpOutOfControl Rename="OutOfControl" />
+			<DownShotForce Rename="ShotForce_Fail" Factor="0.1" />
+			<DownShotOutOfControl Rename="OutOfControl_Fail" />
+			<FirstDirection Rename="SuccessDir" />
+		</SelectCanon>
+		<JumpSelector>
+			<FrontJumpForce Factor="0.1" />
+			<UpJumpForce Factor="0.1" />
+			<DownShotForce Factor="0.1" />
+			<FirstDirection Rename="SuccessButton" />
+		</JumpSelector>
+		<Switch>
+			<TargetList Rename="TargetListON" />
+			<TargetList2 Rename="TargetListOFF" />
+			<EventTimer Rename="TimerON" />
+			<EventType Rename="EventON" />
+			<EventTimer2 Rename="TimerOFF" />
+			<EventType2 Rename="EventOFF" />
+			<SwitchType Rename="Type" />
+		</Switch>
+		<Fan>
+			<Height Rename="KeepHeight" Factor="0.1" />
+			<Velocity Rename="TrgHeight" Factor="0.1" />
+			<OnTime Rename="Time_On" />
+			<OffTime Rename="Time_Off" />
+			<Place Override="1" Condition="OriginalName:WaterFan" />
+		</Fan>
 		<RedMedal>
 			<ItemId Rename="MedalID" />
 		</RedMedal>
+		<DirectionalThorn>
+			<UsePanel Rename="IsUsePanel" />
+		</DirectionalThorn>
+		<SshBubble>
+			<VanishHeight Rename="LifeTime" Factor="0.1" />
+		</SshBubble>
 		<GeneralFloor>
 			<Amplitude Factor="0.1" />
 		</GeneralFloor>
 		<ObjectPhysics>
-			<Type EnumString="true" Condition="OriginalName:Gismo" />
+			<ObjTypeID Rename="Type" EnumString="true" Condition="OriginalName:Gismo" />
 			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsMesh" />
 			<ModelType Rename="Type" EnumString="true" Condition="OriginalName:MapPartsBox" />
 		</ObjectPhysics>
@@ -207,6 +246,18 @@
 		<CpzPipeEnterCollision>
 			<CollisionDepth Rename="Collision_Length" Factor="0.2" />
 		</CpzPipeEnterCollision>
+		<LayerChangeCollisionFlat>
+			<OnLayer0 Rename="ONLayerIndex" />
+			<OnLayer1 Rename="ONLayerIndex1" />
+			<OffLayer0 Rename="OFFLayerIndex" />
+			<OffLayer1 Rename="OFFLayerIndex1" />
+		</LayerChangeCollisionFlat>
+		<AutorunStartCollision>
+			<ForceToGround Override="0" Condition="ForceToGround:false" />
+			<ForceToGround Override="1" Condition="ForceToGround:true" />
+			<ForceToGround Rename="IsForceToGround" />
+			<SendType Rename="Type" />
+		</AutorunStartCollision>
 		<SoundPoint>
 			<CueID Rename="CueName" EnumString="true" />
 			<IsPlayOnce Rename="IsRegularly" BoolFlip="true" />
@@ -342,6 +393,7 @@
 			<Collision. Factor="0.2" />
 			<Speed. Factor="0.1" />
 			<Velocity. Factor="0.1" />
+			<Force. Factor="0.1" />
 			<Gravity. Factor="0.1" />
 			<TargetOffset. Factor="0.1" />
 			<Distance. Factor="0.1" />

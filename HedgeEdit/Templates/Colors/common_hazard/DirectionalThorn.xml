@@ -4,11 +4,9 @@
   <OnTime type="float" default="1" description="" />
   <MoveTime type="float" default="0.5" description="" />
   <ForetasteTime type="float" default="0" description="" />
-  <Unknown6 type="uint32" default="0" description="" />
-  <Unknown7 type="uint32" default="0" description="" />
-  <IsUsePanel type="bool" default="true" description="" />
+  <Phase type="float" default="0" description="" />
+  <TargetID type="target" default="0" description="" />
+  <UsePanel type="bool" default="true" description="" />
   <Type type="enum" default="0" description="" />
-  <Unknown10 type="enum" default="0" description="" />
-  <Unknown11 type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="28" />
 </Template>

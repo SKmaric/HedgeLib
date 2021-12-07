@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="collision of width" />
-  <Collision_Height type="float" default="0" description="the height of the collision" />
+  <CollisionWidth type="float" default="0" description="" />
+  <CollisionHeight type="float" default="0" description="" />
   <Unknown5 type="float" default="1" description="" />
   <Unknown6 type="float" default="1" description="" />
   <TargetDirection type="vector" description="path search-facing" />

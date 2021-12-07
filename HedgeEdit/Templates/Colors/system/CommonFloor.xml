@@ -15,7 +15,7 @@
   <AppearTime type="float" default="0" description="" />
   <DisappearTime type="float" default="0" description="" />
   <AppearStopTime  type="float" default="0" description="" />
-  <DisappearStopTim type="float" default="0" description="" />
+  <DisappearStopTime type="float" default="0" description="" />
   <OnShakeTime type="float" default="0" description="" />
   <OnFloorTime type="float" default="0" description="" />
   <CollisionTimeLag type="float" default="0" description="" />
