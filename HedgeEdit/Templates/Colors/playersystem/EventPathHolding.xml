@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="" />
-  <Collision_Height type="float" default="0" description="" />
+  <CollisionWidth type="float" default="0" description="" />
+  <CollisionHeight type="float" default="0" description="" />
   <Extra type="RawByteLength" length="8" />
 </Template>

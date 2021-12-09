@@ -258,6 +258,36 @@
 			<ForceToGround Rename="IsForceToGround" />
 			<SendType Rename="Type" />
 		</AutorunStartCollision>
+		<ChangeMode_2DtoForward>
+			<CurveCorrectionForce Rename="m_CurveCorrectionForce" />
+			<DashPathSideMoveRate Rename="m_DashPathSideMoveRate" />
+			<IsAutoChange2DPath Rename="m_IsAutoChange2DPath" />
+			<IsChangeCamera Rename="m_IsChangeCamera" />
+			<IsEnableFromBack Rename="m_IsEnableFromBack" />
+			<IsEnableFromFront Rename="m_IsEnableFromFront" />
+			<IsLimitEdge Rename="m_IsLimitEdge" />
+			<IsReverseCameraEnable Rename="m_IsReverseCameraEnable" />
+			<PathCorrectionForce Rename="m_PathCorrectionForce" />
+			<PathEaseTime Rename="m_PathEaseTime" />
+		</ChangeMode_2DtoForward>
+		<ChangeMode_3DtoForward>
+			<CurveCorrectionForce Rename="m_CurveCorrectionForce" />
+			<DashPathSideMoveRate Rename="m_DashPathSideMoveRate" />
+			<IsChangeCamera Rename="m_IsChangeCamera" />
+			<IsAirKeepLine Rename="m_IsEnableAirBoost" />
+			<IsEnableFromBack Rename="m_IsEnableFromBack" />
+			<IsEnableFromFront Rename="m_IsEnableFromFront" />
+			<IsKeepLine Rename="m_IsGravityControl" />
+			<IsLimitEdge Rename="m_IsLimitEdge" />
+			<IsReverseCameraEnable Rename="m_IsReverseCameraEnable" />
+			<PathCorrectionForce Rename="m_PathCorrectionForce" />
+		</ChangeMode_3DtoForward>
+		<JumpCollision>
+			<ImpulseSpeed Rename="ImpulseSpeedOnNormal" Factor="0.1" />
+			<ImpulseSpeedBoost Rename="ImpulseSpeedOnBoost" Factor="0.1" />
+			<SpeedMin Rename="SpeedMin" Factor="0.1" />
+			<IsGroundOnly Rename="m_IsGroundOnly" />
+		</JumpCollision>
 		<SoundPoint>
 			<CueID Rename="CueName" EnumString="true" />
 			<IsPlayOnce Rename="IsRegularly" BoolFlip="true" />
@@ -383,17 +413,19 @@
 			<CollisionDepth Rename="Collision_Depth" Factor="0.2" />
 			<EaseTimeEnter Rename="Ease_Time_Enter" />
 			<EaseTimeLeave Rename="Ease_Time_Leave" />
+			<FovY Rename="Fovy" />
 			<InterpolateType Rename="LineType" />
 			<ShapeType Rename="Shape_Type" />
 			<TargetType Rename="Target_Type" />
 			<TargetOffsetFront Rename="TargetOffset_Front" Factor="0.1" />
 			<TargetOffsetUp Rename="TargetOffset_Up" Factor="0.1" />
 			<TargetOffsetRight Rename="TargetOffset_Right" Factor="0.1" />
+			<TargetFrontOffsetSpeedScale Rename="TargetOffset_Vel" Factor="0.1" />
 			<!-- Parameters that contain... -->
 			<Collision. Factor="0.2" />
 			<Speed. Factor="0.1" />
 			<Velocity. Factor="0.1" />
-			<Force. Factor="0.1" />
+			<!-- <Force. Factor="0.1" /> -->
 			<Gravity. Factor="0.1" />
 			<TargetOffset. Factor="0.1" />
 			<Distance. Factor="0.1" />

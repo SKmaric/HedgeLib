@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <IsCameraView type="bool" default="false" description="camera view" />
+  <IsCollision type="bool" default="false" description="take the collision?" />
+  <EaseTimeEnter type="float" default="0" description="transition time at the time of invasion (sec) ※ use only events" />
+  <EaseTimeLeave type="float" default="0" description="transition time at the time of withdrawal (sec) ※ use only events" />
+  <CameraType type="enum" default="1" description="?" />
   <Extra type="RawByteLength" length="16" />
 </Template>

@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <IsCameraView type="bool" default="false" description="camera view" />
+  <IsCollision type="bool" default="false" description="take the collision?" />
+  <EaseTimeEnter type="float" default="0" description="transition time at the time of invasion (sec) ※ use only events" />
+  <EaseTimeLeave type="float" default="0" description="transition time at the time of withdrawal (sec) ※ use only events" />
+  <Fovy type="float" default="0" description="angle of view" />
+  <ShakeSizeHorizontal type="float" default="0" description="" />
+  <ShakeSizeVertical type="float" default="0" description="" />
+  <TargetOffsetRight type="float" default="0" description="offset left and right of the target coordinate system" />
+  <TargetOffsetUp type="float" default="0" description="offset the top and bottom of the target coordinate system" />
+  <TargetOffsetFront type="float" default="0" description="before and after the offset of the target coordinate system" />
   <Extra type="RawByteLength" length="36" />
 </Template>

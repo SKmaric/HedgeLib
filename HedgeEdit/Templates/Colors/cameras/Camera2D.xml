@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <IsCameraView type="bool" default="true" description="" />
+  <IsCollision type="bool" default="false" description="" />
+  <EaseTimeEnter type="float" default="0" description="" />
+  <EaseTimeLeave type="float" default="0" description="" />
+  <FovY type="float" default="0" description="" />
+  <BaseSpacePathPosition type="float" default="0" description="" />
+  <SphericalPositionX type="float" default="0" description="" />
+  <SphericalPositionY type="float" default="0" description="" />
+  <SphericalPositionZ type="float" default="0" description="" />
+  <TargetUpOffset type="float" default="0" description="" />
+  <TargetFrontOffset type="float" default="0" description="" />
+  <TargetFrontOffsetMax type="float" default="0" description="" />
+  <TargetFrontOffsetSpeedScale type="float" default="0" description="" />
+  <IsBaseSpacePlayer type="bool" default="true" description="" />
+  <IsPositionBasePlayer type="bool" default="false" description="" />
+  <TargetRightOffset type="float" default="0" description="" />
   <Extra type="RawByteLength" length="56" />
 </Template>

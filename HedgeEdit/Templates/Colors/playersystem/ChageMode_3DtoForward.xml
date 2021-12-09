@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Collision_Width type="float" default="0" description="collision of width" />
-  <Collision_Height type="float" default="0" description="the height of the collision" />
-  <Unknown4 type="float" default="1" description="PathCorrectionForce?" />
+  <CollisionWidth type="float" default="0" description="" />
+  <CollisionHeight type="float" default="0" description="" />
+  <DashPathSideMoveRate type="float" default="1" description="" />
   <TargetDirection type="vector" description="path search-facing" />
-  <Unknown5 type="bool" default="true" description="" />
-  <Unknown6 type="bool" default="true" description="" />
-  <Unknown7 type="bool" default="true" description="" />
-  <Unknown8 type="bool" default="true" description="" />
-  <Unknown9 type="float" default="1" description="PathCorrectionForce?" />
-  <Unknown10 type="uint32" default="1" description="" />
-  <Unknown11 type="uint32" default="0" description="" />
-  <Unknown12 type="bool" default="true" description="" />
-  <Unknown13 type="bool" default="true" description="" />
-  <Unknown14 type="bool" default="true" description="" />
-  <Unknown15 type="bool" default="true" description="" />
+  <IsChangeCamera type="bool" default="true" description="" />
+  <IsReverseCameraEnable type="bool" default="false" description="" />
+  <Template type="enum" default="0" description="" />
+  <IsLimitEdge type="bool" default="false" description="" />
+  <CurveCorrectionForce type="float" default="1" description="" />
+  <PathCorrectionForce type="float" default="0" description="" />
+  <IsWallRun type="bool" default="false" description="" />
+  <IsKeepLine type="bool" default="false" description="" />
+  <IsAirKeepLine type="bool" default="false" description="" />
+  <IsEnableFromFront type="bool" default="true" description="" />
+  <IsEnableFromBack type="bool" default="true" description="" />
   <Extra type="RawByteLength" length="44" />
 </Template>
