@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <Type type="enum" default="0" description="?" />
+  <ThrowType type="enum" default="1" description="?" />
+  <Angle type="float" default="75" description="?" />
+  <MinSpeed type="float" default="50" description="?" />
+  <MaxSpeed type="float" default="50" description="?" />
+  <GenerateGap type="float" default="1.4" description="?" />
+  <ThrowNum type="uint32" default="2" description="?" />
+  <WaitTime type="float" default="1.4" description="?" />
   <Extra type="RawByteLength" length="28" />
 </Template>

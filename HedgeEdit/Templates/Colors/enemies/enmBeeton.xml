@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <FirstState type="enum" default="1" description="?" />
+  <MessageType type="enum" default="1" description="?" />
+  <IsVisibleInMessageType type="bool" default="false" description="?" />
+  <IsResurrect type="bool" default="false" description="?" />
+  <AlivePoint type="vector" description="?" />
+  <IsMoveAttack type="bool" default="false" description="?" />
+  <filler type="byte" default="0" description="?" /> <!-- delete when seteditor bug sorted out -->
+  <filler type="byte" default="0" description="?" />
+  <filler type="byte" default="0" description="?" />
+  <filler type="byte" default="0" description="?" />
+  <filler type="byte" default="0" description="?" />
+  <StartPos type="vector" description="?" />
+  <IsMoveAttackRotate type="bool" default="false" description="?" />
+  <IsMoveResurrectRotate type="bool" default="false" description="?" />
+  <MoveSpeed type="float" default="100" description="?" />
+  <IsFixDirection type="bool" default="false" description="?" />
+  <RadiusActive type="float" default="400" description="?" />
+  <RadiusAttack type="float" default="200" description="?" />
+  <ShotSpeed type="float" default="90" description="?" />
+  <IntervalShot type="float" default="0.5" description="?" />
+  <IntervalAttack type="float" default="1" description="?" />
+  <IntervalWait type="float" default="5" description="?" />
+  <NumShotOneTime type="enum" default="1" description="?" />
+  <NumAttackOneTime type="enum" default="1" description="?" />
   <Extra type="RawByteLength" length="76" />
 </Template>

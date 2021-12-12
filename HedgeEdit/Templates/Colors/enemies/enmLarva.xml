@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <InvokeByEvent type="bool" default="true" description="?" />
   <Extra type="RawByteLength" length="4" />
 </Template>

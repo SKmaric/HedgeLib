@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <Type type="enum" default="5" description="?" />
+  <AttackType type="enum" default="0" description="?" />
+  <IsCharge type="bool" default="false" description="?" />
+  <IsEventAttack type="bool" default="true" description="?" />
+  <IsSideView type="bool" default="false" description="?" />
+  <IsOnlyPlayerAttack type="bool" default="false" description="?" />
+  <RadiusActive type="float" default="0" description="?" />
+  <RadiusAttack type="float" default="0" description="?" />
+  <RadiusNearAttack type="float" default="0" description="?" />
+  <ShotInterval type="float" default="0" description="?" />
+  <ShotSpeed type="float" default="0" description="?" />
+  <ShotLifeTime type="float" default="0" description="?" />
+  <LimitDistance type="float" default="0" description="?" />
+  <HomingStartTime type="float" default="0" description="?" />
+  <HomingTime type="float" default="0" description="?" />
+  <HomingPower type="float" default="0" description="?" />
+  <ShotCollisionRadius type="float" default="0" description="?" />
   <Extra type="RawByteLength" length="52" />
 </Template>

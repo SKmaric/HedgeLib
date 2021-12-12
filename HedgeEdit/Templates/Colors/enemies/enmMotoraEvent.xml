@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <BaseSpeed type="float" default="700" description="?" />
+  <DropProbability type="float" default="100" description="?" />
+  <TumbleProbability type="float" default="0" description="?" />
+  <TackleEnable type="bool" default="true" description="?" />
+  <CrashEnable type="bool" default="false" description="?" />
+  <NumUnits type="uint32" default="3" description="?" />
+  <PathIDs0 type="uint32" default="0" description="?" />
+  <PathIDs1 type="uint32" default="0" description="?" />
+  <PathIDs2 type="uint32" default="0" description="?" />
+  <PathIDs3 type="uint32" default="0" description="?" />
+  <PathOffsets0 type="float" default="0" description="?" />
+  <PathOffsets1 type="float" default="0" description="?" />
+  <PathOffsets2 type="float" default="0" description="?" />
+  <PathOffsets3 type="float" default="0" description="?" />
   <Extra type="RawByteLength" length="56" />
 </Template>

@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <Type type="enum" default="5" description="?" />
+  <FirstState type="enum" default="0" description="?" />
+  <IsExcite type="bool" default="true" description="?" />
+  <AlarmMotion type="enum" default="0" description="?" />
+  <MoveTypeSideView type="bool" default="false" description="?" />
+  <IsAttachMoveGround type="bool" default="false" description="?" />
+  <IsReceiveEnemyAttack type="bool" default="false" description="?" />
+  <RadiusAttack type="float" default="45" description="?" />
+  <RadiusActive type="float" default="300" description="?" />
+  <AdvanceDistance type="float" default="500" description="?" />
+  <IsMessageBoot type="bool" default="false" description="?" />
   <Extra type="RawByteLength" length="28" />
 </Template>

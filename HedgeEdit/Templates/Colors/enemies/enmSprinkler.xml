@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <ThrowTime type="float" default="80" description="?" />
+  <RingRatio type="float" default="0" description="?" />
+  <SuperRingRatio type="float" default="0" description="?" />
+  <ThornRatio type="float" default="0" description="?" />
+  <PathID type="uint32" default="0" description="?" />
+  <StartPosition type="float" default="0" description="?" />
+  <Type type="uint32" default="0" description="?" />
+  <Velocity type="float" default="0" description="?" />
+  <EscapeThrow type="enum" default="1" description="?" />
   <Extra type="RawByteLength" length="40" />
 </Template>

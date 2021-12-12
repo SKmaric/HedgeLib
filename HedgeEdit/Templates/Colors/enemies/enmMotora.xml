@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <BaseSpeed type="float" default="700" description="?" />
+  <DropProbability type="float" default="100" description="?" />
+  <TumbleProbability type="float" default="0" description="?" />
+  <TackleEnable type="bool" default="true" description="?" />
+  <CrashEnable type="bool" default="false" description="?" />
+  <NumUnits type="uint32" default="3" description="?" />
+  <NumMaxUnits type="uint32" default="3" description="?" />
+  <LevelProbabilities0 type="float" default="0" description="?" />
+  <LevelProbabilities1 type="float" default="0" description="?" />
+  <LevelProbabilities2 type="float" default="0" description="?" />
+  <LevelProbabilities3 type="float" default="0" description="?" />
+  <LevelProbabilities4 type="float" default="0" description="?" />
+  <LevelProbabilities5 type="float" default="0" description="?" />
+  <XXProbability type="float" default="0" description="?" />
   <Extra type="RawByteLength" length="56" />
 </Template>

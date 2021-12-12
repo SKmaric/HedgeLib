@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <Datum type="enum" default="0" description="?" />
+  <Altitude type="float" default="5" description="?" />
+  <TargetRange type="float" default="100" description="?" />
+  <RaycastRange type="float" default="-1" description="?" />
+  <ExitCrashEnable type="bool" default="true" description="?" />
+  <NumUnits type="uint32" default="2" description="?" />
+  <NumMaxUnits type="uint32" default="2" description="?" />
+  <AutoRecruitEnable type="bool" default="false" description="?" />
+  <AutoLaneChangeEnable type="bool" default="false" description="?" />
+  <TakedownEnable type="bool" default="false" description="?" />
   <Extra type="RawByteLength" length="32" />
 </Template>

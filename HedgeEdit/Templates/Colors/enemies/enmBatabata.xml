@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <ModelType type="enum" default="0" description="?" />
+  <Type type="enum" default="0" description="?" />
+  <MoveType type="enum" default="0" description="?" />
+  <MoveDistance type="float" default="300" description="?" />
+  <RoundTime type="float" default="8" description="?" />
+  <RoundPhase type="float" default="0" description="?" />
+  <IsUsePath type="bool" default="true" description="?" />
+  <JumpSpeed type="float" default="50" description="?" />
+  <TriggerType type="enum" default="0" description="?" />
+  <SearchRadius type="float" default="200" description="?" />
+  <ReturnWaitTime type="float" default="0" description="?" />
+  <IsRecover type="bool" default="true" description="?" />
   <Extra type="RawByteLength" length="44" />
 </Template>

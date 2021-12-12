@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <NumPixies type="enum" default="0" description="?" />
+  <NumPixies type="sbyte" default="0" description="?" />
   <CleanKillId type="enum" default="0" description="?" />
   <Type type="enum" default="5" description="?" />
   <FirstState type="enum" default="0" description="?" />

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <ShapeType type="enum" default="0" description="Shape of volume (box, sphere, capsule?)" />
+  <ShapeDatum type="enum" default="0" description="?" />
+  <Width type="float" default="50" />
+  <Height type="float" default="50" />
+  <Depth type="float" default="50" />
+  <EventType type="enum" default="1" description="?" />
+  <AutoRecruitSwitch type="bool" default="false" description="?" />
   <Extra type="RawByteLength" length="20" />
 </Template>

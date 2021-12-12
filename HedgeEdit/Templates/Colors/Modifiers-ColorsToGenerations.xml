@@ -72,17 +72,20 @@
 		<EnemyPawnPla3D Value="enmEggPawn_elv" />
 		<EnemyPawnGun3D Value="enmEggPawnGun" />
 		<EnemyPawnLance3D Value="enmEggPawnLance" />
-		<EnemyGanigani3D Value="enmGanigani" />
+		<EnemyGanigani3D Value="enmGanigani" Condition="IsSideView:false" />
+		<EnemyGanigani2D Value="enmGanigani" Condition="IsSideView:true" />
 		<EnemyLander3D Value="enmLander" />
 		<EnemyMotora3D Value="enmMotora" />
 		<EnemyNal3D Value="enmNal" />
-		<EnemySpanner Value="enmSpanner" />
+		<EnemySpanner Value="enmSpanner" Condition="ForSideView:false" />
+		<EnemySpanner2D Value="enmSpanner" Condition="ForSideView:true" />
 		<EnemySpinner Value="enmSpinner" Condition="ForSideView:false" />
 		<EnemySpinner2D Value="enmSpinner" Condition="ForSideView:true" />
 		<MissionSprinkler Value="enmSprinkler" />
 		<CteGunTruck200 Value="enmBigChaser" />
 		<!-- Wisp -->
 		<PlaReleaseBox Value="ReleaseBoxSmall" />
+		<FlyReleaseBoxSmall Value="ReleaseBoxSmall" />
 		<SuperRing Value="ReleaseBoxSmall" Condition="PixieType:0" />
 		<CpzPipeEnterCollision Value="EventSpiralPipe" />
 		<GoalRing Value="ReleaseBoxBig" />
@@ -405,6 +408,10 @@
 			<RadiusActive Rename="ActionRange" Factor="0.1" />
 			<IsPlayFindMotion Rename="IsPlayFindMotion" />
 		</EnemyPawn3D>
+		<EnemyEChaserManager>
+			<Altitude Rename="m_FlyHeight" Factor="0.1" />
+			<NumUnits Rename="m_NumChasers" />
+		</EnemyEChaserManager>
 		<all>
 			<!-- Parameters that match... -->
 			<CollisionWidth Rename="Collision_Width" Factor="0.2" />

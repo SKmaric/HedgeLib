@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Radius type="float" default="30" description="?" />
+  <FloorCount type="uint32" default="0" description="?" />
+  <AngularSpeed type="float" default="30" description="?" />
+  <Phase type="float" default="30" description="?" />
+  <FloorSize type="enum" default="1" description="?" />
+  <RotateType type="enum" default="1" description="?" />
+  <EventActType type="enum" default="1" description="?" />
+  <Extra type="RawByteLength" length="20" />
 </Template>

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <PathType type="enum" default="1" description="?" />
+  <InOutType type="enum" default="2" description="?" />
+  <LengthType type="enum" default="0" description="?" />
+  <UsageType type="enum" default="0" description="?" />
   <Extra type="RawByteLength" length="4" />
 </Template>

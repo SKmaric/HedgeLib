@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <Datum type="enum" default="0" description="?" />
+  <Altitude type="float" default="5" description="?" />
+  <InitialState type="enum" default="0" description="?" />
+  <BombAtEndOfPath type="bool" default="false" description="?" />
+  <AppearOffset1D type="float" default="1000" description="?" />
+  <Speed type="float" default="1000" description="?" />
+  <UpperEnable type="bool" default="false" description="?" />
+  <JumpGuideEnable type="bool" default="true" description="?" />
   <Extra type="RawByteLength" length="24" />
 </Template>

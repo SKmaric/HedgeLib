@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
+  <NumPixies type="sbyte" default="0" description="?" />
+  <CleanKillId type="enum" default="0" description="?" />
+  <MoveType type="enum" default="1" description="?" />
+  <TriggerType type="enum" default="0" description="?" />
+  <AttackType type="enum" default="1" description="?" />
+  <IsAttackFront type="bool" default="false" description="?" />
+  <MoveDistance type="float" default="0" description="?" />
+  <RoundTime type="float" default="0" description="?" />
+  <RoundPhase type="float" default="0" description="?" />
+  <RadiusActive type="float" default="0" description="?" />
+  <IsUsePath type="bool" default="true" description="?" />
   <Extra type="RawByteLength" length="28" />
 </Template>
