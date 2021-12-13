@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <TargetID type="target" default="0" description="" />
+  <SetPlaceType type="enum" default="0" description="" />
+  <EventType type="enum" default="0" description="" />
+  <Extra type="RawByteLength" length="8" />
+</Template>

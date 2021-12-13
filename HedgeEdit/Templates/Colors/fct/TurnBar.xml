@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <OutAngle type="float" default="60" description="" />
+  <FirstSpeed type="float" default="180" description="" />
+  <OutOfControl type="float" default="0.5" description="" />
+  <OutAngleInv type="float" default="60" description="" />
+  <FirstSpeedInv type="float" default="180" description="" />
+  <OutOfControlInv type="float" default="0.5" description="" />
+  <BoostOutAngle type="float" default="60" description="" />
+  <BoostFirstSpeed type="float" default="285" description="" />
+  <BoostOutOfControl type="float" default="0.5" description="" />
+  <BoostOutAngleInv type="float" default="60" description="" />
+  <BoostFirstSpeedInv type="float" default="285" description="" />
+  <BoostOutOfControlInv type="float" default="0.5" description="" />
+  <CameraID type="target" default="0" description="" />
+  <Extra type="RawByteLength" length="52" />
+</Template>

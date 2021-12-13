@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <KillerSpeed type="float" default="400" description="" />
+  <RechargeInterval type="float" default="5" description="" />
+  <BurstDistance type="float" default="3000" description="" />
+  <LaunchesTimeBeforehand type="float" default="5" description="" />
+  <KillerType type="enum" default="0" description="" />
+  <Extra type="RawByteLength" length="20" />
 </Template>

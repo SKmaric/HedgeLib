@@ -293,7 +293,7 @@
 		</JumpCollision>
 		<SoundPoint>
 			<CueID Rename="CueName" EnumString="true" />
-			<IsPlayOnce Rename="IsRegularly" BoolFlip="true" />
+			<IsOneShot Rename="IsRegularly" BoolFlip="true" />
 			<RangeIn Rename="Range" Factor="0.1" />
 			<RangeOut Rename="Radius" Factor="0.1" />
 		</SoundPoint>

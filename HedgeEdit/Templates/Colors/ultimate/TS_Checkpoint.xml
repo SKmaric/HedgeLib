@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <CollisionWidth type="float" default="0" />
+  <CollisionHeight type="float" default="0" />
+  <CollisionLength type="float" default="0" />
+  <NextID type="float" default ="0" />
+  <Extra type="RawByteLength" length="16" />
+</Template>

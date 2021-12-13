@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Radius type="float" default="30" description="?" />
+  <Cycle type="float" default="0.01" description="?" />
+  <Phase type="float" default="2" description="?" />
+  <BallCount type="enum" default="6" description="?" />
+  <Option type="enum" default="0" description="?" />
+  <Extra type="RawByteLength" length="16" />
 </Template>

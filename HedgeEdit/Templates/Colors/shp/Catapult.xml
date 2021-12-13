@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Height type="float" default="80" description="" />
+  <UpTime type="float" default="0.15" description="" />
+  <DownTime type="float" default="1" description="" />
+  <ImpulsePower type="float" default="600" description="" />
+  <TargetID type="target" default="0" description="" />
+  <Extra type="RawByteLength" length="20" />
 </Template>

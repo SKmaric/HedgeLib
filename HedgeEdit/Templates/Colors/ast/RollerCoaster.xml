@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <PathID type="uint32" default="0" description="" />
+  <StartPosition type="float" default="2760" description="" />
+  <MaxSpped type="float" default="600" description="" />
+  <FristSpeed type="float" default="1000" description="" />
+  <Accel type="float" default="800" description="" />
+  <VehicleNum type="uint32" default="10" description="" />
+  <Type type="enum" default="1" description="" />
+  <PrepareSpeed type="float" default="100" description="" />
+  <Extra type="RawByteLength" length="32" />
 </Template>

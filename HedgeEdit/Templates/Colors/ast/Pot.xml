@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <UpSpeed type="float" default="100" description="" />
+  <SpeedMin type="float" default="50" description="" />
+  <SpeedMax type="float" default="200" description="" />
+  <Extra type="RawByteLength" length="12" />
 </Template>

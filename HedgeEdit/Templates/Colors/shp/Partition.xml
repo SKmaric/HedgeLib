@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Type type="enum" default="0" description="" />
+  <Length type="float" default="75" description="" />
+  <DownMoveTime type="float" default="4.5" description="" />
+  <DownMoveTimeUnderHead type="float" default="3" description="" />
+  <DownTime type="float" default="1" description="" />
+  <UpMoveTime type="float" default="1" description="" />
+  <UpTime type="float" default="1" description="" />
+  <Extra type="RawByteLength" length="28" />
 </Template>

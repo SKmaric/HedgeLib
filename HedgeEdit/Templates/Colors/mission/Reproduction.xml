@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <ReviveTime type="float" default="2" description="?" />
+  <Type type="enum" default="1" description="?" />
+  <Extra type="RawByteLength" length="8" />
 </Template>

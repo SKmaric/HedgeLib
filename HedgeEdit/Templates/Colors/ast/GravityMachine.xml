@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <RoundRadius type="float" default="50" description="" />
+  <RoundSpeed type="float" default="40" description="" />
+  <ShieldSpeed type="float" default="120" description="" />
+  <Extra type="RawByteLength" length="12" />
 </Template>

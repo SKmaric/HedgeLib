@@ -88,6 +88,6 @@
 	<Enum value="98" description="amb_ast_amb02" />
   </CueID>
   <BaseVolume type="float" default="0" description="1 = normal volume ?" />
-  <IsPlayOnce type="bool" default="false" description="false = loop continuously, true = play once ?" />
+  <IsOneShot type="bool" default="false" description="false = loop continuously, true = play once ?" />
   <Extra type="RawByteLength" length="12" />
 </Template>

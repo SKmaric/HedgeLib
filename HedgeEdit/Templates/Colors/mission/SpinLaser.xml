@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <AngleVelocity type="float" default="0.5" description="?" />
+  <LaserLength type="float" default="20" description="?" />
+  <LaserNum type="enum" default="0" description="?" />
+  <RayCast type="bool" default="false" description="?" />
+  <IsMessageTurn type="bool" default="true" description="?" />
+  <TurnType type="enum" default="0" description="?" />
+  <ThresholdAngle type="float" default="47" description="?" />
+  <Extra type="RawByteLength" length="16" />
 </Template>

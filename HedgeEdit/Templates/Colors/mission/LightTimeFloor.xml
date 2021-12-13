@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <OnFloorTime type="float" default="0.1" description="?" />
+  <ForetasteTime type="float" default="0" description="?" />
+  <AriseTime type="float" default="2" description="?" />
+  <Phase type="float" default="0" description="?" />
+  <FloorSize type="enum" default="1" description="?" />
+  <ActionType type="enum" default="1" description="?" />
+  <EventType type="enum" default="0" description="?" />
+  <Extra type="RawByteLength" length="20" />
 </Template>

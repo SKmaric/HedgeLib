@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <MoveRate type="float" default="1" description="?" />
+  <MoveLength type="float" default="50" description="?" />
+  <Phase type="float" default="0" description="?" />
+  <MoveType type="enum" default="0" description="?" />
+  <ActionType type="enum" default="0" description="?" />
+  <Extra type="RawByteLength" length="16" />
 </Template>

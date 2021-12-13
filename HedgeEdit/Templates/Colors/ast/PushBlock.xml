@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <AppearTime type="float" default="1" description="" />
+  <DisappearTime type="float" default="2" description="" />
+  <AppearStopTime  type="float" default="1.5" description="" />
+  <DisappearStopTime type="float" default="3" description="" />
+  <Phase type="float" default="4" description="" />
+  <WaitTime type="float" default="0" description="" />
+  <AppearDistance type="float" default="80" description="" />
+  <BlockType type="enum" default="0" description="" />
+  <IsEventStart type="bool" default="true" description="" />
+  <IsPushDead type="bool" default="true" description="" />
+  <Extra type="RawByteLength" length="32" />
 </Template>

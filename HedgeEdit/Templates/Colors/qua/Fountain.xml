@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <FirstSpeed type="float" default="400" description="" />
+  <OutOfControl type="float" default="0.5" description="" />
+  <Extra type="RawByteLength" length="8" />
 </Template>
