@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <TargetId type="byte" default="1" description="" />
-  <IDsOffset1 type="uint32" default="0" description="" />
-  <ObjectsCount1 type="uint32" default="0" description="" />
-  <Unknown6 type="uint32" default="0" description="Padding?" />
-  <LimitTime type="float" default="0" description="Padding?" />
-  
-<!--   <TargetId type="byte" default="1" description="" />
-  <TargetList type="id_list" description="" />
-  <LimitTime type="float" default="3" description="" /> -->
+  <TargetList type="uint32array" description="" />
+  <LimitTime type="float" default="0" description="?" />
   <Extra type="RawByteLength" length="20" />
 </Template>

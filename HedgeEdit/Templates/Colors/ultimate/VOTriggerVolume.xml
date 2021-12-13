@@ -3,10 +3,7 @@
   <CollisionWidth type="float" default="0" />
   <CollisionHeight type="float" default="0" />
   <CollisionLength type="float" default="0" />
-  <!-- <VoiceOverIDList type="id_list" default="0" description="" /> -->
-  <IDsOffset1 type="uint32" default="0" description="" />
-  <ObjectsCount1 type="uint32" default="0" description="" />
-  <Unknown5 type="uint32" default="0" description="" />
+  <VoiceOverIDList type="uint32array" description="" />
   <IsRandom type="bool" default="false" description="" />
   <IsOneShot type="bool" default="true" description="" />
   <UseTextBox type="bool" default="true" description="" />

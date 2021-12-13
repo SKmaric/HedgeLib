@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <IDsOffset1 type="uint32" default="0" description="" />
-  <ObjectsCount1 type="uint32" default="0" description="" />
-  <Unknown5 type="uint32" default="0" description="" />
+  <TargetList type="uint32array" description="" />
   <Connect type="bool" default="true" description="" />
-  <!-- 
-  <TargetList type="id_list" default="0" description="" />
-  <Connect type="bool" default="true" description="" />
-  -->
   <Extra type="RawByteLength" length="16" /> <!-- Dummy length -->
 </Template>

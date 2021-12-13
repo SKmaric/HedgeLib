@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <IDsOffset1 type="uint32" default="0" description="" />
-  <ObjectsCount1 type="uint32" default="0" description="" />
+  <TargetList type="uint32array" description="" />
   <Trigger type="target" default="0" description="" />
   <Condition type="enum" default="0" description="" />
   <TimesType type="enum" default="0" description="" />
-  <IDsOffset2 type="uint32" default="0" description="" />
-  <ObjectsCount2 type="uint32" default="0" description="" />
+  <EventList type="uint32array" description="" />
   <EventNotifier type="uint32" default="0" description="" />
   <EventTimer type="uint32" default="0" description="" />
   <EventNotifier2 type="uint32" default="0" description="" />
   <EventTimer2 type="uint32" default="0" description="" />
   <EventNotifier3 type="uint32" default="0" description="" />
   <EventTimer3 type="uint32" default="0" description="" />
-  
-<!--   <TargetList type="id_list" description="" />
-  <Trigger type="target" default="0" description="" />
-  <Condition type="enum" default="0" description="" />
-  <TimesType type="enum" default="0" description="" />
-  <EventList type="id_list" description="" />
-  <EventNotifier type="uint32" default="0" description="" />
-  <EventTimer type="uint32" default="0" description="" />
-  <EventNotifier2 type="uint32" default="0" description="" />
-  <EventTimer2 type="uint32" default="0" description="" />
-  <EventNotifier3 type="uint32" default="0" description="" />
-  <EventTimer3 type="uint32" default="0" description="" /> -->
-  <Extra type="RawByteLength" length="268" /> <!-- Dummy length -->
+  <Extra type="RawByteLength" length="80" /> <!-- Dummy length -->
 </Template>

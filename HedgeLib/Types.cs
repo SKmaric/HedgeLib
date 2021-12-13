@@ -43,7 +43,7 @@ namespace HedgeLib
 
             // Other Values
             new DataType(typeof(string), string.Empty, "string"),
-            new DataType(typeof(uint[]), new uint[0], "uint32array", "uint32[]", "uint[]"),
+            new DataType(typeof(uint[]), new uint[0], "uint32array", "uint32[]", "uint[]", "id_list"),
             new DataType(typeof(ForcesSetData.ObjectReference[]),
                 new ForcesSetData.ObjectReference[0], "forcesobjectlist")
 
