@@ -166,6 +166,12 @@
 		<GrindThorn X="0" Y="-90" Z="0" /> 
 		<ObjectPhysics X="-90" Y="0" Z="0" Condition="OriginalName:Fiber" />
 	</RotationOffset>
+	<PathSnap>
+		<Pulley Parameter="PathID" PosType="XYZ" RotType="Y" />
+		<ObjCameraPathLook Parameter="PathID" PosType="XYZ" RotType="" />
+		<ObjCameraPathTarget Parameter="PathID" PosType="XYZ" RotType="" />
+		<ObjCameraPathPath Parameter="EyePathID" PosType="XYZ" RotType="" />
+	</PathSnap>
 	<ParamModify>
 		<DashPanel>
 			<IsVisibleModel Rename="IsInvisible" BoolFlip="true" />
@@ -388,12 +394,15 @@
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraParallel>
 		<ObjCameraPathLook>
+			<EyePathType Override="2" Condition="EyePathType:1" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPathLook>
 		<ObjCameraPathPath>
+			<EyePathType Override="2" Condition="EyePathType:1" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPathPath>
 		<ObjCameraPathTarget>
+			<EyePathType Override="2" Condition="EyePathType:1" />
 			<RangeOut Rename="Range" Factor="1" />
 		</ObjCameraPathTarget>
 		<ObjCameraPoint>
