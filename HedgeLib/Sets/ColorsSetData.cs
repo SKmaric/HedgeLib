@@ -24,11 +24,14 @@ namespace HedgeLib.Sets
 
             // Header
             var reader = new BINAReader(fileStream);
-            Header = reader.ReadHeader();
+            var Header = (BINAv1Header)reader.ReadHeader();
 
             // SOBJ Data
             Objects = SOBJ.Read(reader,
                 objectTemplates, SOBJ.SOBJType.Colors);
+
+            reader.JumpTo(Header.FinalTableOffset, false);
+            var footer = reader.ReadFooter(Header.FinalTableLength);
         }
 
         public override void Save(Stream fileStream)

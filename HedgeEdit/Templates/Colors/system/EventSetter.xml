@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <TargetList type="uint32array" description="" />
-  <Trigger type="target" default="0" description="" />
+  <Trigger type="enum" default="0" description="" />
   <Condition type="enum" default="0" description="" />
   <TimesType type="enum" default="0" description="" />
   <EventList type="uint32array" description="" />
   <EventNotifier type="uint32" default="0" description="" />
-  <EventTimer type="uint32" default="0" description="" />
+  <EventTimer type="float" default="0" description="" />
   <EventNotifier2 type="uint32" default="0" description="" />
-  <EventTimer2 type="uint32" default="0" description="" />
+  <EventTimer2 type="float" default="0" description="" />
   <EventNotifier3 type="uint32" default="0" description="" />
-  <EventTimer3 type="uint32" default="0" description="" />
-  <Extra type="RawByteLength" length="80" /> <!-- Dummy length -->
+  <EventTimer3 type="float" default="0" description="" />
+  <Padding1 type="uint32" default="0" description="" /> <!-- idk -->
+  <Padding2 type="uint32" default="0" description="" />
+  <Padding3 type="uint32" default="0" description="" />
+  <Padding4 type="uint32" default="0" description="" />
+  <Padding5 type="uint32" default="0" description="" />
+  <Padding6 type="uint32" default="0" description="" />
+  <Extra type="RawByteLength" length="76" />
 </Template>

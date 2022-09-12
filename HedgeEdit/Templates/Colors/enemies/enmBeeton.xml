@@ -8,11 +8,6 @@
   <IsResurrect type="bool" default="false" description="?" />
   <AlivePoint type="vector" description="?" />
   <IsMoveAttack type="bool" default="false" description="?" />
-  <filler type="byte" default="0" description="?" /> <!-- delete when seteditor bug sorted out -->
-  <filler type="byte" default="0" description="?" />
-  <filler type="byte" default="0" description="?" />
-  <filler type="byte" default="0" description="?" />
-  <filler type="byte" default="0" description="?" />
   <StartPos type="vector" description="?" />
   <IsMoveAttackRotate type="bool" default="false" description="?" />
   <IsMoveResurrectRotate type="bool" default="false" description="?" />

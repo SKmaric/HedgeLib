@@ -12,7 +12,7 @@
   <CollisionWidth type="float" default="0" />
   <CollisionHeight type="float" default="0" />
   <CollisionDepth type="float" default="0" />
-  <EventArisingTimer type="uint32" default="0" description="" />
-  <SwitchType type="uint32" default="0" description="" />
+  <EventArisingTimer type="float" default="0" description="" />
+  <SwitchType type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="80" />
 </Template>

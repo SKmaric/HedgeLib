@@ -63,7 +63,7 @@ namespace HedgeLib.Sets
                 // Objects
                 reader.JumpTo(objIndicesOffset, false);
 
-                for (uint i2 = 0; i2 < objOfTypeCount; ++i2)
+                for (uint j = 0; j < objOfTypeCount; ++j)
                 {
                     ushort objIndex = reader.ReadUInt16();
                     long curPos = reader.BaseStream.Position;
@@ -101,7 +101,7 @@ namespace HedgeLib.Sets
         public static void Write(BINAWriter writer, List<SetObject> objects, SOBJType type)
         {
             // Get some data we need to write the file
-            var objectsByType = new Dictionary<string, List<int>>();
+            var objectsByType = new SortedDictionary<string, List<int>>(StringComparer.Ordinal);
             uint transformCount = 0, objTypeCount = 0;
 
             for (int objIndex = 0; objIndex < objects.Count; ++objIndex)
@@ -138,10 +138,6 @@ namespace HedgeLib.Sets
 
             writer.Write(transformCount);
 
-            // Object Offsets
-            writer.FillInOffset("objOffsetsOffset", false);
-            writer.AddOffsetTable("objOffset", (uint)objects.Count);
-
             // Object Types
             uint i = 0;
             writer.FillInOffset("objTypeOffsetsOffset", false);
@@ -155,63 +151,59 @@ namespace HedgeLib.Sets
                 ++i;
             }
 
+
             // Object Indices
-            ushort i2 = 0;
             i = 0;
 
-            foreach (var obj in objectsByType)
+            foreach (var objType in objectsByType)
             {
+                writer.FixPadding(4);
                 writer.FillInOffset($"objIndicesOffset_{i}", false);
-                for (int i3 = 0; i3 < obj.Value.Count; ++i3)
+                foreach (int objIndex in objType.Value)
                 {
-                    writer.Write(i2);
-                    ++i2;
+                    writer.Write((ushort)objIndex);
                 }
 
                 ++i;
             }
 
+            // Object Offsets
+            writer.FixPadding(4);
+            writer.FillInOffset("objOffsetsOffset", false);
+            writer.AddOffsetTable("objOffset", (uint)objects.Count);
+
             // Objects
             writer.FixPadding(4);
             i = 0;
 
-            foreach (var objType in objectsByType)
+            foreach (var obj in objects)
             {
-                foreach (int objIndex in objType.Value)
-                {
-                    writer.FillInOffset($"objOffset_{i}", false);
-                    WriteObject(writer, objects[objIndex], type);
-                    writer.FixPadding(0x4);
-                    ++i;
-                }
+                writer.FillInOffset($"objOffset_{i}", false);
+                WriteObject(writer, obj, type);
+                writer.FixPadding(0x4);
+                ++i;
             }
 
             // TODO: Clean this up
-            writer.FixPadding(4);
-            
-            foreach (var objType in objectsByType)
+            foreach (var obj in objects)
             {
-                foreach (int objIndex in objType.Value)
-                {
-                    // Transforms
-                    writer.FixPadding(0x4);
-                    writer.FillInOffset($"transformsOffset_{objects[objIndex].ObjectID}", false);
-                    WriteTransform(writer, objects[objIndex].Transform,
-                        type == SOBJType.LostWorld);
+                writer.FixPadding(4);
+                writer.FillInOffset($"transformsOffset_{obj.ObjectID}", false);
+                WriteTransform(writer, obj.Transform,
+                    type == SOBJType.LostWorld);
+                writer.FixPadding(0x4);
 
-                    foreach (var childTransform in objects[objIndex].Children)
-                    {
-                        WriteTransform(writer, childTransform,
-                            type == SOBJType.LostWorld);
-                    }
+                foreach (var childTransform in obj.Children)
+                {
+                    WriteTransform(writer, childTransform,
+                        type == SOBJType.LostWorld);
                 }
             }
-
         }
 
         private static SetObject ReadObject(ExtendedBinaryReader reader,
             SetObjectType objTemplate, string objType, SOBJType type,
-            bool rawDataMode = false) // true = full, false = only remaining bytes
+            bool useRawData = false, bool rawDataMode = false) // true = full, false = only remaining bytes
         {
             // For some reason these separate values are saved as one uint rather than two ushorts.
             // Because of this, the values are in a different order depending on endianness, and
@@ -263,23 +255,27 @@ namespace HedgeLib.Sets
             // Skip loading parameters if template doesn't exist
             if (objTemplate != null)
             {
-                // Get Raw Byte Length
-                var rawDataLenExtra = objTemplate.GetExtra("RawByteLength");
                 long paramBegin = reader.BaseStream.Position;
                 int rawLength = 0;
 
-                if (rawDataLenExtra != null &&
-                    !string.IsNullOrEmpty(rawDataLenExtra.Value))
+                if (useRawData)
                 {
-                    int.TryParse(rawDataLenExtra.Value, out rawLength);
-                }
+                    // Get Raw Byte Length
+                    var rawDataLenExtra = objTemplate.GetExtra("RawByteLength");
 
-                // Read all the data then return to beginning
-                if (rawDataMode == true && rawLength != 0)
-                {
-                    obj.CustomData.Add("RawParamData", new SetObjectParam(typeof(byte[]),
-                        reader.ReadBytes(rawLength)));
-                    reader.JumpTo(paramBegin);
+                    if (rawDataLenExtra != null &&
+                        !string.IsNullOrEmpty(rawDataLenExtra.Value))
+                    {
+                        int.TryParse(rawDataLenExtra.Value, out rawLength);
+                    }
+
+                    // Read all the data then return to beginning
+                    if (rawDataMode && rawLength != 0)
+                    {
+                        obj.CustomData.Add("RawParamData", new SetObjectParam(typeof(byte[]),
+                            reader.ReadBytes(rawLength)));
+                        reader.JumpTo(paramBegin);
+                    }
                 }
 
                 // Parameters
@@ -332,14 +328,15 @@ namespace HedgeLib.Sets
                         obj.Parameters.Add(new SetObjectParam(param.DataType, str));
                         continue;
                     }
-                    else if (param.DataType == typeof(float) ||
-                        param.DataType == typeof(int) || param.DataType == typeof(uint))
-                    {
-                        reader.FixPadding(4);
-                    }
                     else if (type == SOBJType.LostWorld && param.DataType == typeof(Vector3))
                     {
                         reader.FixPadding(16);
+                    }
+                    else if (param.DataType == typeof(float) ||
+                        param.DataType == typeof(int) || param.DataType == typeof(uint) ||
+                        param.DataType == typeof(Vector3))
+                    {
+                        reader.FixPadding(4);
                     }
 
                     // Read Data
@@ -348,7 +345,7 @@ namespace HedgeLib.Sets
                     obj.Parameters.Add(objParam);
                 }
 
-                if (rawDataMode == false)
+                if (useRawData && !rawDataMode)
                 {
                     long knownParamLength = (reader.BaseStream.Position - paramBegin);
                     long remainingBytes = (rawLength - knownParamLength);
@@ -397,7 +394,7 @@ namespace HedgeLib.Sets
         }
 
         private static void WriteObject(BINAWriter writer, SetObject obj, SOBJType type,
-            bool rawDataMode = false) // true = full, false = only remaining bytes)
+            bool useRawData = false, bool rawDataMode = false) // true = full, false = only remaining bytes)
         {
             // Get a bunch of values from the object's custom data, if present.
             uint unknown1 = obj.GetCustomDataValue<ushort>("Unknown1");
@@ -431,24 +428,32 @@ namespace HedgeLib.Sets
 
             // Parameters
             long paramBegin = writer.BaseStream.Position;
+            // Do this for Colors uint arrays
+            int currUintArr = 0;
+            List<uint[]> arr = new List<uint[]>();
             foreach (var param in obj.Parameters)
             {
                 // Write Special Types/Fix Padding
                 if (param.DataType == typeof(uint[]))
                 {
                     // Data Info
-                    var arr = (uint[])param.Data;
+                    arr.Add((uint[])param.Data);
                     writer.FixPadding(4);
 
-                    writer.AddOffset("arrOffset");
-                    writer.Write((uint)arr.Length);
+                    writer.AddOffset($"arrOffset_{obj.ObjectID}_{currUintArr}");
+                    writer.Write((uint)arr[currUintArr].Length);
                     writer.WriteNulls(4); // TODO: Figure out what this is.
 
                     // Data
-                    writer.FillInOffset("arrOffset", false);
+                    if (!(type == SOBJType.Colors))
+                    {
+                        writer.FillInOffset($"arrOffset_{obj.ObjectID}_{currUintArr}", false);
 
-                    foreach (uint value in arr)
-                        writer.Write(value);
+                        foreach (uint value in arr[currUintArr])
+                            writer.Write(value);
+                    }
+
+                    currUintArr++;
 
                     continue;
                 }
@@ -471,30 +476,66 @@ namespace HedgeLib.Sets
 
                     continue;
                 }
-                else if (param.DataType == typeof(float) ||
-                    param.DataType == typeof(int) || param.DataType == typeof(uint))
-                {
-                    writer.FixPadding(4);
-                }
                 else if (type == SOBJType.LostWorld && param.DataType == typeof(Vector3))
                 {
                     writer.FixPadding(16);
                 }
+                else if (param.DataType == typeof(float) ||
+                    param.DataType == typeof(int) || param.DataType == typeof(uint) ||
+                    param.DataType == typeof(Vector3))
+                {
+                    writer.FixPadding(4);
+                }
+                
 
                 // Write Data
                 writer.WriteByType(param.DataType, param.Data);
             }
 
-            // Write remaining raw data from loaded ORC
-            if (rawDataMode == false)
+            if (useRawData)
             {
-                writer.Write(rawParamData);
+                //Write remaining raw data from loaded ORC
+                if (!rawDataMode)
+                {
+                    writer.Write(rawParamData);
+                }
+                else
+                {
+                    int knownParamLength = (int)(writer.BaseStream.Position - paramBegin);
+                    writer.Write(rawParamData, knownParamLength,
+                        rawParamData.Length - knownParamLength);
+                }
             }
-            else
+
+            // Uint[] Data for Colors
+            if (type == SOBJType.Colors)
             {
-                int knownParamLength = (int)(writer.BaseStream.Position - paramBegin);
-                writer.Write(rawParamData, knownParamLength,
-                    rawParamData.Length - knownParamLength);
+                writer.FixPadding(4);
+
+                //Need to do this to avoid a bug putting next obj's transform in wrong spot
+                bool[] ValidArrays = new bool[arr.Count];
+                for (int i = arr.Count - 1; i >= 0; i--)
+                {
+                    if (arr[i].Length == 0)
+                    {
+                        writer.FillInOffset($"arrOffset_{obj.ObjectID}_{i}", 0, true, true);
+                        ValidArrays[i] = false;
+                    }
+                    else
+                    {
+                        ValidArrays[i] = true;
+                    }
+                }
+
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    if (ValidArrays[i])
+                    {
+                        writer.FillInOffset($"arrOffset_{obj.ObjectID}_{i}", false);
+                        foreach (uint value in arr[i])
+                            writer.Write(value);
+                    }
+                }
             }
 
             writer.FixPadding(4);

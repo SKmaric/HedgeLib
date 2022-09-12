@@ -252,6 +252,7 @@ namespace HedgeLib.Sets
             Dictionary<string, SetObjectType> objectTemplates = null)
         {
             // Convert to XML file and save
+            int OffsetIDs = 0;
             var rootElem = new XElement("SetData");
 
             foreach (var obj in Objects)
@@ -259,12 +260,14 @@ namespace HedgeLib.Sets
                 // Generate Object Element
                 var objElem = new XElement("Object");
                 var typeAttr = new XAttribute("type", obj.ObjectType);
-                var objIDAttr = new XAttribute("id", obj.ObjectID);
+                var objIDAttr = new XAttribute("id", obj.ObjectID + OffsetIDs);
 
                 // Generate CustomData Element
                 var customDataElem = new XElement("CustomData");
                 foreach (var customData in obj.CustomData)
                 {
+                    if (customData.Key == "RawParamData")
+                        continue;
                     customDataElem.Add(GenerateParamElement(
                         customData.Value, customData.Key));
                 }
@@ -347,6 +350,16 @@ namespace HedgeLib.Sets
                 {
                     Helpers.XMLWriteVector4(elem, (Vector4)param.Data);
                 }
+                else if (new string[] { "Target", "ACameraID", "BCameraID", "ALinkObjID", "BLinkObjID" }.Contains(name) && dataType == typeof(uint))
+                {
+                    // Workaround for target obj id parameters
+                    // Offset if necessary
+                    int temp = (int)(uint)param.Data;
+                    if (temp != 0)
+                        temp += OffsetIDs;
+
+                    elem.Value = temp.ToString();
+                }
                 else if (dataType == typeof(uint[]))
                 {
                     var arr = (param.Data as uint[]);
@@ -354,6 +367,12 @@ namespace HedgeLib.Sets
 
                     if (arr == null)
                         return elem;
+
+                    for (int i = 0; i < arr.Length; i++)
+                    {
+                        if (arr[i] != 0)
+                            arr[i] += (uint)OffsetIDs;
+                    }
 
                     elem.Value = string.Join(",", arr);
                 }
