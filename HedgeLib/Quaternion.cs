@@ -58,8 +58,8 @@ namespace HedgeLib
 
             if (test > 0.499)
             {
-                return GetVect(0,
-                    360 / System.Math.PI * System.Math.Atan2(X, W), 90);
+                return GetVect(360 / System.Math.PI * System.Math.Atan2(X, W),
+                    0, 90);
             }
             if (test < -0.499)
             {
@@ -71,16 +71,19 @@ namespace HedgeLib
             double a = System.Math.Asin(2 * X * Y + 2 * Z * W);
             double b = System.Math.Atan2(2 * X * W - 2 * Y * Z, 1 - 2 * qx2 - 2 * qz2);
 
-            return GetVect(System.Math.Round(b * 180 / System.Math.PI),
-                System.Math.Round(h * 180 / System.Math.PI),
-                System.Math.Round(a * 180 / System.Math.PI));
+            return GetVect(System.Math.Round(b * 180 / System.Math.PI, 2),
+                System.Math.Round(h * 180 / System.Math.PI, 2),
+                System.Math.Round(a * 180 / System.Math.PI, 2));
 
             // Sub-Methods
             Vector3 GetVect(double x, double y, double z)
             {
-                float multi = (returnResultInRadians) ? 0.0174533f : 1;
-                return new Vector3((float)x * multi,
-                    (float)y * multi, (float)z * multi);
+                double multi = (returnResultInRadians) ? (System.Math.PI / 180) : 1;
+                //specific fix for some upside down objects idk
+                if (x == 180 && (y == 0 || y == 180))
+                    z = -z;
+                return new Vector3((float)(x * multi),
+                    (float)(y * multi), (float)(z * multi));
             }
         }
     }

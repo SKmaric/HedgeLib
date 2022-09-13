@@ -436,9 +436,18 @@ namespace HedgeLib.Sets
                 // Write Special Types/Fix Padding
                 if (param.DataType == typeof(uint[]))
                 {
+                    writer.FixPadding(4);
+
                     // Data Info
                     arr.Add((uint[])param.Data);
-                    writer.FixPadding(4);
+
+                    //skip empty arrays
+                    if (arr[currUintArr].Length < 1)
+                    {
+                        writer.WriteNulls(12);
+                        currUintArr++;
+                        continue;
+                    }
 
                     writer.AddOffset($"arrOffset_{obj.ObjectID}_{currUintArr}");
                     writer.Write((uint)arr[currUintArr].Length);
@@ -512,24 +521,9 @@ namespace HedgeLib.Sets
             {
                 writer.FixPadding(4);
 
-                //Need to do this to avoid a bug putting next obj's transform in wrong spot
-                bool[] ValidArrays = new bool[arr.Count];
-                for (int i = arr.Count - 1; i >= 0; i--)
-                {
-                    if (arr[i].Length == 0)
-                    {
-                        writer.FillInOffset($"arrOffset_{obj.ObjectID}_{i}", 0, true, true);
-                        ValidArrays[i] = false;
-                    }
-                    else
-                    {
-                        ValidArrays[i] = true;
-                    }
-                }
-
                 for (int i = 0; i < arr.Count; i++)
                 {
-                    if (ValidArrays[i])
+                    if (arr[i].Length > 0)
                     {
                         writer.FillInOffset($"arrOffset_{obj.ObjectID}_{i}", false);
                         foreach (uint value in arr[i])
