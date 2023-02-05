@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using HedgeLib.IO;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HedgeLib.Animations
@@ -11,9 +12,18 @@ namespace HedgeLib.Animations
         public const string Extension = ".uv-anim";
 
         // Methods
-        public override void Load(Stream fileStream)
+
+        public override string GetAnimType()
         {
-            TextureName = Read(fileStream, true);
+            return Extension;
+        }
+
+        public override void ReadNames(GensReader reader, uint stringTableOffset = 0)
+        {
+            uint materialNameOffset = reader.ReadUInt32();
+            uint textureNameOffset = reader.ReadUInt32();
+            MaterialName = reader.GetString(materialNameOffset + (stringTableOffset + reader.Offset));
+            TextureName = reader.GetString(textureNameOffset + (stringTableOffset + reader.Offset));
         }
 
         public override void Save(Stream fileStream)

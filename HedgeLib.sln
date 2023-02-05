@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorsLfieldEditor", "Hedge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeLfieldEditor", "HedgeTools\HedgeLfieldEditor\HedgeLfieldEditor.csproj", "{104EBC14-680A-4B62-B7FA-45F76C227CF2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeAnimEditor", "HedgeAnimEditor\HedgeAnimEditor.csproj", "{325AEB85-DA73-4361-87F7-A23A7ACCFA26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{325AEB85-DA73-4361-87F7-A23A7ACCFA26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{325AEB85-DA73-4361-87F7-A23A7ACCFA26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{325AEB85-DA73-4361-87F7-A23A7ACCFA26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{325AEB85-DA73-4361-87F7-A23A7ACCFA26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{9EB0D514-2E5D-4440-B416-7D4DD4559A11} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 		{7F185424-4715-4DCD-9379-4B1296D96BCE} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 		{104EBC14-680A-4B62-B7FA-45F76C227CF2} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
+		{325AEB85-DA73-4361-87F7-A23A7ACCFA26} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {637995FC-1FB4-45F7-8336-B9C78FAA11F7}

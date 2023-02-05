@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\CameraAnimation.cs" />
     <Compile Include="Animations\MaterialAnimation.cs" />
     <Compile Include="Animations\VisibilityAnimation.cs" />
     <Compile Include="Archives\ForcesArchive.cs" />

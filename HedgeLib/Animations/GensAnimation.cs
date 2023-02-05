@@ -20,9 +20,10 @@ namespace HedgeLib.Animations
             Read(fileStream);
         }
 
-        protected virtual string Read(Stream fileStream,
+        protected virtual void Read(Stream fileStream,
             bool readAdditionalString = false)
         {
+            string animType = GetAnimType();
             // Header
             var reader = new GensReader(fileStream);
             Header.Read(reader);
@@ -36,9 +37,8 @@ namespace HedgeLib.Animations
 
             // MetaData
             reader.JumpTo(metaDataOffset, false);
-            uint materialNameOffset = reader.ReadUInt32();
-            uint additionalStringOffset = (readAdditionalString) ?
-                reader.ReadUInt32() : 0;
+
+            ReadNames(reader, stringTableOffset);
 
             uint animCount = reader.ReadUInt32();
             var animOffsets = new uint[animCount];
@@ -51,7 +51,7 @@ namespace HedgeLib.Animations
             for (uint i = 0; i < animCount; ++i)
             {
                 reader.JumpTo(animOffsets[i], false);
-                Animations.Add(new Animation(reader));
+                Animations.Add(new Animation(reader, stringTableOffset, animType));
             }
 
             // Keyframes
@@ -62,26 +62,14 @@ namespace HedgeLib.Animations
                     set.ReadKeyframes(reader, keyframesOffset);
                 }
             }
-
-            // String Table
-            name = ReadString(materialNameOffset);
-            string additionalString = (readAdditionalString) ?
-                ReadString(additionalStringOffset) : null;
-
-            foreach (var anim in Animations)
-            {
-                anim.BlendType = ReadString(anim.BlendTypeOffset);
-            }
-
-            return additionalString;
-
-            // Sub-Methods
-            string ReadString(uint off)
-            {
-                reader.JumpTo(stringTableOffset + off, false);
-                return reader.ReadNullTerminatedString();
-            }
         }
+
+        public virtual void ReadNames(GensReader reader, uint stringTableOffset = 0)
+        {
+            return;
+        }
+
+        public abstract string GetAnimType();
 
         public override void Save(Stream fileStream)
         {
@@ -119,7 +107,7 @@ namespace HedgeLib.Animations
             {
                 var anim = Animations[i];
                 writer.FillInOffset($"animsOffset_{i}", false, false);
-                AddStringToTable(anim.BlendType);
+                AddStringToTable(anim.Name);
                 anim.Write(writer, true);
             }
 
@@ -191,6 +179,10 @@ namespace HedgeLib.Animations
                     anim = new VisibilityAnimation();
                     break;
 
+                case "cameraanimation":
+                    anim = new CameraAnimation();
+                    break;
+
                 //case "textureanimation":
                 //    anim = new TextureAnimation();
                 //    break;
@@ -253,14 +245,23 @@ namespace HedgeLib.Animations
         {
             // Variables/Constants
             public List<KeyframeSet> KeyframeSets = new List<KeyframeSet>();
-            public string BlendType = "default";
+            public string Name = "default";
             public float FPS, StartTime, EndTime;
-            public uint BlendTypeOffset { get; protected set; }
+            // Camera Variables
+            public byte Flag1, Flag2, Flag3, Flag4;
+            public Vector3 Position, Rotation, Aim;
+            public float Twist, NearZ, FarZ, FOV, Aspect;
+
+            //public uint BlendTypeOffset { get; protected set; }
+            //public string BlendType = "default";
+
+            private string animType = "";
 
             // Constructors
             public Animation() { }
-            public Animation(BinaryReader reader)
+            public Animation(GensReader reader, uint stringTableOffset = 0, string type = "")
             {
+                animType = type.ToLower();
                 Read(reader);
             }
 
@@ -270,15 +271,49 @@ namespace HedgeLib.Animations
             }
 
             // Methods
-            public void Read(BinaryReader reader)
+            public void Read(GensReader reader, uint stringTableOffset = 0)
             {
-                BlendTypeOffset = reader.ReadUInt32(); // texsetNameOffset for Forces?
-                FPS = reader.ReadSingle();
-                StartTime = reader.ReadSingle();
-                EndTime = reader.ReadSingle();
+                uint keyframeSetsCount = 0;
 
-                // Keyframe Sets
-                uint keyframeSetsCount = reader.ReadUInt32();
+                //BlendTypeOffset = reader.ReadUInt32(); // texsetNameOffset for Forces?
+
+                uint NameOffset = reader.ReadUInt32();
+                Name = reader.GetString(NameOffset + (stringTableOffset + reader.Offset));
+                
+                if (animType == CameraAnimation.Extension)
+                {
+                    // Flags
+                    Flag1 = reader.ReadByte(); // Interpolation type?
+                    Flag2 = reader.ReadByte();
+                    Flag3 = reader.ReadByte();
+                    Flag4 = reader.ReadByte();
+
+                    FPS = reader.ReadSingle();
+                    StartTime = reader.ReadSingle();
+                    EndTime = reader.ReadSingle();
+
+                    // Keyframe Sets
+                    keyframeSetsCount = reader.ReadUInt32();
+
+                    //Camera Specific Properties
+                    Position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Rotation = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Aim = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    Twist = reader.ReadSingle();
+                    NearZ = reader.ReadSingle();
+                    FarZ = reader.ReadSingle();
+                    FOV = reader.ReadSingle();
+                    Aspect = reader.ReadSingle();
+                }
+                else
+                {
+                    FPS = reader.ReadSingle();
+                    StartTime = reader.ReadSingle();
+                    EndTime = reader.ReadSingle();
+
+                    // Keyframe Sets
+                    keyframeSetsCount = reader.ReadUInt32();
+                }
                 for (uint i2 = 0; i2 < keyframeSetsCount; ++i2)
                 {
                     KeyframeSets.Add(new KeyframeSet(reader));
@@ -287,9 +322,10 @@ namespace HedgeLib.Animations
 
             public void Write(BinaryWriter writer, bool wroteBlendTypeOffset = false)
             {
-                if (!wroteBlendTypeOffset)
-                    writer.Write(0U);
+                //if (!wroteBlendTypeOffset)
+                //    writer.Write(0U);
 
+                writer.Write(Name);
                 writer.Write(FPS);
                 writer.Write(StartTime);
                 writer.Write(EndTime);
@@ -307,14 +343,19 @@ namespace HedgeLib.Animations
 
             public void ImportXElement(XElement elem)
             {
-                var blendTypeAttr = elem.Attribute("blendType");
+                //var blendTypeAttr = elem.Attribute("blendType");
+                var nameAttr = elem.Attribute("name");
                 var fpsAttr = elem.Attribute("fps");
                 var startTimeAttr = elem.Attribute("startTime");
                 var endTimeAttr = elem.Attribute("endTime");
 
-                BlendType = (blendTypeAttr == null ||
-                    string.IsNullOrEmpty(blendTypeAttr.Value)) ?
-                    "default" : blendTypeAttr.Value;
+                //BlendType = (blendTypeAttr == null ||
+                //    string.IsNullOrEmpty(blendTypeAttr.Value)) ?
+                //    "default" : blendTypeAttr.Value;
+
+                Name = (nameAttr == null ||
+                    string.IsNullOrEmpty(nameAttr.Value)) ?
+                    "default" : nameAttr.Value;
 
                 float.TryParse(fpsAttr?.Value, out FPS);
                 float.TryParse(startTimeAttr?.Value, out StartTime);
@@ -329,7 +370,8 @@ namespace HedgeLib.Animations
             public XElement GenerateXElement()
             {
                 var elem = new XElement("Animation", 
-                    new XAttribute("blendType", BlendType),
+                    //new XAttribute("blendType", BlendType),
+                    new XAttribute("name", Name),
                     new XAttribute("fps", FPS),
                     new XAttribute("startTime", StartTime),
                     new XAttribute("endTime", EndTime));

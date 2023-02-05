@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using HedgeLib.IO;
+using System.Xml.Linq;
 
 namespace HedgeLib.Animations
 {
@@ -9,6 +10,18 @@ namespace HedgeLib.Animations
         public const string Extension = ".mat-anim";
 
         // Methods
+
+        public override string GetAnimType()
+        {
+            return Extension;
+        }
+
+        public override void ReadNames(GensReader reader, uint stringTableOffset = 0)
+        {
+            uint materialNameOffset = reader.ReadUInt32();
+            MaterialName = reader.GetString(materialNameOffset + (stringTableOffset + reader.Offset));
+        }
+
         protected override void ReadXML(XElement root)
         {
             var matNameAttr = root.Attribute("materialName");

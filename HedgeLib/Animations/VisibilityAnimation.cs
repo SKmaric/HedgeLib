@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using HedgeLib.IO;
+using System.IO;
 using System.Xml.Linq;
 
 namespace HedgeLib.Animations
@@ -11,9 +12,17 @@ namespace HedgeLib.Animations
         public const string Extension = ".vis-anim";
 
         // Methods
-        public override void Load(Stream fileStream)
+        public override string GetAnimType()
         {
-            MeshName = Read(fileStream, true);
+            return Extension;
+        }
+
+        public override void ReadNames(GensReader reader, uint stringTableOffset = 0)
+        {
+            uint modelNameOffset = reader.ReadUInt32();
+            uint meshNameOffset = reader.ReadUInt32();
+            ModelName = reader.GetString(modelNameOffset + (stringTableOffset + reader.Offset));
+            MeshName = reader.GetString(meshNameOffset + (stringTableOffset + reader.Offset));
         }
 
         public override void Save(Stream fileStream)
