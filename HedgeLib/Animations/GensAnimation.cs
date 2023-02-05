@@ -236,7 +236,7 @@ namespace HedgeLib.Animations
         {
             foreach (var anim in Animations)
             {
-                root.Add(anim.GenerateXElement());
+                root.Add(anim.GenerateXElement(GetAnimType()));
             }
         }
 
@@ -262,7 +262,7 @@ namespace HedgeLib.Animations
             public Animation(GensReader reader, uint stringTableOffset = 0, string type = "")
             {
                 animType = type.ToLower();
-                Read(reader);
+                Read(reader, stringTableOffset);
             }
 
             public Animation(XElement elem)
@@ -367,14 +367,34 @@ namespace HedgeLib.Animations
                 }
             }
 
-            public XElement GenerateXElement()
+            public XElement GenerateXElement(string animationType = "")
             {
+                animType = animationType;
+
                 var elem = new XElement("Animation", 
                     //new XAttribute("blendType", BlendType),
                     new XAttribute("name", Name),
                     new XAttribute("fps", FPS),
                     new XAttribute("startTime", StartTime),
                     new XAttribute("endTime", EndTime));
+
+                if (animType == CameraAnimation.Extension)
+                {
+                    elem.Add(
+                        new XAttribute("flag1", Flag1),
+                        new XAttribute("flag2", Flag2),
+                        new XAttribute("flag3", Flag3),
+                        new XAttribute("flag4", Flag4),
+                        new XAttribute("position", Position),
+                        new XAttribute("rotation", Rotation),
+                        new XAttribute("aim", Aim),
+                        new XAttribute("twist", Twist),
+                        new XAttribute("nearz", NearZ),
+                        new XAttribute("farz", FarZ),
+                        new XAttribute("fov", FOV),
+                        new XAttribute("aspect", Aspect)
+                    );
+                }
 
                 foreach (var set in KeyframeSets)
                 {

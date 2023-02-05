@@ -8,14 +8,73 @@ namespace HedgeAnimEditor
 {
     public partial class MainForm : Form
     {
+        // Variables/Constants
         public GensAnimation GensAnimation;
-        public string LoadedFilePath = "";
+        public string FileName;
 
+        // Constructors
         public MainForm()
         {
             InitializeComponent();
         }
 
+        // Methods
+        public void OpenAnim(string filePath)
+        {
+            Console.WriteLine("Opening Animation File: {0}", (object)filePath);
+            this.FileName = filePath;
+
+            try
+            {
+                var anim = Program.LoadAnim(filePath);
+                GensAnimation = anim;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Program.ProgramName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            //this.Update();
+        }
+
+        public void SaveAnim(bool forceSaveAs = false)
+        {
+            if (forceSaveAs || string.IsNullOrEmpty(FileName))
+            {
+                var sfd = new SaveFileDialog()
+                {
+                    Title = "Save ANIM File...",
+                    Filter = "Animation File|*.uv-anim;*.cam-anim;*.vis-anim;*.mat-anim",
+                };
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                FileName = sfd.FileName;
+            }
+            GensAnimation.Save(FileName, true);
+        }
+
+        public void SaveAnimXML(bool forceSaveAs = false)
+        {
+            if (forceSaveAs || string.IsNullOrEmpty(FileName))
+            {
+                var sfd = new SaveFileDialog()
+                {
+                    Title = "Save XML File...",
+                    Filter = "Animation File XML|*.xml",
+                };
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                FileName = sfd.FileName;
+            }
+            GensAnimation.ExportXML(FileName);
+        }
+
+        // GUI Events
         private void BtnOpen_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -26,22 +85,19 @@ namespace HedgeAnimEditor
             this.OpenAnim(openFileDialog.FileName);
         }
 
-        public void OpenAnim(string filePath)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("Opening Animation File: {0}", (object)filePath);
-            this.LoadedFilePath = filePath;
+            SaveAnim(true);
+        }
 
-            try
-            {
-                var anim = Program.LoadAnim(filePath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, Program.ProgramName,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+        private void BtnOpenXML_Click(object sender, EventArgs e)
+        {
 
-            //this.Update();
+        }
+
+        private void BtnSaveXML_Click(object sender, EventArgs e)
+        {
+            SaveAnimXML(true);
         }
     }
 }
