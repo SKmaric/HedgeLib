@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeLib", "HedgeLib\HedgeLib.csproj", "{EEB16FCA-FF9F-40B5-9D43-F2460AA930C8}"
 EndProject
@@ -22,6 +22,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeCnvrsEditor", "HedgeTools\HedgeCnvrsEditor\HedgeCnvrsEditor.csproj", "{1B424F08-998B-4575-B2CE-AFE58F79B42D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeSCFNTConverter", "HedgeTools\HedgeSCFNTConverter\HedgeSCFNTConverter.csproj", "{9EB0D514-2E5D-4440-B416-7D4DD4559A11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColorsLfieldEditor", "HedgeTools\ColorsLfieldEditor\ColorsLfieldEditor.csproj", "{7F185424-4715-4DCD-9379-4B1296D96BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HedgeLfieldEditor", "HedgeTools\HedgeLfieldEditor\HedgeLfieldEditor.csproj", "{104EBC14-680A-4B62-B7FA-45F76C227CF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,14 @@ Global
 		{9EB0D514-2E5D-4440-B416-7D4DD4559A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EB0D514-2E5D-4440-B416-7D4DD4559A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EB0D514-2E5D-4440-B416-7D4DD4559A11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F185424-4715-4DCD-9379-4B1296D96BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F185424-4715-4DCD-9379-4B1296D96BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F185424-4715-4DCD-9379-4B1296D96BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F185424-4715-4DCD-9379-4B1296D96BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{104EBC14-680A-4B62-B7FA-45F76C227CF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +89,8 @@ Global
 		{07D4587C-AE7C-4E98-A3C8-2F08B72600E4} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 		{1B424F08-998B-4575-B2CE-AFE58F79B42D} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 		{9EB0D514-2E5D-4440-B416-7D4DD4559A11} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
+		{7F185424-4715-4DCD-9379-4B1296D96BCE} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
+		{104EBC14-680A-4B62-B7FA-45F76C227CF2} = {965BE90A-F869-45E1-8F44-97BEBAA12A06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {637995FC-1FB4-45F7-8336-B9C78FAA11F7}
