@@ -13,6 +13,7 @@ namespace HedgeLib.Animations
         public GensHeader Header = new GensHeader();
         public List<Animation> Animations = new List<Animation>();
         protected string name;
+        protected string subname;
 
         // Methods
         public override void Load(Stream fileStream)
@@ -20,8 +21,7 @@ namespace HedgeLib.Animations
             Read(fileStream);
         }
 
-        protected virtual void Read(Stream fileStream,
-            bool readAdditionalString = false)
+        protected virtual void Read(Stream fileStream)
         {
             string animType = GetAnimType();
             // Header
@@ -76,8 +76,7 @@ namespace HedgeLib.Animations
             Write(fileStream);
         }
 
-        protected virtual void Write(Stream fileStream,
-            string additionalString = null)
+        protected virtual void Write(Stream fileStream)
         {
             // WHY ARE SIZeS IN THE OFfSET TABlE SEGA YOU BUMS?>??!??!
             int stringTableSize = 0;
@@ -94,10 +93,10 @@ namespace HedgeLib.Animations
             // MetaData
             uint metaDataOffset = (uint)fileStream.Position;
             writer.FillInOffset("metaDataOffset", false, false);
-            AddStringToTable(name);
-
-            if (!string.IsNullOrEmpty(additionalString))
-                AddStringToTable(additionalString);
+            if (!string.IsNullOrEmpty(name))
+                AddStringToTable(name);
+            if (!string.IsNullOrEmpty(subname))
+                AddStringToTable(subname);
 
             writer.Write(Animations.Count);
             writer.AddOffsetTable("animsOffset", (uint)Animations.Count);
@@ -201,9 +200,10 @@ namespace HedgeLib.Animations
 
         protected virtual void ReadXML(XElement root)
         {
+            string animtype = GetAnimType();
             foreach (var anim in root.Elements("Animation"))
             {
-                Animations.Add(new Animation(anim));
+                Animations.Add(new Animation(anim, animtype));
             }
         }
 
@@ -265,8 +265,9 @@ namespace HedgeLib.Animations
                 Read(reader, stringTableOffset);
             }
 
-            public Animation(XElement elem)
+            public Animation(XElement elem, string type = "")
             {
+                animType = type;
                 ImportXElement(elem);
             }
 
@@ -325,15 +326,44 @@ namespace HedgeLib.Animations
                 //if (!wroteBlendTypeOffset)
                 //    writer.Write(0U);
 
-                writer.Write(Name);
-                writer.Write(FPS);
-                writer.Write(StartTime);
-                writer.Write(EndTime);
+                if (animType == CameraAnimation.Extension)
+                {
+                    writer.Write(Flag1);
+                    writer.Write(Flag2);
+                    writer.Write(Flag3);
+                    writer.Write(Flag4);
+
+                    writer.Write(FPS);
+                    writer.Write(StartTime);
+                    writer.Write(EndTime);
+
+                    writer.Write(KeyframeSets.Count);
+
+                    writer.Write(Position.X);
+                    writer.Write(Position.Y);
+                    writer.Write(Position.Z);
+                    writer.Write(Rotation.X);
+                    writer.Write(Rotation.Y);
+                    writer.Write(Rotation.Z);
+                    writer.Write(Aim.X);
+                    writer.Write(Aim.Y);
+                    writer.Write(Aim.Z);
+                    writer.Write(Twist);
+                    writer.Write(NearZ);
+                    writer.Write(FarZ);
+                    writer.Write(FOV);
+                    writer.Write(Aspect);
+                } else
+                {
+                    writer.Write(FPS);
+                    writer.Write(StartTime);
+                    writer.Write(EndTime);
+
+                    writer.Write(KeyframeSets.Count);
+                }
 
                 // Keyframe Sets
                 int startIndex = 0;
-                writer.Write(KeyframeSets.Count);
-
                 foreach (var set in KeyframeSets)
                 {
                     set.Write(writer, startIndex);
@@ -343,6 +373,7 @@ namespace HedgeLib.Animations
 
             public void ImportXElement(XElement elem)
             {
+                //animType = GetAnimType();
                 //var blendTypeAttr = elem.Attribute("blendType");
                 var nameAttr = elem.Attribute("name");
                 var fpsAttr = elem.Attribute("fps");
@@ -361,11 +392,61 @@ namespace HedgeLib.Animations
                 float.TryParse(startTimeAttr?.Value, out StartTime);
                 float.TryParse(endTimeAttr?.Value, out EndTime);
 
+                if (animType == CameraAnimation.Extension)
+                {
+                    var flag1Attr = elem.Attribute("flag1");
+                    var flag2Attr = elem.Attribute("flag2");
+                    var flag3Attr = elem.Attribute("flag3");
+                    var flag4Attr = elem.Attribute("flag4");
+                    var positionAttr = elem.Attribute("position");
+                    var rotationAttr = elem.Attribute("rotation");
+                    var aimAttr = elem.Attribute("aim");
+                    var twistAttr = elem.Attribute("twist");
+                    var nearzAttr = elem.Attribute("nearz");
+                    var farzAttr = elem.Attribute("farz");
+                    var fovAttr = elem.Attribute("fov");
+                    var aspectAttr = elem.Attribute("aspect");
+
+                    byte.TryParse(flag1Attr?.Value, out Flag1);
+                    byte.TryParse(flag2Attr?.Value, out Flag2);
+                    byte.TryParse(flag3Attr?.Value, out Flag3);
+                    byte.TryParse(flag4Attr?.Value, out Flag4);
+                    Position = StringToVector3(positionAttr?.Value);
+                    Rotation = StringToVector3(rotationAttr?.Value);
+                    Aim = StringToVector3(aimAttr?.Value);
+                    float.TryParse(twistAttr?.Value, out Twist);
+                    float.TryParse(nearzAttr?.Value, out NearZ);
+                    float.TryParse(farzAttr?.Value, out FarZ);
+                    float.TryParse(fovAttr?.Value, out FOV);
+                    float.TryParse(aspectAttr?.Value, out Aspect);
+                }
+
                 foreach (var set in elem.Elements("KeyframeSet"))
                 {
                     KeyframeSets.Add(new KeyframeSet(set));
                 }
             }
+
+            public Vector3 StringToVector3(string sVector)
+            {
+                // Remove the parentheses
+                if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+                {
+                    sVector = sVector.Substring(1, sVector.Length - 2);
+                }
+
+                // split the items
+                string[] sArray = sVector.Split(',');
+
+                // store as a Vector3
+                var result = new Vector3(
+                    float.Parse(sArray[0]),
+                    float.Parse(sArray[1]),
+                    float.Parse(sArray[2]));
+
+                return result;
+            }
+
 
             public XElement GenerateXElement(string animationType = "")
             {

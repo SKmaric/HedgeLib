@@ -56,6 +56,25 @@ namespace HedgeAnimEditor
             GensAnimation.Save(FileName, true);
         }
 
+        public void OpenAnimXML(string filePath)
+        {
+            Console.WriteLine("Opening Animation XML: {0}", (object)filePath);
+            this.FileName = filePath;
+
+            try
+            {
+                var anim = GensAnimation.ImportXML(filePath);
+                GensAnimation = anim;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Program.ProgramName,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            //this.Update();
+        }
+
         public void SaveAnimXML(bool forceSaveAs = false)
         {
             if (forceSaveAs || string.IsNullOrEmpty(FileName))
@@ -92,7 +111,12 @@ namespace HedgeAnimEditor
 
         private void BtnOpenXML_Click(object sender, EventArgs e)
         {
-
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Open Animation XML";
+            openFileDialog.Filter = "Mirage Animation XML|*.xml";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
+            this.OpenAnimXML(openFileDialog.FileName);
         }
 
         private void BtnSaveXML_Click(object sender, EventArgs e)

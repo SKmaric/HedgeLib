@@ -8,7 +8,7 @@ namespace HedgeLib.Animations
     {
         // Variables/Constants
         public string ModelName { get => name; set => name = value; }
-        public string MeshName;
+        public string MeshName { get => subname; set => subname = value; }
         public const string Extension = ".vis-anim";
 
         // Methods
@@ -23,11 +23,6 @@ namespace HedgeLib.Animations
             uint meshNameOffset = reader.ReadUInt32();
             ModelName = reader.GetString(modelNameOffset + (stringTableOffset + reader.Offset));
             MeshName = reader.GetString(meshNameOffset + (stringTableOffset + reader.Offset));
-        }
-
-        public override void Save(Stream fileStream)
-        {
-            Write(fileStream, MeshName);
         }
 
         protected override void ReadXML(XElement root)
@@ -45,7 +40,7 @@ namespace HedgeLib.Animations
         {
             root.Name = "VisibilityAnimation";
             root.Add(new XAttribute("modelName", name));
-            root.Add(new XAttribute("meshName", MeshName));
+            root.Add(new XAttribute("meshName", subname));
             root.Add(new XComment("Controls mesh visibility."));
             root.Add(new XComment("A keyframe with a value of 0 = A frame where the mesh is invisible."));
             root.Add(new XComment("A keyframe with a value of 1 = A frame where the mesh is visible."));

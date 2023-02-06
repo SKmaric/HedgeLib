@@ -8,7 +8,7 @@ namespace HedgeLib.Animations
     {
         // Variables/Constants
         public string MaterialName { get => name; set => name = value; }
-        public string TextureName;
+        public string TextureName { get => subname; set => subname = value; }
         public const string Extension = ".uv-anim";
 
         // Methods
@@ -26,11 +26,6 @@ namespace HedgeLib.Animations
             TextureName = reader.GetString(textureNameOffset + (stringTableOffset + reader.Offset));
         }
 
-        public override void Save(Stream fileStream)
-        {
-            Write(fileStream, TextureName);
-        }
-
         protected override void ReadXML(XElement root)
         {
             var matNameAttr = root.Attribute("materialName");
@@ -46,7 +41,7 @@ namespace HedgeLib.Animations
         {
             root.Name = "UVAnimation";
             root.Add(new XAttribute("materialName", name));
-            root.Add(new XAttribute("textureName", TextureName));
+            root.Add(new XAttribute("textureName", subname));
             root.Add(new XComment("In Forces, textureName and Animation blendType are swapped."));
             base.WriteXML(root);
         }
