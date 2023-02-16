@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\PatternAnimation.cs" />
+    <Compile Include="Animations\MorphAnimation.cs" />
+    <Compile Include="Animations\LightAnimation.cs" />
     <Compile Include="Animations\CameraAnimation.cs" />
     <Compile Include="Animations\MaterialAnimation.cs" />
     <Compile Include="Animations\VisibilityAnimation.cs" />

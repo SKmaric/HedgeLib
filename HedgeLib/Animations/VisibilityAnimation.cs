@@ -30,7 +30,7 @@ namespace HedgeLib.Animations
             var modelNameAttr = root.Attribute("modelName");
             var meshNameAttr = root.Attribute("meshName");
 
-            name = GetStringAttr(modelNameAttr);
+            ModelName = GetStringAttr(modelNameAttr);
             MeshName = GetStringAttr(meshNameAttr);
 
             base.ReadXML(root);
