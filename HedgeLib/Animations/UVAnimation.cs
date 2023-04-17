@@ -42,7 +42,10 @@ namespace HedgeLib.Animations
             root.Name = "UVAnimation";
             root.Add(new XAttribute("materialName", name));
             root.Add(new XAttribute("mapName", subname));
-            root.Add(new XComment("In Forces, textureName and Animation blendType are swapped."));
+            //root.Add(new XComment("In Forces, textureName and Animation blendType are swapped."));
+            root.Add(new XComment("KeyframeSet Flag1 = 0 : U, 1 : V"));
+            root.Add(new XComment("KeyframeSet Flag2 = ?"));
+            root.Add(new XComment("KeyframeSet Flag3 = 0 : linear interpolation, 1 : step interpolation"));
             base.WriteXML(root);
         }
     }

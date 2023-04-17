@@ -15,7 +15,6 @@ namespace HedgeLib.Animations
         public List<Animation> Animations = new List<Animation>();
         protected string name;
         protected string subname;
-        public string Extension;
 
         // Methods
         public override void Load(Stream fileStream)
@@ -131,7 +130,7 @@ namespace HedgeLib.Animations
                 var anim = Animations[i];
                 writer.FillInOffset($"animsOffset_{i}", false, false);
                 AddStringToTable(anim.Name);
-                anim.Write(writer, ref startIndex, ref stringTableSize, ref stringTable, ref stringTable2Size, ref stringTable2, true);
+                anim.Write(writer, animType, ref startIndex, ref stringTableSize, ref stringTable, ref stringTable2Size, ref stringTable2, true);
             }
 
             // Keyframes
@@ -337,7 +336,7 @@ namespace HedgeLib.Animations
                     animType == LightAnimation.Extension)
                 {
                     // Flags
-                    Flag1 = reader.ReadByte(); // Interpolation type?
+                    Flag1 = reader.ReadByte();
                     Flag2 = reader.ReadByte();
                     Flag3 = reader.ReadByte();
                     Flag4 = reader.ReadByte();
@@ -386,12 +385,13 @@ namespace HedgeLib.Animations
                 }
             }
 
-            public void Write(GensWriter writer, ref int startIndex, ref int stringTableSize,
+            public void Write(GensWriter writer, string type, ref int startIndex, ref int stringTableSize,
                 ref List<string> stringTable, ref int stringTable2Size,
                 ref List<string> stringTable2, bool wroteBlendTypeOffset = false)
             {
                 //if (!wroteBlendTypeOffset)
                 //    writer.Write(0U);
+                animType = type;
 
                 if (animType == CameraAnimation.Extension ||
                     animType == LightAnimation.Extension)
@@ -460,7 +460,7 @@ namespace HedgeLib.Animations
                 // Keyframe Sets
                 foreach (var set in KeyframeSets)
                 {
-                    set.Write(writer, startIndex, ref stringTableSize, ref stringTable, stringTable2Size);
+                    set.Write(writer, animType, startIndex, ref stringTableSize, ref stringTable, stringTable2Size);
                     foreach (var str in set.textureNames)
                     {
                         stringTable2Size += str.Length + 1;
@@ -727,9 +727,11 @@ namespace HedgeLib.Animations
                 }
             }
 
-            public void Write(GensWriter writer, int startIndex,
+            public void Write(GensWriter writer, string type, int startIndex,
                 ref int stringTableSize, ref List<string> stringTable, int startOffset = 0)
             {
+                animType = type;
+
                 if (animType == MorphAnimation.Extension)
                 {
                     AddStringToTable(name, writer, ref stringTableSize, ref stringTable);
