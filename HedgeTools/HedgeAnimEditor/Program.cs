@@ -38,7 +38,7 @@ namespace HedgeAnimEditor
             // Checks if the input has .otf or .ttf
             if (!CheckExtension(args[0], ".xml", ".uv-anim", ".cam-anim", ".pt-anim", ".mat-anim", ".lit-anim", ".vis-anim", ".morph-anim"))
             {
-                Console.WriteLine("Error: Input file doesn't have a .otf, .ttf or .scfnt extension!\n");
+                Console.WriteLine("Error: Input file doesn't have an anim or .xml extension!\n");
                 ShowHelp();
                 return;
             }
