@@ -1,4 +1,5 @@
 ﻿using HedgeLib.Headers;
+using System;
 using System.IO;
 using System.Text;
 
@@ -14,21 +15,19 @@ namespace HedgeLib.IO
             bool isBigEndian = true) : base(input, encoding, isBigEndian) { }
 
         // Methods
-        public GensHeader ReadHeader()
+        public HedgehogEngineHeader ReadHeader()
         {
-            var header = new GensHeader()
-            {
-                FileSize = ReadUInt32(),
-                RootNodeType = ReadUInt32(),
-                OffsetFinalTable = ReadUInt32(),
-                RootNodeOffset = ReadUInt32(),
-                OffsetFinalTableAbs = ReadUInt32(),
-                FileEndOffset = ReadUInt32()
-            };
+            uint fileSize = ReadUInt32();
+            uint rootNodeType = ReadUInt32();
+            JumpBehind(8);
 
-            Offset = header.RootNodeOffset;
-            JumpTo(header.RootNodeOffset);
-            return header;
+            // Mirage Header
+            byte mirageMarker = (byte)(fileSize >> 31);
+            if (mirageMarker == 1 && rootNodeType == MirageHeader.Signature)
+                return new MirageHeader(this);
+
+            // Generations Header
+            return new GensHeader(this);
         }
 
         public uint[] ReadFooter()
@@ -49,74 +48,106 @@ namespace HedgeLib.IO
     {
         // Constructors
         public GensWriter(Stream output, bool isBigEndian = true) :
+            base(output, Encoding.ASCII, isBigEndian) { }
+
+        public GensWriter(Stream output, Encoding encoding,
+            bool isBigEndian = true) : base(output, encoding, isBigEndian) {}
+
+        public GensWriter(Stream output, HedgehogEngineHeader header,
+            string mirageType = null, bool isBigEndian = true) :
             base(output, Encoding.ASCII, isBigEndian)
         {
-            Offset = GensHeader.Length;
-            WriteNulls(Offset);
+            if (!string.IsNullOrEmpty(mirageType) && header is MirageHeader mirageHeader)
+            {
+                mirageHeader.GenerateNodes(mirageType);
+            }
+
+            header.PrepareWrite(this);
         }
 
         public GensWriter(Stream output, Encoding encoding,
+            HedgehogEngineHeader header, string mirageType = null,
             bool isBigEndian = true) : base(output, encoding, isBigEndian)
         {
-            Offset = GensHeader.Length;
-            WriteNulls(Offset);
-        }
+            if (!string.IsNullOrEmpty(mirageType) && header is MirageHeader mirageHeader)
+            {
+                mirageHeader.GenerateNodes(mirageType);
+            }
 
-        public GensWriter(Stream output, GensHeader header,
-            bool isBigEndian = true) : base(output, Encoding.ASCII, isBigEndian)
-        {
-            if (header.RootNodeOffset < GensHeader.Length)
-                header.RootNodeOffset = GensHeader.Length;
-
-            Offset = header.RootNodeOffset;
-            WriteNulls(Offset);
-        }
-
-        public GensWriter(Stream output, Encoding encoding, GensHeader header,
-            bool isBigEndian = true) : base(output, encoding, isBigEndian)
-        {
-            if (header.RootNodeOffset < GensHeader.Length)
-                header.RootNodeOffset = GensHeader.Length;
-
-            Offset = header.RootNodeOffset;
-            WriteNulls(Offset);
+            header.PrepareWrite(this);
         }
 
         // Methods
-        public void FinishWrite(GensHeader header)
+        public void FinishWrite(HedgehogEngineHeader header,
+            string mirageType = null, bool writeEOFNull = true)
         {
-            WriteFooter(header);
-            FillInHeader(header);
-        }
+            // Write Footer and Update Header Values
+            uint footerPos = (uint)BaseStream.Position;
+            if (header is GensHeader gensHeader)
+            {
+                WriteFooter(true, writeEOFNull);
 
-        public void FillInHeader(GensHeader header)
-        {
+                header.FooterOffset = footerPos;
+                gensHeader.RootNodeSize = (footerPos - Offset);
+                gensHeader.FileSize = (uint)BaseStream.Position;
+            }
+            else if (header is MirageHeader mirageHeader)
+            {
+                FixPadding(16);
+
+                uint footerPosPadded = (uint)BaseStream.Position;
+                uint len = MirageHeader.Node.Length;
+
+                header.FooterOffset = footerPosPadded;
+                WriteFooter(false, writeEOFNull);
+                
+                // Update Sizes
+                uint fileSize = (uint)BaseStream.Position;
+                mirageHeader.FooterOffsetsCount = (uint)offsets.Count;
+                mirageHeader.RootNode.DataSize = fileSize;
+
+                if (!string.IsNullOrEmpty(mirageType))
+                {
+                    MirageHeader.Node typeNode, contextsNode;
+                    typeNode = mirageHeader.GetNode(mirageType, false);
+
+                    if (typeNode != null)
+                    {
+                        UpdateSize(typeNode, footerPosPadded);
+                        contextsNode = typeNode.GetNode(MirageHeader.Contexts, false);
+
+                        if (contextsNode != null)
+                            UpdateSize(contextsNode, footerPos);
+                    }
+                }
+
+                // Sub-Methods
+                void UpdateSize(MirageHeader.Node node, uint endPos)
+                {
+                    if (node.DataSize == 0)
+                        node.DataSize = (endPos - len);
+
+                    len += MirageHeader.Node.Length;
+                }
+            }
+
+            // Write Header
             BaseStream.Position = 0;
-
-            Write(header.FileSize);
-            Write(header.RootNodeType);
-            Write(header.OffsetFinalTable);
-            Write(Offset);
-            Write(header.OffsetFinalTableAbs);
-            Write(header.FileEndOffset);
+            header.FinishWrite(this);
         }
 
-        public void WriteFooter(GensHeader header)
+        public void WriteFooter(bool writeCount, bool writeEOFNull = true)
         {
-            uint finalTablePos = (uint)BaseStream.Position;
-            Write((uint)offsets.Count);
+            if (writeCount)
+                Write((uint)offsets.Count);
 
             foreach (var offset in offsets)
             {
                 Write(offset.Value - Offset);
             }
 
-            WriteNulls(4);
-
-            // Update Header Values
-            header.OffsetFinalTableAbs = finalTablePos;
-            header.OffsetFinalTable = finalTablePos - Offset;
-            header.FileSize = (uint)BaseStream.Position;
+            if (writeEOFNull)
+                WriteNulls(4);
         }
     }
 }

@@ -8,16 +8,18 @@ namespace HedgeLib.Terrain
     public class GensTerrainGroup : FileBase
     {
         // Variables/Constants
-        public InstanceInfo[] InstanceInfos;
+        public InstanceInfoEntry[] InstanceInfos;
         public string[] TerrainModels;
         public GensHeader Header = new GensHeader();
+
+        public const string Extension = ".terrain-group";
 
         // Methods
         public override void Load(Stream fileStream)
         {
             // Header
             var reader = new GensReader(fileStream, true);
-            Header = reader.ReadHeader();
+            Header = new GensHeader(reader);
 
             // Root Node
             uint instanceInfoCount = reader.ReadUInt32();
@@ -27,12 +29,12 @@ namespace HedgeLib.Terrain
             uint terrainModelOffsetsOffset = reader.ReadUInt32();
 
             // Instance Infos
-            InstanceInfos = new InstanceInfo[instanceInfoCount];
+            InstanceInfos = new InstanceInfoEntry[instanceInfoCount];
             reader.JumpTo(instanceInfoOffsetsOffset, false);
 
             for (uint i = 0; i < instanceInfoCount; ++i)
             {
-                var instanceInfo = new InstanceInfo();
+                var instanceInfo = new InstanceInfoEntry();
                 uint instanceInfoOffset = reader.ReadUInt32();
                 long curPos = reader.BaseStream.Position;
                 reader.JumpTo(instanceInfoOffset, false);
@@ -71,7 +73,7 @@ namespace HedgeLib.Terrain
         public override void Save(Stream fileStream)
         {
             // Header
-            var writer = new GensWriter(fileStream, Header, true);
+            var writer = new GensWriter(fileStream, Header);
 
             // Root Node
             writer.Write(InstanceInfos.Length);
@@ -126,7 +128,7 @@ namespace HedgeLib.Terrain
         }
 
         // Other
-        public struct InstanceInfo
+        public struct InstanceInfoEntry
         {
             public string[] FileNames;
             public Vector3 BoundingSphereCenter;

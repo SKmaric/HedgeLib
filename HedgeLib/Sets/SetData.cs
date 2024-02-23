@@ -124,13 +124,36 @@ namespace HedgeLib.Sets
             // Sub-Methods
             SetObjectParam LoadParam(XElement paramElem)
             {
+                // Groups
                 var dataTypeAttr = paramElem.Attribute("type");
-                if (dataTypeAttr == null) return null;
+                if (dataTypeAttr == null)
+                {
+                    var padAttr = paramElem.Attribute("padding");
+                    uint? padding = null;
 
+                    if (uint.TryParse(padAttr?.Value, out var pad))
+                        padding = pad;
+
+                    var group = new SetObjectParamGroup(padding);
+                    var parameters = group.Parameters;
+
+                    foreach (var param in paramElem.Elements())
+                    {
+                        parameters.Add(LoadParam(param));
+                    }
+
+                    return group;
+                }
+
+                // Parameters
                 var dataType = Types.GetTypeFromString(dataTypeAttr.Value);
                 object data = null;
 
-                if (dataType == typeof(Vector3))
+                if (dataType == typeof(Vector2))
+                {
+                    data = Helpers.XMLReadVector2(paramElem);
+                }
+                else if (dataType == typeof(Vector3))
                 {
                     data = Helpers.XMLReadVector3(paramElem);
                 }
@@ -141,6 +164,57 @@ namespace HedgeLib.Sets
                 else if (dataType == typeof(Quaternion))
                 {
                     data = Helpers.XMLReadQuat(paramElem);
+                }
+                else if (dataType == typeof(uint[]))
+                {
+                    var countAttr = paramElem.Attribute("count");
+                    uint arrLength = 0;
+
+                    if (countAttr != null)
+                    {
+                        uint.TryParse(countAttr.Value, out arrLength);
+                    }
+
+                    var values = paramElem.Value.Split(',');
+                    var arr = new uint[arrLength];
+                    for (uint i = 0; i < arrLength; ++i)
+                    {
+                        if (i >= values.Length)
+                            break;
+
+                        uint.TryParse(values[i], out arr[i]);
+                    }
+
+                    data = arr;
+                }
+                else if (dataType == typeof(ForcesSetData.ObjectReference[]))
+                {
+                    var countAttr = paramElem.Attribute("count");
+                    uint arrLength = 0;
+
+                    if (countAttr != null)
+                    {
+                        uint.TryParse(countAttr.Value, out arrLength);
+                    }
+
+                    uint i = 0;
+                    var arr = new ForcesSetData.ObjectReference[arrLength];
+
+                    foreach (var refElem in paramElem.Elements("ForcesObjectReference"))
+                    {
+                        var objRef = new ForcesSetData.ObjectReference();
+                        objRef.ImportXML(refElem);
+                        arr[i] = objRef;
+                        ++i;
+                    }
+
+                    data = arr;
+                }
+                else if (dataType  == typeof(ForcesSetData.ObjectReference))
+                {
+                    var objRef = new ForcesSetData.ObjectReference();
+                    objRef.ImportXML(paramElem);
+                    data = objRef;
                 }
                 else
                 {
@@ -168,7 +242,7 @@ namespace HedgeLib.Sets
         public void ExportXML(string filePath,
             Dictionary<string, SetObjectType> objectTemplates = null)
         {
-            using (var fileStream = File.OpenWrite(filePath))
+            using (var fileStream = File.Create(filePath))
             {
                 ExportXML(fileStream, objectTemplates);
             }
@@ -196,13 +270,16 @@ namespace HedgeLib.Sets
                 }
 
                 // Generate Parameters Element
+                SetObjectTypeParam p;
                 var paramsElem = new XElement("Parameters");
-                var template = objectTemplates?[obj.ObjectType];
+                var template = (objectTemplates != null && objectTemplates.ContainsKey(obj.ObjectType)) ?
+                    objectTemplates[obj.ObjectType] : null;
 
                 for (int i = 0; i < obj.Parameters.Count; ++i)
                 {
-                    paramsElem.Add(GenerateParamElement(obj.Parameters[i],
-                        template?.Parameters[i].Name));
+                    p = template?.Parameters[i];
+                    paramsElem.Add(GenerateParamElement(
+                        obj.Parameters[i], p?.Name, p));
                 }
 
                 // Generate Transforms Element
@@ -224,21 +301,82 @@ namespace HedgeLib.Sets
             xml.Save(fileStream);
 
             // Sub-Methods
-            XElement GenerateParamElement(
-                SetObjectParam param, string name = "Parameter")
+            XElement GenerateParamElement(SetObjectParam param,
+                string name = "Parameter", SetObjectTypeParam paramTemp = null)
             {
+                // Groups
+                if (param is SetObjectParamGroup group)
+                {
+                    var e = new XElement((string.IsNullOrEmpty(name)) ?
+                        "Group" : name);
+
+                    if (group.Padding.HasValue)
+                        e.Add(new XAttribute("padding", group.Padding.Value));
+
+                    SetObjectTypeParam p;
+                    var templateGroup = (paramTemp as SetObjectTypeParamGroup);
+                    var parameters = group.Parameters;
+
+                    for (int i = 0; i < parameters.Count; ++i)
+                    {
+                        p = templateGroup?.Parameters[i];
+                        e.Add(GenerateParamElement(parameters[i], p?.Name, p));
+                    }
+
+                    return e;
+                }
+
+                // Parameters
                 var dataType = param.DataType;
                 var dataTypeAttr = new XAttribute("type", dataType.Name);
+                if (dataType == typeof(ForcesSetData.ObjectReference))
+                    dataTypeAttr.Value = "ForcesObjectReference";
+
                 var elem = new XElement((string.IsNullOrEmpty(name)) ?
                     "Parameter" : name, dataTypeAttr);
-
-                if (dataType == typeof(Vector3))
+                
+                if (dataType == typeof(Vector2))
+                {
+                    Helpers.XMLWriteVector2(elem, (Vector2)param.Data);
+                }
+                else if (dataType == typeof(Vector3))
                 {
                     Helpers.XMLWriteVector3(elem, (Vector3)param.Data);
                 }
                 else if (dataType == typeof(Vector4) || dataType == typeof(Quaternion))
                 {
                     Helpers.XMLWriteVector4(elem, (Vector4)param.Data);
+                }
+                else if (dataType == typeof(uint[]))
+                {
+                    var arr = (param.Data as uint[]);
+                    elem.Add(new XAttribute("count", (arr == null) ? 0 : arr.Length));
+
+                    if (arr == null)
+                        return elem;
+
+                    elem.Value = string.Join(",", arr);
+                }
+                else if (dataType == typeof(ForcesSetData.ObjectReference[]))
+                {
+                    var arr = (param.Data as ForcesSetData.ObjectReference[]);
+                    dataTypeAttr.Value = "ForcesObjectList";
+                    elem.Add(new XAttribute("count", (arr == null) ? 0 : arr.Length));
+
+                    if (arr == null)
+                        return elem;
+
+                    foreach (var v in arr)
+                    {
+                        var objRefElem = new XElement("ForcesObjectReference");
+                        v.ExportXML(objRefElem);
+                        elem.Add(objRefElem);
+                    }
+                }
+                else if (dataType == typeof(ForcesSetData.ObjectReference))
+                {
+                    var objRef = (param.Data as ForcesSetData.ObjectReference);
+                    objRef.ExportXML(elem);
                 }
                 else
                 {

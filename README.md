@@ -9,28 +9,40 @@ HedgeLib is a C# library [under the MIT license](https://github.com/Radfordhound
 Right now it supports the following:
 
 ### Havok
-- [Reading/Writing XML Havok data.](HedgeLib/Collison/Havok.cs)
+- [Reading/Writing XML Havok data.](HedgeLib/Havok/HavokXML.cs)
 
 ### Hedgehog Engine
 - [Reading/Writing Lights.](HedgeLib/Lights/Light.cs)
+- [Reading/Writing Models.](HedgeLib/Models/GensModel.cs)
+- [Reading/Writing Materials.](HedgeLib/Materials/GensMaterial.cs)
 
-### Sonic Heroes/Shadow the Hedgehog
-- [Reading/Writing Uncompressed Archives.](HedgeLib/Archives/ONEArchive.cs)
+### Sonic Forces
+- [Reading/Writing Gismos.](HedgeLib/Misc/ForcesGISM.cs)
+- [Reading Archives.](HedgeLib/Archives/ForcesArchive.cs)
+- [Reading/Writing Set Data.](HedgeLib/Sets/ForcesSetData.cs)
 
-### Sonic '06
-- [Reading/Writing Set Data.](HedgeLib/Sets/S06SetData.cs)
+### Sonic Colors/Sonic Lost World
+- [Reading/Writing GISM files.](HedgeLib/Misc/LWGism.cs)
+- [Reading/Writing Set Data.](HedgeLib/Sets/SOBJ.cs)
+- [Reading/Writing SNDL (SouND List) files.](HedgeLib/Sound/ColorsSNDL.cs)
 
 ### Sonic Unleashed/Sonic Generations
 - [Reading/Writing Uncompressed Archives.](HedgeLib/Archives/GensArchive.cs)
 - [Reading Set Data.](HedgeLib/Sets/GensSetData.cs)
 - [Reading/Writing Terrain Groups.](HedgeLib/Terrain/GensTerrainGroup.cs)
 - [Reading/Writing Light Lists.](HedgeLib/Lights/GensLightList.cs)
+- [Reading/Writing PFI Files.](HedgeLib/Misc/GensPFI.cs)
 
-### Sonic Colors/Sonic Lost World
+### Sonic '06
+- [Reading Archives.](HedgeLib/Archives/S06Archive.cs)
+- [Reading/Writing Set Data.](HedgeLib/Sets/S06SetData.cs)
+
+### Sonic Heroes/Shadow the Hedgehog
+- [Reading/Writing Uncompressed Archives.](HedgeLib/Archives/ONEArchive.cs)
+
+### Other
+- [Reading DDS Texures.](HedgeLib/Textures/DDS.cs)
 - [Reading/Writing BINA headers/footers.](HedgeLib/IO/BINA.cs)
-- [Reading/Writing GISM files.](HedgeLib/Misc/LWGism.cs)
-- [Reading/Writing Set Data.](HedgeLib/Sets/SOBJ.cs)
-- [Reading/Writing SNDL (SouND List) files.](HedgeLib/Sound/ColorsSNDL.cs)
 
 ## HedgeEdit
 A level editor built with OpenTK/Winforms designed to carry much of the same
@@ -49,8 +61,21 @@ Right now this includes the following:
 - [Hedge Archive Editor](HedgeTools/HedgeArchiveEditor)
   * A GUI tool that allows easy editing of archiving formats from all games HedgeLib supports.
 
+- [Hedge PFD](HedgeTools/HedgePFD)
+  * A Command Line tool that allows for quick packing of Generations/Unleashed PFD
+  files and generation of their accompanying PFI files.
+
+- [Forces GISM Editor](HedgeTools/ForcesGISMEditor)
+  * A GUI tool that allows editing of the Forces GISM format (basically a "Gismo" used by a stage).
+
 - [Hedge GISM Editor](HedgeTools/HedgeGISMEditor)
   * A GUI tool that allows editing of the Lost World GISM format (basically a list of "Gismos" used by a stage).
+
+- [Hedge Cnvrs Editor](HedgeTools/HedgeCnvrsEditor)
+  * A GUI tool that allows editing of the Forces CNVRS-TEXT format (basically a list of text used in different areas in the game e.g.: Loading Screen).
+  
+- [Hedge SCFNT Converter](HedgeTools/HedgeSCFNTConverter)
+  * A Command Line tool that allows for conversion of OTF or TTF files into a SCFNT format.
 
 # Building
 This repository uses [AppVeyor](https://www.appveyor.com/) to automatically build every commit!
@@ -63,4 +88,4 @@ As such, you don't have to manually build any of the tools/libraries in this rep
 If you do wish to manually build, however, all that's required is the following:
 - [Visual Studio 2017 (or later).](https://www.visualstudio.com/downloads/)
 - .NET Framework 4.6/4.7 (can be downloaded from Visual Studio).
-- OpenTK and OpenTK.GLControl (both are automatically downloaded as a NuGet package when HedgeEdit is first opened in Visual Studio).
+- OpenTK, OpenTK.GLControl, and MoonSharp (these are all automatically downloaded as NuGet packages when HedgeEdit is first opened in Visual Studio).

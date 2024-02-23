@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HedgeLib.Sets;
+using System;
 using System.Linq;
 
 namespace HedgeLib
@@ -15,21 +16,22 @@ namespace HedgeLib
             new DataType(typeof(char), '\0', "char"),
 
             // 2-Byte Values
-            new DataType(typeof(short), (short)0, "signed short", "sint16", "short"),
+            new DataType(typeof(short), (short)0, "signed short", "sint16", "int16", "short"),
             new DataType(typeof(ushort), (ushort)0, "unsigned short", "uint16", "ushort"),
 
             // 4-Byte Values
             new DataType(typeof(int), 0, "signed int", "integer", "sint32", "int", "int32"),
             new DataType(typeof(uint), 0u, "unsigned int",
-				"unsigned integer", "uint32", "uint", "target"),
+                "unsigned integer", "uint32", "uint", "target"),
             new DataType(typeof(float), 0f, "single", "float"),
-
-            new DataType(typeof(uint[]), new uint[0], "uint32array"),
+            new DataType(typeof(ForcesSetData.ObjectReference),
+                new ForcesSetData.ObjectReference(), "forcesobjectreference"),
 
             // 8-Byte Values
-            new DataType(typeof(long), 0L, "signed long", "sint64", "long"),
+            new DataType(typeof(long), 0L, "signed long", "sint64", "long", "int64"),
             new DataType(typeof(ulong), 0UL, "unsigned long", "uint64", "ulong"),
             new DataType(typeof(double), 0D, "double"),
+            new DataType(typeof(Vector2), new Vector2(), "vector2"),
 
             // 12-Byte Values
             new DataType(typeof(Vector3), new Vector3(), "vect", "vector", "vector3", "position"),
@@ -40,7 +42,10 @@ namespace HedgeLib
             new DataType(typeof(Quaternion), new Quaternion(), "quat", "quaternion"),
 
             // Other Values
-            new DataType(typeof(string), string.Empty, "string")
+            new DataType(typeof(string), string.Empty, "string"),
+            new DataType(typeof(uint[]), new uint[0], "uint32array", "uint32[]", "uint[]"),
+            new DataType(typeof(ForcesSetData.ObjectReference[]),
+                new ForcesSetData.ObjectReference[0], "forcesobjectlist")
 
             // TODO: Add other data types if necessary.
         };

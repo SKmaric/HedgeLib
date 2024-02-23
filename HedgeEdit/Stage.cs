@@ -1,9 +1,6 @@
-﻿using HedgeLib;
-using HedgeLib.Archives;
-using HedgeLib.Misc;
-using HedgeLib.Sets;
+﻿using HedgeEdit.Lua;
+using HedgeEdit.UI;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace HedgeEdit
@@ -11,13 +8,18 @@ namespace HedgeEdit
     public class Stage
     {
         // Variables/Constants
-        public static List<SetData> Sets = new List<SetData>();
         public static GameEntry GameType;
+        public static EditorCache EditorCache;
+        public static LuaScript Script => script;
+        public static string ID, DataDir, CacheDir;
+
+        private static LuaScript script;
+        private static string scriptPath;
 
         // Methods
         public static void Load(string dataDir, string stageID, GameEntry game)
         {
-            Viewport.Clear();
+            Data.Clear();
 
             // Throw exceptions if necessary
             if (!Directory.Exists(dataDir))
@@ -28,289 +30,131 @@ namespace HedgeEdit
 
             if (string.IsNullOrEmpty(stageID))
             {
-                throw new Exception("Cannot load stage. Invalid Stage ID!");
+                throw new ArgumentNullException("stageID",
+                    "Cannot load stage. Invalid Stage ID!");
             }
 
             GameType = game;
+            ID = stageID;
+            DataDir = dataDir;
+
+            var resDir = new AssetDirectory(game.ResourcesDir);
+            Data.ModelDirectories.Add(resDir);
+            Data.ResourceDirectories.Add(resDir);
 
             // Make cache directory
-            string cacheDir = Helpers.CombinePaths(Program.StartupPath,
+            CacheDir = Path.Combine(Program.StartupPath,
                 Program.CachePath, stageID);
 
-            string editorCachePath = Helpers.CombinePaths(cacheDir, EditorCache.FileName);
-            Directory.CreateDirectory(cacheDir);
+            string editorCachePath = Path.Combine(
+                CacheDir, EditorCache.FileName);
+            Directory.CreateDirectory(CacheDir);
 
             // Load Editor Cache
-            EditorCache editorCache = null;
-
-            if (File.Exists(editorCachePath))
+            bool cacheExists = File.Exists(editorCachePath);
+            EditorCache = new EditorCache()
             {
-                editorCache = new EditorCache();
+                GameType = game.Name,
+            };
+
+            if (cacheExists)
+            {
+                var editorCache = new EditorCache();
                 editorCache.Load(editorCachePath);
 
-                if (editorCache.GameType.ToLower() != game.Name.ToLower())
-                    editorCache = null;
+                if (editorCache.GameType == game.Name)
+                    EditorCache = editorCache;
             }
 
-            // Unpack Data
+            // Lua Script
+            string pth = Path.Combine(Program.StartupPath,
+                Program.ScriptsPath, LuaScript.GamesDir,
+                $"{game.ShortName}{LuaScript.Extension}");
+
+            if (script == null || scriptPath != pth)
+            {
+                script = new LuaScript();
+                scriptPath = pth;
+
+                try
+                {
+                    script.DoScript(scriptPath);
+                    var canAddSetLayer = script.GetValue("CanAddSetLayer");
+
+                    SceneView.CanAddLayer = (canAddSetLayer != null &&
+                        canAddSetLayer.GetType() == typeof(bool)) ?
+                        (bool)canAddSetLayer : false;
+                }
+                catch (Exception ex)
+                {
+                    LuaTerminal.LogError($"ERROR: {ex.Message}");
+                }
+            }
+
+            // Unpack/Load
             var unpackStopWatch = System.Diagnostics.Stopwatch.StartNew();
-            var arcHashes = Unpack(cacheDir, editorCache,
-                dataDir, stageID, game);
+
+            try
+            {
+                script.Call("Load", dataDir, CacheDir, stageID);
+            }
+            catch (Exception ex)
+            {
+                LuaTerminal.LogError($"ERROR: {ex.Message}, {ex.StackTrace}");
+            }
+
             unpackStopWatch.Stop();
             Console.WriteLine("Done unpacking! Time: {0}(ms).",
                 unpackStopWatch.ElapsedMilliseconds);
 
             // Generate new Editor Cache
-            if (editorCache != null) File.Delete(editorCachePath);
-            editorCache = new EditorCache()
-            {
-                GameType = game.Name,
-                ArcHashes = arcHashes
-            };
+            if (cacheExists)
+                File.Delete(editorCachePath);
 
-            editorCache.Save(editorCachePath);
+            EditorCache.Save(editorCachePath, true);
 
-            // Load Data
-            var loadStopWatch = System.Diagnostics.Stopwatch.StartNew();
-            LoadFromCache(cacheDir, stageID, game);
-            loadStopWatch.Stop();
-            Console.WriteLine("Done loading! Time: {0}(ms).",
-                loadStopWatch.ElapsedMilliseconds);
+            // TODO: Remove this line
+            //CurrentSetLayer = Sets[0];
         }
 
-        private static List<List<string>> Unpack(string cacheDir, EditorCache editorCache,
-            string dataDir, string stgID, GameEntry game)
+        public static void SaveSets()
         {
-            var arcHashes = new List<List<string>>();
-            int arcIndex = 0;
-
-            foreach (var entry in game.UnpackInfo)
-            {
-                string path = string.Format(entry.Path, stgID);
-                string cachePath = string.Format(entry.CachePath, stgID, "{1}"); // Hacky but idc
-                string fullPath = Helpers.CombinePaths(dataDir, path);
-                string fullCachePath = Helpers.CombinePaths(cacheDir, cachePath);
-                string dataType = entry.Type.ToLower();
-
-                if (!File.Exists(fullPath) && !Directory.Exists(fullPath))
-                {
-                    Console.WriteLine(
-                        "WARNING: Skipping \"{0}\", as it could not be found!", path);
-
-                    if (dataType == "archive") ++arcIndex;
-                    continue;
-                }
-
-                switch (dataType)
-                {
-                    case "archive":
-                        {
-                            // Get file hashes
-                            var arc = Types.GetArchiveOfType(game.DataType);
-                            if (arc == null)
-                            {
-                                ++arcIndex;
-                                continue;
-                            }
-
-                            bool hashesMatch = true;
-
-                            var arcFileList = arc.GetSplitArchivesList(fullPath);
-                            var arcHashesSub = new List<string>();
-                            var editorCacheHashes = (editorCache == null ||
-                                arcIndex >= editorCache.ArcHashes.Count) ?
-                                    null : editorCache.ArcHashes[arcIndex];
-
-                            for (int i = 0; i < arcFileList.Count; ++i)
-                            {
-                                string file = arcFileList[i];
-                                string arcHash = Helpers.GetFileHash(file);
-                                arcHashesSub.Add(arcHash);
-
-                                if (editorCacheHashes == null || i >= editorCacheHashes.Count ||
-                                    editorCacheHashes[i] != arcHash)
-                                {
-                                    hashesMatch = false;
-                                }
-                            }
-                            arcHashes.Add(arcHashesSub);
-
-                            // Unpack Archive if hash changed (or was not present)
-                            if (!hashesMatch)
-                            {
-                                if (Directory.Exists(fullCachePath))
-                                    Directory.Delete(fullCachePath, true);
-
-                                UnpackArchive(arc, fullPath, fullCachePath);
-                            }
-
-                            ++arcIndex;
-                            break;
-                        }
-
-                    case "file":
-                        {
-                            CopyData(fullPath, fullCachePath);
-                            break;
-                        }
-
-                    case "files":
-                        {
-                            string searchPattern = string.Format(entry.SearchPattern, stgID);
-                            foreach (var file in Directory.GetFiles(fullPath, searchPattern))
-                            {
-                                var fileInfo = new FileInfo(file);
-                                string dest = string.Format(fullCachePath, stgID, fileInfo.Name);
-                                CopyData(file, dest);
-                            }
-                            break;
-                        }
-                }
-            }
-
-            return arcHashes;
-
-            // Sub-Methods
-            void CopyData(string path, string destPath)
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(destPath));
-                File.Copy(path, destPath, true);
-            }
-
-            void UnpackArchive(Archive arc, string arcPath, string dir)
-            {
-                if (arc == null) return;
-                if (!File.Exists(arcPath))
-                {
-                    throw new FileNotFoundException(
-                        "The given archive could not be found!", arcPath);
-                }
-
-                Directory.CreateDirectory(dir);
-
-                arc.Load(arcPath);
-                arc.Extract(dir);
-            }
+            Save("SaveSets", DataDir, CacheDir);
         }
 
-        private static void LoadFromCache(string cacheDir,
-            string stageID, GameEntry game)
+        public static void SaveAll()
         {
-            // Load Directories
-            foreach (var entry in game.LoadInfo.Directories)
-            {
-                var dirEntry = entry.Value;
-                var dirs = string.Format(dirEntry.Directory, stageID).Split('|');
-
-                foreach (string dir in dirs)
-                {
-                    string fullDir = Helpers.CombinePaths(cacheDir, dir);
-                    if (!Directory.Exists(fullDir))
-                    {
-                        Console.WriteLine(
-                            "WARNING: Could not load directory \"{0}\" as it does not exist!",
-                            fullDir);
-                        continue;
-                    }
-
-                    foreach (string file in Directory.GetFiles(fullDir, dirEntry.Filter))
-                    {
-                        LoadFile(entry.Key, file, game);
-                    }
-                }
-            }
-
-            // Load Files
-            foreach (var entry in game.LoadInfo.Files)
-            {
-                string fileName = string.Format(entry.Value, stageID);
-                string file = Helpers.CombinePaths(cacheDir, fileName);
-                LoadFile(entry.Key, file, game);
-            }
+            SaveSets();
+            Save("SaveAll", DataDir, CacheDir);
         }
 
-        private static void LoadFile(string type, string filePath, GameEntry game)
+        public static void Save(string funcName, string dataDir, string cacheDir)
         {
-            if (!File.Exists(filePath))
+            // Argument Checks
+            if (string.IsNullOrEmpty(dataDir))
+                throw new ArgumentNullException("dataDir");
+
+            if (string.IsNullOrEmpty(cacheDir))
+                throw new ArgumentNullException("cacheDir");
+
+            // Save Sets
+            try
             {
-                Console.WriteLine(
-                    "WARNING: Could not load file \"{0}\" as it does not exist!",
-                    filePath);
-                return;
+                script.Call(funcName, dataDir, CacheDir, ID);
+            }
+            catch (Exception ex)
+            {
+                LuaTerminal.LogError($"ERROR: {ex.Message}");
             }
 
-            var fileInfo = new FileInfo(filePath);
-            switch (type.ToLower())
-            {
-                case "lightlist":
-                    {
-                        // Load Light-List
-                        var lightList = new HedgeLib.Lights.GensLightList();
-                        lightList.Load(filePath);
+            // Generate new Editor Cache
+            string editorCachePath = Path.Combine(
+                CacheDir, EditorCache.FileName);
 
-                        // Load all lights in list
-                        foreach (var lightName in lightList.LightNames)
-                        {
-                            string lightPath = Helpers.CombinePaths(fileInfo.DirectoryName,
-                                lightName + HedgeLib.Lights.Light.Extension);
-                            LoadFile("light", lightPath, game);
-                        }
+            if (File.Exists(editorCachePath))
+                File.Delete(editorCachePath);
 
-                        return;
-                    }
-
-                case "gensstagexml":
-                    {
-                        var stageXML = new GensStageXML();
-                        stageXML.Load(filePath);
-
-                        // TODO: Load sonic spawn data.
-                        // TODO: Load path data.
-
-                        return;
-                    }
-
-                case "setdata":
-                    {
-                        var setData = Types.GetSetDataOfType(game.DataType);
-                        Console.WriteLine("Loading sets " + filePath);
-                        setData.Load(filePath, game.ObjectTemplates);
-
-                        // Spawn Objects in World
-                        for (int i = 0; i < setData.Objects.Count; ++i)
-                        {
-                            // TODO: Load actual models.
-                            var obj = setData.Objects[i];
-                            SpawnObject(obj.Transform, game.UnitMultiplier, obj);
-
-                            // Spawn Child Objects
-                            if (obj.Children == null) continue;
-                            foreach (var transform in obj.Children)
-                            {
-                                if (transform == null) continue;
-
-                                SpawnObject(transform,
-                                    game.UnitMultiplier, transform);
-                            }
-                        }
-
-                        setData.Name = Path.GetFileNameWithoutExtension(filePath);
-                        Sets.Add(setData);
-                        return;
-                    }
-
-                // TODO: Add more types.
-            }
-        }
-
-        private static void SpawnObject(SetObjectTransform transform,
-            float unitMultiplier, object customData)
-        {
-            transform.Position *= unitMultiplier;
-
-            Viewport.AddModel(Viewport.DefaultCube,
-                transform.Position,
-                transform.Rotation, customData);
+            EditorCache.Save(editorCachePath, true);
         }
     }
 }

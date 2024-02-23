@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>HedgeEdit</RootNamespace>
     <AssemblyName>HedgeEdit</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -38,16 +38,26 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.0-pre\lib\net20\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.GLControl.3.0.0-pre\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
+    <Reference Include="PropertyGridEx">
+      <HintPath>.\PropertyGridEx.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,37 +69,86 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SceneView.cs">
+    <Compile Include="Data\Archives.cs" />
+    <Compile Include="Data\Asset.cs" />
+    <Compile Include="Data\Materials.cs" />
+    <Compile Include="UI\GUI.cs" />
+    <Compile Include="Data\Objects.cs" />
+    <Compile Include="GameEntry.cs" />
+    <Compile Include="Lua\ArchiveCallbacks.cs" />
+    <Compile Include="Lua\IOCallbacks.cs" />
+    <Compile Include="Lua\MaterialCallbacks.cs" />
+    <Compile Include="Lua\LuaScript.cs" />
+    <Compile Include="Lua\SetCallbacks.cs" />
+    <Compile Include="Lua\TerrainCallbacks.cs" />
+    <Compile Include="Lua\UICallbacks.cs" />
+    <Compile Include="Data\Models.cs" />
+    <Compile Include="Data\Data.cs" />
+    <Compile Include="UI\AssetsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SceneView.Designer.cs">
+    <Compile Include="UI\AssetsDialog.Designer.cs">
+      <DependentUpon>AssetsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\LuaTerminal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LuaTerminal.Designer.cs">
+      <DependentUpon>LuaTerminal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MaterialEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MaterialEditor.Designer.cs">
+      <DependentUpon>MaterialEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SceneView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SceneView.Designer.cs">
       <DependentUpon>SceneView.cs</DependentUpon>
     </Compile>
     <Compile Include="EditorCache.cs" />
     <Compile Include="GameList.cs" />
-    <Compile Include="ViewportObject.cs" />
-    <Compile Include="MainFrm.cs">
+    <Compile Include="UI\TxtBxDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainFrm.Designer.cs">
+    <Compile Include="UI\TxtBxDialog.Designer.cs">
+      <DependentUpon>TxtBxDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VPModel.cs" />
+    <Compile Include="UI\MainFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MainFrm.Designer.cs">
       <DependentUpon>MainFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders.cs" />
     <Compile Include="Stage.cs" />
-    <Compile Include="StgOpenDialog.cs">
+    <Compile Include="UI\StgOpenDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StgOpenDialog.Designer.cs">
+    <Compile Include="UI\StgOpenDialog.Designer.cs">
       <DependentUpon>StgOpenDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Types.cs" />
     <Compile Include="Viewport.cs" />
-    <EmbeddedResource Include="SceneView.resx">
+    <Compile Include="VPObjectInstance.cs" />
+    <EmbeddedResource Include="UI\AssetsDialog.resx">
+      <DependentUpon>AssetsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\LuaTerminal.resx">
+      <DependentUpon>LuaTerminal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MaterialEditor.resx">
+      <DependentUpon>MaterialEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SceneView.resx">
       <DependentUpon>SceneView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFrm.resx">
+    <EmbeddedResource Include="UI\MainFrm.resx">
       <DependentUpon>MainFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -102,13 +161,19 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="StgOpenDialog.resx">
+    <EmbeddedResource Include="UI\StgOpenDialog.resx">
       <DependentUpon>StgOpenDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TxtBxDialog.resx">
+      <DependentUpon>TxtBxDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
     <None Include="Cache\README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="License.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="OpenTK.dll.config" />
@@ -122,32 +187,43 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\DefaultCube.mdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\DefaultCube.txt" />
+    <None Include="Resources\DefaultTexture.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Shaders\Default.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Shaders\Default.vert">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Shaders\ColorTest.frag">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Shaders\ColorTest.vert">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="Templates\Generations\README.md">
+    <None Include="Scripts\Games\Colors.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Lost World\README.md">
+    <None Include="Scripts\Games\Forces.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\README.md">
+    <None Include="Scripts\Games\SA2.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Unleashed\README.md">
+    <None Include="Scripts\Games\S06.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Games\Unleashed.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Games\Generations.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Games\Heroes.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Plugins\README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -173,6 +249,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /E "$(ProjectDir)Templates" "Templates" /Y</PostBuildEvent>
+    <PostBuildEvent>echo D|xcopy /E "$(ProjectDir)Templates" "Templates" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

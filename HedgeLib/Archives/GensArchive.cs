@@ -15,6 +15,7 @@ namespace HedgeLib.Archives
         public const string ListExtension = ".arl", Extension = ".ar",
             PFDExtension = ".pfd", SplitExtension = ".00";
         public const uint Sig1 = 0, Sig2 = 0x10, Sig3 = 0x14;
+        public const uint MinFileEntrySize = 21, PFDPadding = 2048;
 
         public override bool HasSplitArchives => true;
 
@@ -41,19 +42,37 @@ namespace HedgeLib.Archives
             var fileInfo = new FileInfo(filePath);
             var splitArchivesList = new List<string>();
 
-            string ext = (fileInfo.Extension == ListExtension) ? ".ar" : "";
-            string shortName = fileInfo.Name.Substring(0,
-                fileInfo.Name.Length - fileInfo.Extension.Length);
-
-            for (int i = 0; i <= 99; ++i)
+            // PFD
+            if (fileInfo.Extension == PFDExtension)
             {
-                string fileName = Path.Combine(fileInfo.DirectoryName,
-                $"{shortName}{ext}.{i.ToString("00")}");
+                splitArchivesList.Add(filePath);
+            }
 
-                if (!File.Exists(fileName))
-                    break;
+            // ARL, AR.00, AR, and everything else
+            else
+            {
+                string ext = (fileInfo.Extension == ListExtension) ?
+                    ".ar" : fileInfo.Extension;
 
-                splitArchivesList.Add(fileName);
+                if (int.TryParse(ext.Substring(1), out var e))
+                    ext = "";
+
+                // fileInfo.Extension only gets the last extension in the fileName.
+                // Therefore if the fileName is something like "ghz200.ar.00", this
+                // will only remove the ".00" from the end.
+                string shortName = fileInfo.Name.Substring(0,
+                    fileInfo.Name.Length - fileInfo.Extension.Length);
+
+                for (int i = 0; i <= 99; ++i)
+                {
+                    string fileName = Path.Combine(fileInfo.DirectoryName,
+                        $"{shortName}{ext}.{i.ToString("00")}");
+
+                    if (!File.Exists(fileName))
+                        break;
+
+                    splitArchivesList.Add(fileName);
+                }
             }
 
             return splitArchivesList;
@@ -70,9 +89,9 @@ namespace HedgeLib.Archives
             Padding = reader.ReadUInt32();
 
             // Data
-            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            while (fileStream.Position < fileStream.Length)
             {
-                reader.Offset = (uint)reader.BaseStream.Position;
+                reader.Offset = (uint)fileStream.Position;
 
                 uint dataEndOffset = reader.ReadUInt32();
                 uint dataLength = reader.ReadUInt32();
@@ -174,9 +193,10 @@ namespace HedgeLib.Archives
             for (int i = startIndex; i < files.Count; ++i)
             {
                 var file = files[i];
-                writer.Offset = (uint)writer.BaseStream.Position;
-                if (sizeLimit.HasValue && i > startIndex && writer.BaseStream.Position +
-                    21 + file.Data.Length > sizeLimit) // 'Cuz file entries must be >= 21 bytes
+                writer.Offset = (uint)fileStream.Position;
+
+                if (sizeLimit.HasValue && i > startIndex && fileStream.Position +
+                    MinFileEntrySize + file.Data.Length > sizeLimit)
                     return i;
 
                 writer.AddOffset("dataEndOffset");
