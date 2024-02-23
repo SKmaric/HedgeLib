@@ -82,7 +82,7 @@ namespace HedgeAnimEditor
         public static void ExportAnim(FileInfo fileInfo, string outputFile)
         {
             var anim = GensAnimation.ImportXML(fileInfo.FullName);
-            outputFile = Path.ChangeExtension(outputFile, anim.Extension);
+            outputFile = Path.ChangeExtension(outputFile, anim.GetAnimType());
             anim.Save(outputFile, true);
         }
 

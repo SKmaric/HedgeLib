@@ -240,10 +240,10 @@ namespace HedgeLib.Sets
             }
 
             // Add custom data to object
-            obj.CustomData.Add("Unknown1", new SetObjectParam(typeof(ushort), unknown1));
-            obj.CustomData.Add("Unknown2", new SetObjectParam(typeof(uint), unknown2));
-            obj.CustomData.Add("Unknown3", new SetObjectParam(typeof(uint), unknown3));
-            obj.CustomData.Add("Unknown4", new SetObjectParam(typeof(float), unknown4));
+            obj.CustomData.Add("Class", new SetObjectParam(typeof(ushort), unknown1));
+            obj.CustomData.Add("Param Array", new SetObjectParam(typeof(uint), unknown2));
+            obj.CustomData.Add("Unit Array", new SetObjectParam(typeof(uint), unknown3));
+            obj.CustomData.Add("ID", new SetObjectParam(typeof(float), unknown4));
             obj.CustomData.Add("RangeIn", new SetObjectParam(typeof(float), rangeIn));
             obj.CustomData.Add("RangeOut", new SetObjectParam(typeof(float), rangeOut));
 
