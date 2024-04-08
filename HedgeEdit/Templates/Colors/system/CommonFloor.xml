@@ -22,7 +22,7 @@
   <Gravity type="float" default="0" description="" />
   <ResetTime type="float" default="0" description="" />
   <PathIndex type="uint32" default="0" description="" />
-  <StartPath1DPos  type="enum" default="0" description="" />
+  <StartPath1DPos  type="float" default="0" description="" />
   <PathSpeed type="float" default="0" description="" />
   <PathReverseTime  type="float" default="0" description="" />
   <LightFieldOffset type="position" description="" />

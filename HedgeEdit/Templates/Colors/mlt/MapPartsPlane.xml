@@ -6,5 +6,7 @@
   <Width type="enum" default="2" description="" />
   <Height type="enum" default="2" description="" />
   <Length type="enum" default="2" description="" />
+  <Unknown7 type="enum" default="0" description="" />
+  <Unknown8 type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="8" />
 </Template>

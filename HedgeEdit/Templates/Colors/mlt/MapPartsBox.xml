@@ -10,5 +10,7 @@
   <BoxSizeX type="enum" default="2" description="" />
   <BoxSizeY type="enum" default="2" description="" />
   <BoxSizeZ type="enum" default="2" description="" />
+  <Unknown7 type="enum" default="0" description="" />
+  <Unknown8 type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="8" />
 </Template>

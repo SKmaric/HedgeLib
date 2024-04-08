@@ -33,6 +33,7 @@
 		<ChangeMode_2DtoForward Value="ChageMode_2DtoForward" />
 		<ChangeMode_3Dto2D Value="ChageMode_3Dto2D" />
 		<ChangeMode_3DtoForward Value="ChageMode_3DtoForward" />
+		<ChangeMode_3Dto2D Value="ChageMode_toLoop" />
 		<ChangeDiveBegin Value="ChangeDiveModeStart" />
 		<ChangeDiveEnd Value="ChangeDiveEndNoEvent" />
 		<JumpCollision Value="EventJumpCollision" />

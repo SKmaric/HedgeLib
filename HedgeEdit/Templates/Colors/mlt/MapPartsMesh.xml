@@ -26,5 +26,6 @@
 	<Enum value="24" description="mlt_024" />
 	<Enum value="25" description="mlt_025" />
   </ModelType>
+  <Unknown7 type="enum" default="0" description="" />
   <Extra type="RawByteLength" length="4" />
 </Template>

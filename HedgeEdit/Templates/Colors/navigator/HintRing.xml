@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <CueID type="uint32" default="0" description="" />
+  <Unknown5 type="byte" default="0" description="" />
+  <Unknown6 type="byte" default="0" description="" />
+  <Unknown7 type="byte" default="0" description="" />
+  <Unknown8 type="byte" default="0" description="" />
   <Extra type="RawByteLength" length="8" />
 </Template>

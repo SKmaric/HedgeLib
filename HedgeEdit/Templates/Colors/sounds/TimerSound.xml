@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <CueID type="uint32" default="0" description="The ID of the sound, as defined in cue_name_list.orc">
+  <CueID type="uint32" default="16" description="The ID of the sound, as defined in cue_name_list.orc">
 	<Enum value="3" description="amb_cmn_water_01" />
 	<Enum value="4" description="amb_cmn_water_02" />
 	<Enum value="5" description="amb_cmn_water_03" />
@@ -87,8 +87,8 @@
 	<Enum value="97" description="amb_ast_amb01" />
 	<Enum value="98" description="amb_ast_amb02" />
   </CueID>
-  <Unknown1 type="float" default="0" description="" />
-  <Unknown2 type="float" default="0" description="" />
-  <Unknown3 type="float" default="0" description="" />
+  <Unknown5 type="float" default="1" description="" />
+  <Unknown6 type="float" default="1" description="" />
+  <Unknown7 type="float" default="4" description="" />
   <Extra type="RawByteLength" length="16" />
 </Template>

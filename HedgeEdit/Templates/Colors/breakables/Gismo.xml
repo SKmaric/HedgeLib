@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <ObjCategoryID type="uint32" default="0" description="?" />
+  <ObjCategoryID type="byte" default="0" description="?" />
   <ObjTypeID type="uint32" default="0" description="Numerical ID of Gismo, set by stage info.">
 	<!-- stg100 Gismo -->
 <!-- 	<Enum value="0" description="stg100_obj_woodbox" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
   <MoveSpeed type="float" default="0" />
-  <GuidePathID type="enum" default="0" />
+  <GuidePathID type="uint" default="0" />
   <Path1DPos type="float" default="0" />
   <ActionType type="enum" default="0" />
   <OffsetType type="enum" default="0" />

@@ -16,8 +16,8 @@
   <Unknown5 type="enum" default="0" description="?" />
   <Unknown6 type="enum" default="0" description="?" />
   <Unknown7 type="enum" default="0" description="?" />
-  <Unknown8 type="float" default="45" description="?" />
-  <Unknown9 type="float" default="300" description="?" />
-  <UnknownA type="float" default="500" description="?" />
+  <Unknown8 type="float" default="2" description="?" />
+  <Unknown9 type="float" default="5" description="?" />
+  <UnknownA type="float" default="2" description="?" />
   <Extra type="RawByteLength" length="40" />
 </Template>

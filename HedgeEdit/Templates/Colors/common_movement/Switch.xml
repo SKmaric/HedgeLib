@@ -2,13 +2,13 @@
 <Template>
   <TargetList type="uint32array" description="" />
   <EventTimer type="float" default="0" description="" />
-  <EventType type="uint32" default="0" description="" />
+  <EventType type="byte" default="0" description="" />
   <TargetList2 type="uint32array" description="" />
   <EventTimer2 type="float" default="0" description="" />
-  <EventType2 type="uint32" default="0" description="" />
+  <EventType2 type="byte" default="0" description="" />
   <TargetList3 type="uint32array" description="" />
   <EventTimer3 type="float" default="0" description="" />
-  <EventType3 type="uint32" default="0" description="" />
+  <EventType3 type="byte" default="0" description="" />
   <OffTimer type="float" default="0" />
   <TargetID type="target" default="0" />
   <SwitchType type="enum" default="0" />

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Unknown5 type="float" default="140" description="" />
+  <Unknown6 type="float" default="45" description="" />
+  <Unknown7 type="float" default="8" description="" />
+  <Unknown8 type="float" default="0.5" description="" />
+  <Unknown9 type="float" default="10" description="" />
+  <Unknown10 type="float" default="1.6" description="" />
+  <Unknown11 type="float" default="1" description="" />
+  <Extra type="RawByteLength" length="28" />
 </Template>

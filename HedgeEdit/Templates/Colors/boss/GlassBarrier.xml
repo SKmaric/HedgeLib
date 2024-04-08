@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Template>
-  <Extra type="RawByteLength" length="0" />
+  <Unknown5 type="byte" default="0" description="" />
+  <Unknown6 type="uint" default="0" description="" />
+  <Extra type="RawByteLength" length="8" />
 </Template>
