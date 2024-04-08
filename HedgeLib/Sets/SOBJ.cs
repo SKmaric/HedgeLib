@@ -209,7 +209,7 @@ namespace HedgeLib.Sets
             // Because of this, the values are in a different order depending on endianness, and
             // this is the easiest known way to read them.
             uint unknownValue = reader.ReadUInt32();
-            ushort unknown1 = (ushort)((unknownValue >> 16) & 0xFFFF);
+            ushort objClass = (ushort)((unknownValue >> 16) & 0xFFFF);
             ushort objID = (ushort)(unknownValue & 0xFFFF);
 
             var obj = new SetObject()
@@ -217,10 +217,9 @@ namespace HedgeLib.Sets
                 ObjectType = objType,
                 ObjectID = objID
             };
-
-            uint unknown2 = reader.ReadUInt32();
-            uint unknown3 = reader.ReadUInt32();
-            float unknown4 = reader.ReadSingle();
+            uint objParamArray = reader.ReadUInt32();
+            uint objUnitArray = reader.ReadUInt32();
+            float objFloatID = reader.ReadSingle();
 
             float rangeIn = reader.ReadSingle();
             float rangeOut = reader.ReadSingle();
@@ -233,17 +232,17 @@ namespace HedgeLib.Sets
             uint unknown7 = (type == SOBJType.LostWorld) ? reader.ReadUInt32() : 0;
 
             // Call me crazy, but I have a weird feeling these values aren't JUST padding
-            if (unknown3 != 0 || unknown5 != 0 || unknown6 != 0 || unknown7 != 0)
+            if (objUnitArray != 0 || unknown5 != 0 || unknown6 != 0 || unknown7 != 0)
             {
                 Console.WriteLine("WARNING: Not padding?! ({0},{1},{2},{3})",
-                    unknown3, unknown5, unknown6, unknown7);
+                    objUnitArray, unknown5, unknown6, unknown7);
             }
 
             // Add custom data to object
-            obj.CustomData.Add("Class", new SetObjectParam(typeof(ushort), unknown1));
-            obj.CustomData.Add("Param Array", new SetObjectParam(typeof(uint), unknown2));
-            obj.CustomData.Add("Unit Array", new SetObjectParam(typeof(uint), unknown3));
-            obj.CustomData.Add("ID", new SetObjectParam(typeof(float), unknown4));
+            obj.CustomData.Add("Class", new SetObjectParam(typeof(ushort), objClass));
+            obj.CustomData.Add("ParamArray", new SetObjectParam(typeof(uint), objParamArray));
+            obj.CustomData.Add("UnitArray", new SetObjectParam(typeof(uint), objUnitArray));
+            obj.CustomData.Add("ID", new SetObjectParam(typeof(float), objFloatID));
             obj.CustomData.Add("RangeIn", new SetObjectParam(typeof(float), rangeIn));
             obj.CustomData.Add("RangeOut", new SetObjectParam(typeof(float), rangeOut));
 
@@ -282,8 +281,8 @@ namespace HedgeLib.Sets
                 foreach (var param in objTemplate.Parameters)
                 {
                     // For compatibility with SonicGlvl templates.
-                    if (param.Name == "Unknown1" || param.Name == "Unknown2" ||
-                        param.Name == "Unknown3" || param.Name == "RangeIn" ||
+                    if (param.Name == "ParamArray" || param.Name == "UnitArray" ||
+                        param.Name == "Class" || param.Name == "RangeIn" ||
                         param.Name == "RangeOut" || param.Name == "Parent")
                         continue;
 
@@ -401,10 +400,10 @@ namespace HedgeLib.Sets
             bool useRawData = false, bool rawDataMode = false) // true = full, false = only remaining bytes)
         {
             // Get a bunch of values from the object's custom data, if present.
-            uint unknown1 = obj.GetCustomDataValue<ushort>("Unknown1");
-            uint unknown2 = obj.GetCustomDataValue<uint>("Unknown2");
-            uint unknown3 = obj.GetCustomDataValue<uint>("Unknown3");
-            float unknown4 = obj.GetCustomDataValue<float>("Unknown4");
+            uint objClass = obj.GetCustomDataValue<ushort>("Class");
+            uint objParamArray = obj.GetCustomDataValue<uint>("ParamArray");
+            uint objUnitArray = obj.GetCustomDataValue<uint>("UnitArray");
+            float objFloatID = obj.GetCustomDataValue<float>("ID");
 
             float rangeIn = obj.GetCustomDataValue<float>("RangeIn");
             float rangeOut = obj.GetCustomDataValue<float>("RangeOut");
@@ -414,12 +413,12 @@ namespace HedgeLib.Sets
             var rawParamData = obj.GetCustomDataValue<byte[]>("RawParamData");
 
             // Combine the two values back into one so we can write with correct endianness.
-            uint unknownData = (unknown1 << 16) | (obj.ObjectID & 0xFFFF);
+            uint unknownData = (objClass << 16) | (obj.ObjectID & 0xFFFF);
             writer.Write(unknownData);
 
-            writer.Write(unknown2);
-            writer.Write(unknown3);
-            writer.Write(unknown4);
+            writer.Write(objParamArray);
+            writer.Write(objUnitArray);
+            writer.Write(objFloatID);
 
             writer.Write(rangeIn);
             writer.Write(rangeOut);
