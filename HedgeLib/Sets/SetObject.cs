@@ -98,5 +98,9 @@ namespace HedgeLib.Sets
         public Quaternion Rotation = new Quaternion(0, 0, 0, 1);
         public Vector3 Position = new Vector3(0, 0, 0),
 			Scale = new Vector3(1, 1, 1);
+
+        //Compatiblity test
+        public Vector3 RotationV3 = new Vector3(0, 0, 0);
+
     }
 }

@@ -233,7 +233,9 @@ namespace HedgeLib.Sets
                 return new SetObjectTransform()
                 {
                     Position = Helpers.XMLReadVector3(posElem),
-                    Rotation = Helpers.XMLReadQuat(rotElem),
+                    //Rotation = Helpers.XMLReadQuat(rotElem),
+                    Rotation = new Quaternion(Helpers.XMLReadVector3(rotElem), true),
+                    RotationV3 = Helpers.XMLReadVector3(rotElem),
                     Scale = Helpers.XMLReadVector3(scaleElem)
                 };
             }
@@ -414,7 +416,8 @@ namespace HedgeLib.Sets
                 var scaleElem = new XElement("Scale");
 
                 Helpers.XMLWriteVector3(posElem, transform.Position);
-                Helpers.XMLWriteVector4(rotElem, transform.Rotation);
+                //Helpers.XMLWriteVector4(rotElem, transform.Rotation);
+                Helpers.XMLWriteVector3(rotElem, transform.RotationV3);
                 Helpers.XMLWriteVector3(scaleElem, transform.Scale);
 
                 // Add elements to new transform element and return it.

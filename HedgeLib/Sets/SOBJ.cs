@@ -377,7 +377,11 @@ namespace HedgeLib.Sets
 
             // World Space
             transform.Position = reader.ReadVector3();
-            transform.Rotation = new Quaternion(reader.ReadVector3(), true);
+
+            //transform.Rotation = new Quaternion(reader.ReadVector3(), true);
+
+            transform.RotationV3 = reader.ReadVector3();
+            transform.Rotation = new Quaternion(transform.RotationV3, true);
 
             // Local Space
             if (readLocalSpace)
@@ -540,7 +544,8 @@ namespace HedgeLib.Sets
         {
             // World-Space
             writer.Write(transform.Position);
-            writer.Write(transform.Rotation.ToEulerAngles(true));
+            //writer.Write(transform.Rotation.ToEulerAngles(true));
+            writer.Write(transform.RotationV3);
 
             // Local-Space
             if (writeLocalSpace)
