@@ -75,11 +75,15 @@ namespace HedgeLib.Headers
             if (unknown1 != 0)
                 Console.WriteLine($"WARNING: Unknown1 is not zero! ({unknown1})");
 
-            ushort unknownFlag1 = reader.ReadUInt16();
-            if (unknownFlag1 != 0)
-                Console.WriteLine($"WARNING: UnknownFlag1 is not zero! ({unknownFlag1})");
+            // SCU maybe revealed this is a uint instead ushort
+            //ushort unknownFlag1 = reader.ReadUInt16();
+            //if (unknownFlag1 != 0)
+            //    Console.WriteLine($"WARNING: UnknownFlag1 is not zero! ({unknownFlag1})");
 
-            IsFooterMagicPresent = (reader.ReadUInt16() == 1); // FooterNodeCount?
+            //IsFooterMagicPresent = (reader.ReadUInt16() == 1); // FooterNodeCount?
+
+            IsFooterMagicPresent = (reader.ReadUInt32() == 1); // FooterNodeCount?
+
             reader.JumpAhead(4);
 
             // BINA Signature
@@ -109,8 +113,11 @@ namespace HedgeLib.Headers
             writer.Write(FinalTableLength);
             writer.WriteNulls(4); // TODO: Figure out what this is (probably padding).
 
-            writer.WriteNulls(2); // TODO: Figure out what this flag is.
-            writer.Write((IsFooterMagicPresent) ? (ushort)1 : (ushort)0);
+            // SCU maybe revealed this is a uint instead ushort
+            //writer.WriteNulls(2); // TODO: Figure out what this flag is.
+            //writer.Write((IsFooterMagicPresent) ? (ushort)1 : (ushort)0);
+
+            writer.Write((IsFooterMagicPresent) ? (uint)1 : (uint)0);
 
             string verString = Version.ToString();
             if (verString.Length < 3)

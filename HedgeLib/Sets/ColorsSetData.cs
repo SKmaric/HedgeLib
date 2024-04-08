@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System;
-using HedgeLib.Headers;
+﻿using HedgeLib.Headers;
 using HedgeLib.IO;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace HedgeLib.Sets
 {
     public class ColorsSetData : SetData
     {
         // Variables/Constants
-        public BINAHeader Header = new BINAv1Header()
+        public BINAv1Header Header = new BINAv1Header()
         {
             IsFooterMagicPresent = true
         };
@@ -24,7 +24,7 @@ namespace HedgeLib.Sets
 
             // Header
             var reader = new BINAReader(fileStream);
-            var Header = (BINAv1Header)reader.ReadHeader();
+            Header = (BINAv1Header)reader.ReadHeader();
 
             // SOBJ Data
             Objects = SOBJ.Read(reader,
