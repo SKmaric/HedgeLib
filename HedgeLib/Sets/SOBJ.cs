@@ -179,16 +179,17 @@ namespace HedgeLib.Sets
             foreach (var obj in objects)
             {
                 writer.FillInOffset($"objOffset_{i}", false);
-                WriteObject(writer, obj, type);
+                WriteObject(writer, obj, type, i);
                 writer.FixPadding(0x4);
                 ++i;
             }
 
             // TODO: Clean this up
+            i = 0;
             foreach (var obj in objects)
             {
                 writer.FixPadding(4);
-                writer.FillInOffset($"transformsOffset_{obj.ObjectID}", false);
+                writer.FillInOffset($"transformsOffset_{i}", false);
                 WriteTransform(writer, obj.Transform,
                     type == SOBJType.LostWorld);
                 writer.FixPadding(0x4);
@@ -198,6 +199,7 @@ namespace HedgeLib.Sets
                     WriteTransform(writer, childTransform,
                         type == SOBJType.LostWorld);
                 }
+                ++i;
             }
         }
 
@@ -396,7 +398,7 @@ namespace HedgeLib.Sets
             return transform;
         }
 
-        private static void WriteObject(BINAWriter writer, SetObject obj, SOBJType type,
+        private static void WriteObject(BINAWriter writer, SetObject obj, SOBJType type, uint objNumber,
             bool useRawData = false, bool rawDataMode = false) // true = full, false = only remaining bytes)
         {
             // Get a bunch of values from the object's custom data, if present.
@@ -424,7 +426,7 @@ namespace HedgeLib.Sets
             writer.Write(rangeOut);
             if (type == SOBJType.LostWorld) writer.Write(parent);
             writer.FixPadding(4);
-            writer.AddOffset($"transformsOffset_{obj.ObjectID}");
+            writer.AddOffset($"transformsOffset_{objNumber}");
 
             writer.Write((uint)obj.Children.Length + 1);
             writer.WriteNulls((type == SOBJType.LostWorld) ? 0xC : 4u);
