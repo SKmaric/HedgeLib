@@ -254,7 +254,19 @@ namespace HedgeLib.Sets
             Dictionary<string, SetObjectType> objectTemplates = null)
         {
             // Convert to XML file and save
+
+            // Load OffsetIDs
             int OffsetIDs = 0;
+            try
+            {
+                var doc = XDocument.Load("Templates/Colors/Modifiers-ColorsToGenerations.xml");
+                OffsetIDs = int.Parse(doc.Root.Element("IDOffset").Attribute("Value").Value);
+            }
+            catch
+            {
+                Console.WriteLine("Couldn't load ObjectID offset config (ignore if not Colors set editor)");
+            }
+
             var rootElem = new XElement("SetData");
 
             foreach (var obj in Objects)
@@ -352,7 +364,8 @@ namespace HedgeLib.Sets
                 {
                     Helpers.XMLWriteVector4(elem, (Vector4)param.Data);
                 }
-                else if (new string[] { "Target", "ACameraID", "BCameraID", "ALinkObjID", "BLinkObjID" }.Contains(name) && dataType == typeof(uint))
+                else if (new string[] { "Target", "TargetID", "ACameraID", "BCameraID", "ALinkObjID", "BLinkObjID",
+                    "CameraA", "CameraB", "CollisionA", "CollisionB" }.Contains(name) && dataType == typeof(uint))
                 {
                     // Workaround for target obj id parameters
                     // Offset if necessary
@@ -370,12 +383,14 @@ namespace HedgeLib.Sets
                     if (arr == null)
                         return elem;
 
-                    for (int i = 0; i < arr.Length; i++)
+                    if (name != "VoiceOverIDList")
                     {
-                        if (arr[i] != 0)
-                            arr[i] += (uint)OffsetIDs;
+                        for (int i = 0; i < arr.Length; i++)
+                        {
+                            if (arr[i] != 0)
+                                arr[i] += (uint)OffsetIDs;
+                        }
                     }
-
                     elem.Value = string.Join(",", arr);
                 }
                 else if (dataType == typeof(ForcesSetData.ObjectReference[]))
